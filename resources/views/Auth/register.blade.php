@@ -21,7 +21,7 @@
 
                 <!-- Formulir Registrasi -->
                 <form action="{{ route('register.applicant.post') }}" method="POST" enctype="multipart/form-data">
-    @csrf
+                @csrf
 
                 <!-- Input Username -->
                 <div class="mb-3">

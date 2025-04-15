@@ -27,7 +27,6 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        // HAPUS dd() agar kode dapat berjalan
         // dd($request->all());
         
         // Validasi data dari formulir

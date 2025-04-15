@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8">
@@ -11,27 +10,42 @@
                         {{ session('success') }}
                     </div>
                 @endif
-
                 @if (session('error'))
                     <div class="alert alert-danger">
                         {{ session('error') }}
                     </div>
                 @endif
-
                 <form action="{{ route('register.company.post') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
+                    <!-- User Data Section -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                    </div>
+                    
                     <!-- Role Selection -->
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select class="form-select" id="role" name="role" required>
-                            <option value="employee">Employee</option>
-                            <option value="company">Company</option>
+                            <option value="applicant">Applicant</option>
+                            <option value="company" selected>Company</option>
                         </select>
                     </div>
-
+                    
                     <!-- Company Data Section -->
-                    <div id="companyData" style="display:none;">
+                    <div id="companyData">
                         <div class="mb-3">
                             <label for="logo" class="form-label">Logo</label>
                             <input type="file" class="form-control" id="logo" name="logo">
@@ -56,7 +70,6 @@
                             <label for="company_phone_number" class="form-label">Company Phone Number</label>
                             <input type="text" class="form-control" id="company_phone_number" name="company_phone_number" required>
                         </div>
-
                         <!-- Job Vacancy -->
                         <div class="mb-3">
                             <label for="position" class="form-label">Position</label>
@@ -87,17 +100,25 @@
                             <textarea class="form-control" id="job_description" name="job_description" rows="3" required></textarea>
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary mt-4">Register</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 <script>
     document.getElementById('role').addEventListener('change', function () {
         var role = this.value;
+        if (role === 'company') {
+            document.getElementById('companyData').style.display = 'block';
+        } else {
+            document.getElementById('companyData').style.display = 'none';
+        }
+    });
+    
+    // Jalankan fungsi saat halaman dimuat untuk menampilkan/menyembunyikan sesuai nilai awal
+    document.addEventListener('DOMContentLoaded', function() {
+        var role = document.getElementById('role').value;
         if (role === 'company') {
             document.getElementById('companyData').style.display = 'block';
         } else {

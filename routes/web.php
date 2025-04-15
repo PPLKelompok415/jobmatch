@@ -18,7 +18,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('register/company', [RegisterCompanyController::class, 'showRegistrationForm'])->name('register.company');
 Route::post('register/company', [RegisterCompanyController::class, 'register'])->name('register.company.post');
 
-// Register Applicant (Employee) Routes
+// Register Applicant (applicant) Routes
 Route::get('register/applicant', [RegisterController::class, 'showRegistrationForm'])->name('register.applicant');
 Route::post('register/applicant', [RegisterController::class, 'register'])->name('register.applicant.post');
 
