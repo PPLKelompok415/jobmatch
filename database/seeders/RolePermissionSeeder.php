@@ -38,38 +38,38 @@ class RolePermissionSeeder extends Seeder
             );
         }
 
-        // Applicant Role
-        $applicantRole = Role::firstOrCreate([
-            'name' => 'applicant_role',
-        ]); 
+        // // Applicant Role
+        // $applicantRole = Role::firstOrCreate([
+        //     'name' => 'applicant_role',
+        // ]); 
 
-        $applicantRolePermissions = [
-            'manage applicant soft skill',
-            'manage applicant hard skill',
-            'manage skills',
-            'manage job skill',
-            'manage applicant skill',
-            'manage educations',
-            'manage experiences',
-            'manage certifications',
-        ];
+        // $applicantRolePermissions = [
+        //     'manage applicant soft skill',
+        //     'manage applicant hard skill',
+        //     'manage skills',
+        //     'manage job skill',
+        //     'manage applicant skill',
+        //     'manage educations',
+        //     'manage experiences',
+        //     'manage certifications',
+        // ];
 
-        $applicantRole->syncPermissions($applicantRolePermissions);
+        // $applicantRole->syncPermissions($applicantRolePermissions);
 
-        // Company Role
-        $companyRole = Role::firstOrCreate([
-            'name' => 'company_role',
-        ]); 
+        // // Company Role
+        // $companyRole = Role::firstOrCreate([
+        //     'name' => 'company_role',
+        // ]); 
 
-        $companyRolePermissions = [
-            'manage applicants',
-            'manage applicant soft skill',
-            'manage applicant hard skill',
-            'manage job skill',
-            'manage applicant skill',
-        ];
+        // $companyRolePermissions = [
+        //     'manage applicants',
+        //     'manage applicant soft skill',
+        //     'manage applicant hard skill',
+        //     'manage job skill',
+        //     'manage applicant skill',
+        // ];
 
-        $companyRole->syncPermissions($companyRolePermissions);
+        // $companyRole->syncPermissions($companyRolePermissions);
         
 
         // Admin Role

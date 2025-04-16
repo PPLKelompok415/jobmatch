@@ -76,7 +76,7 @@ class RegisterCompanyController extends Controller
             session()->flash('success', 'Registrasi berhasil! Silakan login.');
 
             // Redirect ke halaman login setelah registrasi berhasil
-            return redirect()->route('auth.loginApplicant');
+            return redirect()->route('auth.loginCompany');
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan saat registrasi: ' . $e->getMessage());
             return back()->withInput($request->except('password', 'password_confirmation'));
