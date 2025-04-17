@@ -1,16 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="mb-4 d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold">JOBMATCH</h5>
-        <div class="d-flex gap-3 align-items-center">
-            <a class='btn' href="#">Home</a>
-            <a class='btn' href="#">Language</a>
-            <a class='btn' href="#">Employer site</a>
-            <img src="" class="rounded-circle" alt="Profile">
-        </div>
-    </div>
-
     <div class="mb-2 border-bottom pb-2 d-flex justify-content-start gap-4 small text-muted">
         <a class='btn active' href="#">Bookmark</a>
         <a class='btn' href="#">Community</a>
