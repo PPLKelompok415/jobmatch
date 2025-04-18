@@ -1,12 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisterCompanyController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginCompanyController;
+use App\Http\Controllers\Auth\LoginApplicantController;
+use App\Http\Controllers\Auth\LoginSuperAdminController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminDashboardController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-<<<<<<< Updated upstream
-Route::get('/', function () {
-    return view('welcome');
-});
-=======
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -57,7 +61,7 @@ Route::post('logout', function (Request $request) {
           return redirect('/');
       })->name('logout');
 
-      
+// Chat 
 Route::get('/chat', function () {
     return view('job-matching.chat');
 })->name('chat');
@@ -70,4 +74,3 @@ Route::get('/chat/company', function () {
 Route::get('/bookmark', function () {
     return view('job-matching.bookmark');
 })->name('bookmark');
->>>>>>> Stashed changes
