@@ -10,7 +10,7 @@ class LoginCompanyController extends Controller
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('auth.company.login');  // Pastikan Anda memiliki file auth/login.blade.php
+        return view('auth.loginCompany');  // Pastikan Anda memiliki file auth/login.blade.php
     }
 
     // Menangani proses login

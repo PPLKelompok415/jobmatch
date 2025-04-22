@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginCompanyController;
 use App\Http\Controllers\Auth\LoginApplicantController;
 use App\Http\Controllers\Auth\LoginSuperAdminController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CompanyHomeController; // Ensure this controller exists in the specified namespace
 use App\Http\Controllers\AdminDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -15,8 +16,10 @@ use Illuminate\Http\Request;
 //     return view('welcome');
 // });
 
-// Home Route
+// Applicant Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
+// Company Home Route
+Route::get('/Company', [CompanyHomeController::class, 'index'])->name('CompanyHome');
 
 // Register Company Routes
 Route::get('register/company', [RegisterCompanyController::class, 'showRegistrationForm'])->name('register.company');

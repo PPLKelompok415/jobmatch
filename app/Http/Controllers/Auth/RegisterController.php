@@ -103,14 +103,19 @@ class RegisterController extends Controller
 
             // Menambahkan pesan flash ke session untuk menandakan berhasil
             session()->flash('success', 'Registrasi berhasil! Silakan login.');
-
-            // Redirect ke halaman login setelah registrasi berhasil
-            return redirect()->route('auth.loginApplicant');
+            // Set session success
+            return redirect()->route('login.applicant')->with('success', 'Registration successful! Please login.');
+            // // Redirect ke halaman login setelah registrasi berhasil
+            // return redirect()->route('auth.loginApplicant');
             
         } catch (\Exception $e) {
-            // Menambahkan pesan error jika terjadi kesalahan saat menyimpan
-            session()->flash('error', 'Terjadi kesalahan saat registrasi: ' . $e->getMessage());
-            return back()->withInput($request->except('password', 'password_confirmation'));
+            // Jika ada error
+            return redirect()->route('register.applicant')->with('error', 'Registration failed, please try again.');
         }
+        // catch (\Exception $e) {
+        //     // Menambahkan pesan error jika terjadi kesalahan saat menyimpan
+        //     session()->flash('error', 'Terjadi kesalahan saat registrasi: ' . $e->getMessage());
+        //     return back()->withInput($request->except('password', 'password_confirmation'));
+        // }
     }
 }

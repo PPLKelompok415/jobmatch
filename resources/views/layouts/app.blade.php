@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JobMatch</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Optional: tambahkan CSS eksternal -->
+    <!-- Optional: tambahkan CSS & Bootstrap eksternal -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     @yield('styles')
 </head>
@@ -28,17 +29,35 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Language</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Employer site</a>
-                    </li>
+                    <!-- Check if the current URL is for the login applicant page -->
+                    @if (url()->current() == url('/login/applicant'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('home') }}">Applicant Site</a>
+                        </li>
+                    @elseif (url()->current() == url('/Company'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('home') }}">Applicant Site</a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('CompanyHome') }}">Company site</a>
+                        </li>
+                    @endif
                     @if (Auth::check())
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('logout') }}">Logout</a>
                         </li>
                     @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login.applicant') }}">Login</a>
-                        </li>
+                        <!-- Check if we are on Company URL or Applicant URL -->
+                        @if (url()->current() == url('/Company'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login.company') }}">Login</a>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login.applicant') }}">Login</a>
+                            </li>
+                        @endif
                     @endif
                 </ul>
             </div>
