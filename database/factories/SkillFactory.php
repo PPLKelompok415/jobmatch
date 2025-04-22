@@ -1,0 +1,17 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Skill>
+ */
+class SkillFactory extends Factory
+{
+    public function definition(): array
+    {
+        $skills = ['PHP', 'Laravel', 'JavaScript', 'Python', 'SQL', 'React', 'Node.js', 'CSS', 'HTML', 'Docker'];
+        return ['name' => $this->faker->unique()->randomElement($skills)];
+    }
+}
