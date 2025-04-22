@@ -45,7 +45,11 @@
                     @endif
                     @if (Auth::check())
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('logout') }}">Logout</a>
+                            <a class="nav-link" href="{{ route('login.applicant') }}">Login</a>
+                        </li>
+                    @elseif (url()->current() == url('/Company'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login.company') }}">Login</a>
                         </li>
                     @else
                         <!-- Check if we are on Company URL or Applicant URL -->
