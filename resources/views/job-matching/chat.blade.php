@@ -10,7 +10,7 @@
     <div class="bg-dark-green text-white rounded d-flex align-items-center p-3 mb-2" height=50%>
         <a href="/" class="text-white me-3 fs-5">&larr;</a>
         <div class="text-center flex-grow-1 fw-bold ">GOJEK</div>
-        <img src="" class="rounded-circle" alt="Avatar">
+        <img src="images/gojek.png" class="rounded-circle" alt="Avatar" width="40" height="40">
     </div>
 
     <div class="text-center text-muted small my-3">
@@ -19,7 +19,7 @@
 
     <div id="chatBox" class="mb-3 px-2" style="min-height: 300px;">
         <!-- Default messages -->
-        <div class="bg-secondady-subtle p-3 rounded text-white ms-auto mb-2" style="max-width: 75%; background-color: #5a7c80;">
+        <div class="bg-secondady-subtle p-3 rounded text-white mb-2" style="max-width: 75%; background-color: #5a7c80;">
             Good Afternoon! Previously, let me introduce myself, my name is Raisa Leonore, I am glad you can match with our company...
         </div>
     </div>
@@ -49,7 +49,7 @@
 
             // Create user's message bubble
             const userMsg = document.createElement('div');
-            userMsg.className = 'bg-secondary-subtle p-3 rounded text-black mb-2';
+            userMsg.className = 'bg-secondary-subtle p-3 rounded text-black ms-auto mb-2';
             userMsg.style.cssText = 'max-width: 75%; background-color: #dfdfdf !important;';
             userMsg.textContent = message;
             chatBox.appendChild(userMsg);
@@ -60,7 +60,7 @@
             // Simulate admin reply (optional)
             setTimeout(() => {
                 const reply = document.createElement('div');
-                reply.className = 'bg-secondady-subtle p-3 rounded text-white ms-auto mb-2';
+                reply.className = 'bg-secondady-subtle p-3 rounded text-white mb-2';
                 reply.style.cssText = 'max-width: 75%; background-color: #5a7c80 !important;';
                 reply.textContent = "Thank you for your message. We will get back to you shortly. (System Message)";
                 chatBox.appendChild(reply);

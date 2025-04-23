@@ -19,12 +19,11 @@
 
     <div id="chatBox" class="mb-3 px-2" style="min-height: 300px;">
         <!-- Default messages -->
-        <div class="bg-secondary-subtle p-3 rounded text-black mb-2" style="max-width: 75%; background-color: #dfdfdf !important;">
+        <div class="bg-secondary-subtle p-3 rounded text-black ms-auto mb-2" style="max-width: 75%; background-color: #dfdfdf !important;">
             Good Afternoon! Previously, let me introduce myself, my name is Raisa Leonore, I am glad you can match with our company...
         </div>
-        <div class="bg-secondady-subtle p-3 rounded text-white ms-auto mb-2" style="max-width: 75%; background-color: #5a7c80;">
-            Good Afternoon! I am very grateful for the opportunity. Okay,
-            I will come on schedule and on time. Thank you very much!
+        <div class="bg-secondady-subtle p-3 rounded text-white mb-2" style="max-width: 75%; background-color: #5a7c80;">
+            Good Afternoon! I am very grateful for the opportunity!
         </div>
     </div>
 
@@ -54,22 +53,13 @@
             // Create user's message bubble
             const adminMsg = document.createElement('div');
             adminMsg.className = 'bg-light p-3 rounded text-dark ms-auto mb-2';
-            adminMsg.style.maxWidth = '75%';
+            adminMsg.style.cssText = 'max-width: 75%; background-color: #dfdfdf !important;';
             adminMsg.textContent = message;
             chatBox.appendChild(adminMsg);
 
             chatInput.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Simulate admin reply (optional)
-            setTimeout(() => {
-                const reply = document.createElement('div');
-                reply.className = 'bg-secondary-subtle p-3 rounded text-black mb-2';
-                reply.style.cssText = 'max-width: 75%; background-color: #5a7c80 !important;';
-                reply.textContent = "Thank you for your message. We will get back to you shortly. (System Message)";
-                chatBox.appendChild(reply);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000);
         });
     </script>
 @endsection
