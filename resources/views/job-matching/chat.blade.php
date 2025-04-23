@@ -26,8 +26,8 @@
 
     <form id="chatForm" class="d-flex align-items-center border-top pt-3 mt-3">
         <span class="me-2 text-muted fs-5">🔗</span>
-        <input type="text" id="chatInput" class="form-control border-0" placeholder="Message">
-        <button type="submit" class="btn btn-link text-muted fs-5">🎤</button>
+        <input type="text" name="chatInput" id="chatInput" class="form-control border-0" placeholder="Message">
+        <button type="submit" class="btn btn-link text-muted fs-5">Send</button>
     </form>
 
     <footer class="d-flex justify-content-end gap-4 small text-muted mt-4">
