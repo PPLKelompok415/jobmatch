@@ -7,7 +7,7 @@ use App\Http\Controllers\Auth\LoginCompanyController;
 use App\Http\Controllers\Auth\LoginApplicantController;
 use App\Http\Controllers\Auth\LoginSuperAdminController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\CompanyHomeController; // Ensure this controller exists in the specified namespace
+use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\DashboardApplicantController;
@@ -49,12 +49,7 @@ Route::post('register/applicant', [RegisterController::class, 'register'])->name
 Route::get('login/applicant', [LoginApplicantController::class, 'showLoginForm'])->name('login.applicant');
 Route::post('login/applicant', [LoginApplicantController::class, 'login'])->name('applicant.login.post');
 
-// Route::middleware('auth')->get('/applicant/dashboard', function () {
-//     return view('applicant/daApplicant');  // Pastikan path ini sesuai dengan view yang diinginkan
-// })->name('applicant.dashboard');
-// routes/web.php
 Route::middleware('auth')->get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])->name('applicant.dashboard');
-
 
 // Rute untuk logout
 Route::post('/logout', [LoginApplicantController::class, 'logout'])->name('logout');
