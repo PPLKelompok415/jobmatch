@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Job;
 use App\Models\Skill;
+use App\Models\Company;
 
 class JobSeeder extends Seeder
 {
@@ -15,17 +16,16 @@ class JobSeeder extends Seeder
             'React', 'Node.js', 'CSS', 'HTML', 'Docker'
         ];
 
-        // Tambahkan skill jika belum ada
         foreach ($skills as $skillName) {
             Skill::firstOrCreate(['name' => $skillName]);
         }
 
         $allSkillIds = Skill::pluck('id')->toArray();
+        $companyIds = Company::pluck('id')->toArray(); // ✅ Aman ambil langsung dari DB
 
-        // Buat 10 job dummy
         for ($i = 1; $i <= 10; $i++) {
             $job = Job::create([
-                'company_id' => rand(1, 5), // pastikan data company ada
+                'company_id' => fake()->randomElement($companyIds),
                 'title' => fake()->randomElement(['Backend Developer', 'Frontend Developer', 'Data Analyst']),
                 'type_of_work' => fake()->randomElement(['Full-Time', 'Part-Time', 'Remote']),
                 'location' => fake()->randomElement(['Jakarta', 'Bandung', 'Surabaya']),
@@ -34,8 +34,8 @@ class JobSeeder extends Seeder
                 'bidang' => fake()->randomElement(['IT', 'Finance', 'Design']),
             ]);
 
-            // Hubungkan ke skill
             $job->skills()->attach(fake()->randomElements($allSkillIds, rand(3, 5)));
         }
     }
 }
+
