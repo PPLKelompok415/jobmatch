@@ -10,7 +10,7 @@
     <div class="bg-dark-green text-white rounded d-flex align-items-center p-3 mb-2" height=50%>
         <a href="/" class="text-white me-3 fs-5">&larr;</a>
         <div class="text-center flex-grow-1 fw-bold ">Edward Cullen</div>
-        <img src="" class="rounded-circle" alt="Avatar">
+        <img src="/images/male.jpg" class="rounded-circle" alt="Avatar" width="40" height="40">
     </div>
 
     <div class="text-center text-muted small my-3">
@@ -30,7 +30,7 @@
     <form id="chatForm" class="d-flex align-items-center border-top pt-3 mt-3">
         <span class="me-2 text-muted fs-5">🔗</span>
         <input type="text" id="chatInput" class="form-control border-0" placeholder="Message">
-        <button type="submit" class="btn btn-link text-muted fs-5">🎤</button>
+        <button type="submit" class="btn btn-link text-muted fs-5">Send</button>
     </form>
 
     <footer class="d-flex justify-content-end gap-4 small text-muted mt-4">

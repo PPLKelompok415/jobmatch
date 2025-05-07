@@ -10,7 +10,7 @@ class LoginApplicantController extends Controller
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('auth.loginApplicant');  // Pastikan Anda memiliki file auth/login.blade.php
+        return view('Auth.loginApplicant');  // Pastikan Anda memiliki file auth/login.blade.php
     }
 
     // Menangani proses login

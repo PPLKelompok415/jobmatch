@@ -18,15 +18,29 @@
     </div>
 
     <div id="chatBox" class="mb-3 px-2" style="min-height: 300px;">
-        <!-- Default messages -->
-        <div class="bg-secondady-subtle p-3 rounded text-white mb-2" style="max-width: 75%; background-color: #5a7c80;">
-            Good Afternoon! Previously, let me introduce myself, my name is Raisa Leonore, I am glad you can match with our company...
-        </div>
+        @foreach ($messages as $msg)
+            @if ($msg->sender_id === auth()->id())
+                <!-- Pesan dari user (kanan) -->
+                <div class="bg-secondary-subtle p-3 rounded text-black ms-auto mb-2"
+                    style="max-width: 75%; background-color: #dfdfdf !important;">
+                    {{ $msg->message }}
+                </div>
+            @else
+                <!-- Pesan dari admin / perusahaan (kiri) -->
+                <div class="bg-secondady-subtle p-3 rounded text-white mb-2"
+                    style="max-width: 75%; background-color: #5a7c80 !important;">
+                    {{ $msg->message }}
+                </div>
+            @endif
+        @endforeach
     </div>
 
-    <form id="chatForm" class="d-flex align-items-center border-top pt-3 mt-3">
+
+    <form id="chatForm" class="d-flex align-items-center border-top pt-3 mt-3" method="POST" action="{{ route('chat.send') }}">
+        @csrf
+        <input type="hidden" name="receiver_id" value="{{ $receiver->id }}">
         <span class="me-2 text-muted fs-5">🔗</span>
-        <input type="text" name="chatInput" id="chatInput" class="form-control border-0" placeholder="Message">
+        <input type="text" name="message" id="chatInput" class="form-control border-0" placeholder="Message">
         <button type="submit" class="btn btn-link text-muted fs-5">Send</button>
     </form>
 
@@ -36,36 +50,4 @@
         <a class='btn' href="#">Help Centre</a>
     </footer>
 
-    <!-- Script -->
-    <script>
-        const chatForm = document.getElementById('chatForm');
-        const chatInput = document.getElementById('chatInput');
-        const chatBox = document.getElementById('chatBox');
-
-        chatForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const message = chatInput.value.trim();
-            if (message === '') return;
-
-            // Create user's message bubble
-            const userMsg = document.createElement('div');
-            userMsg.className = 'bg-secondary-subtle p-3 rounded text-black ms-auto mb-2';
-            userMsg.style.cssText = 'max-width: 75%; background-color: #dfdfdf !important;';
-            userMsg.textContent = message;
-            chatBox.appendChild(userMsg);
-
-            chatInput.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Simulate admin reply (optional)
-            setTimeout(() => {
-                const reply = document.createElement('div');
-                reply.className = 'bg-secondady-subtle p-3 rounded text-white mb-2';
-                reply.style.cssText = 'max-width: 75%; background-color: #5a7c80 !important;';
-                reply.textContent = "Thank you for your message. We will get back to you shortly. (System Message)";
-                chatBox.appendChild(reply);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000);
-        });
-    </script>
 @endsection

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginCompanyController;
 use App\Http\Controllers\Auth\LoginApplicantController;
 use App\Http\Controllers\Auth\LoginSuperAdminController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -62,9 +63,7 @@ Route::post('logout', function (Request $request) {
       })->name('logout');
 
 // Chat 
-Route::get('/chat', function () {
-    return view('job-matching.chat');
-})->name('chat');
+Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
 Route::get('/chat/company', function () {
     return view('job-matching.companychat');
@@ -74,3 +73,14 @@ Route::get('/chat/company', function () {
 Route::get('/bookmark', function () {
     return view('job-matching.bookmark');
 })->name('bookmark');
+
+//Bookmark
+Route::get('/bookmark2', function () {
+    return view('job-matching.bookmark2');
+})->name('bookmark_2');
+
+// routes/web.php
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat/{receiver}', [ChatController::class, 'index'])->name('chat');
+    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+});
