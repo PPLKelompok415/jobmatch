@@ -10,10 +10,40 @@ class Applicant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'full_name', 'photo', 'date_of_birth', 'gender', 'email', 'phone_number',
-        'address', 'cv_file', 'portfolio_file', 'desired_position', 'type_of_work',
-        'location', 'salary_min', 'salary_max', 'availability_date', 'available_now'
+        'user_id',
+        'name',
+        'password',
+        'role',
+        'full_name',
+        'photo',
+        'date_of_birth',
+        'gender',
+        'email',
+        'phone_number',
+        'address',
+        'cv_file',
+        'portfolio_file',
+        'institution',
+        'major',
+        'graduation_year',
+        'work_company',
+        'work_position',
+        'work_description',
+        'soft_skills',
+        'hard_skills',
+        'certification',
+        'desired_position',
+        'type_of_work',
+        'location',
+        'salary_min',
+        'salary_max',
+        'availability_date',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function educations() {
         return $this->hasMany(Education::class);
