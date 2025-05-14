@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JobMatch-Applicant Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+      body {
+        background-color: #f9fbfc;
+        font-family: 'Segoe UI', sans-serif;
+      }
+      .logo {
+        font-weight: bold;
+        font-size: 20px;
+        margin-left: 10px;
+      }
+      .language-switch {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+      .dropdown-toggle {
+        background-color: #6c8494;
+        color: white;
+        border-radius: 10px;
+        padding: 10px 15px;
+        border: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dropdown-menu {
+        min-width: 120px;
+        font-size: 14px;
+      }
+      .accordion-button::after {
+        transform: rotate(180deg);
+      }
+      .accordion-button.collapsed::after {
+        transform: rotate(0deg);
+      }
+      .accordion-button {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #2c3e50;
+        background-color: transparent;
+      }
+      .card {
+        border: 2px solid #6c8494;
+        border-radius: 12px;
+      }
+      .card-header {
+        background-color: transparent;
+        border-bottom: none;
+      }
+      .login-text {
+        margin-top: 20px;
+        text-align: left;
+        font-size: 14px;
+      }
+      .login-text a {
+        text-decoration: none;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5 position-relative">
+      <div class="d-flex align-items-center mb-4">
+        <div class="bg-dark text-white px-2 py-1 rounded">J</div>
+        <div class="logo">JOBMATCH</div>
+      </div>
+
+      <div class="language-switch dropdown">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-globe"></i> Language
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">English</a></li>
+          <li><a class="dropdown-item" href="#">Indonesia</a></li>
+        </ul>
+      </div>
+
+      <p class="mb-3">Are you a company? <a href="{{ route('register.company') }}" class="text-decoration-none">Register as a company</a></p>
+
+      <div class="card p-4">
+        <h6 class="fw-bold">REGISTER</h6>
+        <div class="accordion mt-3" id="registerAccordion">
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#personalData">
+                Personal Data
+              </button>
+            </h2>
+            <div id="personalData" class="accordion-collapse collapse" data-bs-parent="#registerAccordion">
+              <div class="accordion-body">
+                <div class="row mb-3">
+                  <div class="col-md-2 text-center">
+                    <label for="photo" class="form-label">Photo</label>
+                    <div class="border rounded p-2">
+                      <i class="bi bi-camera" style="font-size: 1.5rem;"></i>
+                      <input type="file" class="form-control mt-2" id="photo" name="photo">
+                    </div>
+                  </div>
+                  <div class="col-md-10">
+                    <label for="fullname" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Your full name">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label class="form-label">Date of Birth</label>
+                  <div class="col">
+                    <input type="number" class="form-control" placeholder="DD" name="dob_day" min="1" max="31">
+                  </div>
+                  <div class="col">
+                    <input type="number" class="form-control" placeholder="MM" name="dob_month" min="1" max="12">
+                  </div>
+                  <div class="col">
+                    <input type="number" class="form-control" placeholder="YYYY" name="dob_year" min="1900" max="2099">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="gender" class="form-label">Gender</label>
+                  <select class="form-select" id="gender" name="gender">
+                    <option selected disabled>Choose your gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com">
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Phone Number</label>
+                  <input type="tel" class="form-control" id="phone" name="phone" placeholder="+62 812 3456 7890">
+                </div>
+
+                <div class="mb-3">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="text" class="form-control" id="address" name="address">
+                </div>
+
+                <div class="mb-3">
+                  <label for="cv" class="form-label">CV</label>
+                  <input type="file" class="form-control" id="cv" name="cv">
+                </div>
+
+                <div class="mb-3">
+                  <label for="portfolio" class="form-label">Portfolio</label>
+                  <input type="file" class="form-control" id="portfolio" name="portfolio">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#experienceEducation">
+                Experience & Education
+              </button>
+            </h2>
+            <div id="experienceEducation" class="accordion-collapse collapse" data-bs-parent="#registerAccordion">
+              <div class="accordion-body">
+                <h6><strong>Education</strong></h6>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label for="institution" class="form-label">Institution</label>
+                    <input type="text" class="form-control" id="institution" name="institution">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="major" class="form-label">Major</label>
+                    <input type="text" class="form-control" id="major" name="major">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="graduation_year" class="form-label">Graduation Year</label>
+                    <input type="number" class="form-control" id="graduation_year" name="graduation_year" placeholder="e.g. 2024">
+                  </div>
+                </div>
+
+                <h6><strong>Work Experience</strong></h6>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label for="company" class="form-label">Company</label>
+                    <input type="text" class="form-control" id="company" name="company">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="position" class="form-label">Position</label>
+                    <input type="text" class="form-control" id="position" name="position">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="work_period" class="form-label">Working Period</label>
+                    <input type="text" class="form-control" id="work_period" name="work_period" placeholder="e.g. Jan 2022 - Dec 2023">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label for="soft_skill" class="form-label">Soft Skill</label>
+                  <input type="text" class="form-control" id="soft_skill" name="soft_skill">
+                </div>
+                <div class="mb-3">
+                  <label for="hard_skill" class="form-label">Hard Skill</label>
+                  <input type="text" class="form-control" id="hard_skill" name="hard_skill">
+                </div>
+                <div class="mb-3">
+                  <label for="certification" class="form-label">Certification (Upload File)</label>
+                  <input type="file" class="form-control" id="certification" name="certification">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#desiredJob">
+                Desired Job
+              </button>
+            </h2>
+            <div id="desiredJob" class="accordion-collapse collapse" data-bs-parent="#registerAccordion">
+              <div class="accordion-body">
+                <div class="mb-3">
+                  <label for="desired_position" class="form-label">Desired Job Position</label>
+                  <input type="text" class="form-control" id="desired_position" name="desired_position" placeholder="e.g. Frontend Developer">
+                </div>
+
+                <div class="mb-3">
+                  <label for="job_type" class="form-label">Type of Work</label>
+                  <select class="form-select" id="job_type" name="job_type">
+                    <option selected disabled>Select work type</option>
+                    <option value="full-time">Full-time</option>
+                    <option value="part-time">Part-time</option>
+                    <option value="internship">Internship</option>
+                    <option value="remote">Remote</option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="e.g. Jakarta">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label for="salary_min" class="form-label">Salary Min</label>
+                    <input type="number" class="form-control" id="salary_min" name="salary_min" placeholder="e.g. 7000000">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label for="salary_max" class="form-label">Salary Max</label>
+                    <input type="number" class="form-control" id="salary_max" name="salary_max" placeholder="e.g. 10000000">
+                  </div>
+                </div>
+
+                <h6 class="mt-3">Availability to Work</h6>
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label for="available_month" class="form-label">Month</label>
+                    <select class="form-select" id="available_month" name="available_month">
+                      <option value="june">June</option>
+                      <option value="july">July</option>
+                      <option value="august">August</option>
+                      <option value="september">September</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="available_date" class="form-label">Date</label>
+                    <select class="form-select" id="available_date" name="available_date">
+                      <option value="1">01</option>
+                      <option value="2">02</option>
+                      <option value="3">03</option>
+                      <option value="4">04</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="available_year" class="form-label">Year</label>
+                    <select class="form-select" id="available_year" name="available_year">
+                      <option value="2023">2023</option>
+                      <option value="2024">2024</option>
+                      <option value="2025" selected>2025</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="available_now" name="available_now">
+                  <label class="form-check-label" for="available_now">Available Now</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+          <button class="btn btn-secondary btn-lg" type="submit">Register</button>
+        </div>
+
+        <div class="login-text">
+          Already have an account? <a href="#">Login</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

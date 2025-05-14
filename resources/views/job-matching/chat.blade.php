@@ -10,7 +10,11 @@
     <div class="bg-dark-green text-white rounded d-flex align-items-center p-3 mb-2" height=50%>
         <a href="/" class="text-white me-3 fs-5">&larr;</a>
         <div class="text-center flex-grow-1 fw-bold ">GOJEK</div>
+<<<<<<< HEAD
         <img src="images/gojek.png" class="rounded-circle" alt="Avatar" width="40" height="40">
+=======
+        <img src="" class="rounded-circle" alt="Avatar">
+>>>>>>> f4ac92a317be92c3e8a782d18866d01300314141
     </div>
 
     <div class="text-center text-muted small my-3">

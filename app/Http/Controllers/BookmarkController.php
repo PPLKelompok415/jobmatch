@@ -1,0 +1,30 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Job; // Model untuk pekerjaan
+use App\Models\Bookmark; // Model untuk bookmark
+
+class BookmarkController extends Controller
+{
+    public function save(Request $request)
+    {
+        $jobId = $request->input('job_id');
+        $userId = auth()->id(); // Ambil ID pengguna yang sedang login
+
+        // Cek apakah bookmark sudah ada
+        $exists = Bookmark::where('user_id', $userId)->where('job_id', $jobId)->exists();
+
+        if (!$exists) {
+            // Simpan bookmark baru
+            Bookmark::create([
+                'user_id' => $userId,
+                'job_id' => $jobId,
+            ]);
+
+            return response()->json(['message' => 'Job saved to bookmarks.']);
+        }
+
+        return response()->json(['message' => 'Job already bookmarked.'], 400);
+    }
+}
