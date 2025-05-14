@@ -1,212 +1,91 @@
+@extends('layouts.app')
 
-  <header class="topbar">
-    <div><strong>🧊 JOBMATCH</strong></div>
-    <div>🌐 Language &nbsp;&nbsp; | &nbsp;&nbsp; Employer site &nbsp;&nbsp; <img src="https://via.placeholder.com/30" alt="Profile" style="border-radius: 50%;" /></div>
+@section('content')
+  <header class="topbar d-flex justify-content-between align-items-center py-2">
+    <strong>🧊 JOBMATCH</strong>
+    <button @click="fetchJobs()" class="btn btn-outline-primary btn-sm">🔄 Refresh</button>
   </header>
 
-  <nav class="menu">
+  <nav class="menu my-3 d-flex gap-3">
     <div>Bookmark</div>
     <div>Community</div>
     <div>Notification & Announcement</div>
   </nav>
 
-  <div class="content">
-    <div class="title">MATCH</div>
-    <div class="subtitle">{{ count($matchingJobs) }} companies</div>
+  <!-- Injected JSON data -->
+  <script id="initial-jobs" type="application/json">
+    {!! json_encode($matchingJobs) !!}
+  </script>
 
-    <!-- Jika ada pekerjaan yang cocok, tampilkan -->
-    @if($matchingJobs->isNotEmpty())
-        <div class="card-container">
-            @foreach($matchingJobs as $job)
-                <div class="card">
-                    <div class="company-logo">
-                        <img src="{{ $job->company->logo }}" alt="{{ $job->company->company_name }}">
-                    </div>
-                    <div class="job-info">
-                        <h4>{{ $job->company->company_name }}</h4>
-                        <p><strong>{{ $job->position }}</strong></p>
-                        <div class="meta">
-                            📍 {{ $job->location }} &nbsp;&nbsp; 🕒 {{ $job->deadline }} &nbsp;&nbsp; 🕐 {{ $job->type_of_work }}
-                        </div>
-                    </div>
-                    <div class="match-score">{{ $job->match_score }}%</div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <!-- Tampilkan No Match jika tidak ada pekerjaan yang cocok -->
-        <div class="no-match-box">
-            <i>🗂️</i>
-            <strong>No Match</strong>
-        </div>
-    @endif
+  <div x-data="jobMatchApp()" 
+       x-init="initJobs(JSON.parse(document.getElementById('initial-jobs').textContent))"
+       class="jobmatch">
+    
+    <template x-if="jobs.length">
+      <div class="card-container d-grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(280px,1fr));">
+        <template x-for="job in jobs" :key="job.id">
+          <div class="card p-3 d-flex align-items-center gap-3" style="background: #0095FF; border-radius: .625rem;">
+            <div class="company-logo">
+              <img :src="job.company.logo" style="max-height: 60px; object-fit: contain;">
+            </div>
+            <div class="job-info flex-grow-1 text-start text-white">
+              <h4 class="mb-1" x-text="job.company.company_name"></h4>
+              <p class="mb-1"><strong x-text="job.title"></strong></p>
+              <div class="meta small">
+                📍 <span x-text="job.location"></span> &nbsp;
+                🕒 <span x-text="new Date(job.deadline).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })"></span> &nbsp;
+                🕐 <span x-text="job.type_of_work"></span>
+              </div>
+            </div>
+            <div class="match-score fw-bold" x-text="job.match_score + '%'"></div>
+          </div>
+        </template>
+      </div>
+    </template>
 
-    <!-- Pekerjaan yang tidak cocok akan ditampilkan hanya jika ada pekerjaan yang cocok -->
-    @if($matchingJobs->isNotEmpty() && $noMatchingJobs->isNotEmpty())
-        <div class="subtitle">No match jobs:</div>
-        <div class="card-container">
-            @foreach($noMatchingJobs as $job)
-                <div class="card">
-                    <div class="company-logo">
-                        <img src="{{ $job->company->logo }}" alt="{{ $job->company->company_name }}">
-                    </div>
-                    <div class="job-info">
-                        <h4>{{ $job->company->company_name }}</h4>
-                        <p><strong>{{ $job->position }}</strong></p>
-                        <div class="meta">
-                            📍 {{ $job->location }} &nbsp;&nbsp; 🕒 {{ $job->deadline }} &nbsp;&nbsp; 🕐 {{ $job->type_of_work }}
-                        </div>
-                    </div>
-                    <div class="match-score">{{ $job->match_score }}%</div>
-                </div>
-            @endforeach
-        </div>
-    @endif
+    <template x-if="!jobs.length">
+      <div class="no-match-box text-center p-5" style="background: #bcc7cf; border-radius: .625rem;">
+        <i style="font-size: 2rem;">🗂️</i>
+        <div><strong>No Match</strong></div>
+      </div>
+    </template>
   </div>
 
-  <footer>
+  <footer class="mt-4 d-flex justify-content-center gap-5">
     <div>Terms & Conditions</div>
     <div>Security & Privacy</div>
     <div>Help Centre</div>
   </footer>
+@endsection
 
+@push('scripts')
+  <script>
+    function jobMatchApp() {
+      return {
+        jobs: [],
+
+        initJobs(initial) {
+          console.log("Initial jobs:", initial);
+          this.jobs = initial;
+        },
+
+        async fetchJobs() {
+          try {
+            const res = await fetch(@json(route('applicant.dashboard.data')));
+            if (!res.ok) throw new Error('Network error');
+            this.jobs = await res.json();
+            console.log("Fetched jobs:", this.jobs);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+    }
+  </script>
+@endpush
+
+@push('styles')
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
-    }
-
-    header, footer {
-      display: flex;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      font-size: 14px;
-      background-color: #fff;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .menu {
-      display: flex;
-      gap: 40px;
-      font-size: 12px;
-      margin: 0 2rem;
-      border-bottom: 1px solid #000;
-      padding: 10px 0 8px;
-      background-color: #fff;
-    }
-
-    .content {
-      text-align: center;
-      margin-top: 60px;
-    }
-
-    .title {
-      font-size: 28px;
-      font-weight: bold;
-      color: #2e3e4e;
-    }
-
-    .subtitle {
-      font-size: 10px;
-      color: #777;
-      margin-bottom: 40px;
-    }
-
-    .card-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Membuat grid responsif */
-      gap: 20px;
-      max-width: 1000px; /* Maksimal lebar grid */
-      margin: 0 auto; /* Center the grid */
-    }
-
-    .card {
-      background-color: #bcc7cf;
-      border-radius: 10px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      min-width: 250px;  /* Menambahkan lebar minimal */
-      max-width: 400px;  /* Menambahkan lebar maksimal */
-      height: 120px;  /* Sesuaikan dengan tinggi card */
-      overflow: hidden; /* Agar tidak ada elemen yang tumpah */
-    }
-
-    .company-logo img {
-      max-width: 100%; /* Agar gambar tidak melebar */
-      height: auto;    /* Menjaga proporsi gambar */
-      max-height: 60px; /* Menentukan tinggi gambar */
-      object-fit: contain; /* Menjaga gambar agar proporsional */
-    }
-
-    .job-info {
-      flex-grow: 1;
-      text-align: left;
-    }
-
-    .job-info h4 {
-      margin: 0;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .job-info p {
-      margin: 4px 0;
-      font-size: 10px;
-      color: #333;
-    }
-
-    .meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 9px;
-    }
-
-    .match-score {
-      font-weight: bold;
-      font-size: 16px;
-      color: #2e3e4e;
-    }
-
-    footer {
-      font-size: 10px;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 80px;
-      border-top: 1px solid #000;
-      padding: 20px 0;
-      background-color: #fff;
-    }
-
-    .no-match-box {
-      width: 650px;
-      margin: 0 auto;
-      background-color: #bcc7cf;
-      padding: 100px;
-      border-radius: 10px;
-      color: #2e3e4e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .no-match-box i {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-
-    .no-match-box strong {
-      font-size: 14px;
-    }
+    .no-match-box { color: #2e3e4e; }
   </style>
-
+@endpush
