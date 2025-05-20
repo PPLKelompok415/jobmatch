@@ -12,8 +12,10 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\DashboardApplicantController;
 use App\Http\Controllers\JobMatchingController;
+use App\Http\Controllers\Applicant\JobApplyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+
 
 
 // Applicant Home Route
@@ -54,6 +56,8 @@ Route::middleware('auth')->group(function () {
     // Endpoint JSON untuk fetch via Alpine
     Route::get('/applicant/dashboard/data', [DashboardApplicantController::class, 'data'])
          ->name('applicant.dashboard.data');
+    
+    Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
 });
 
 // Rute untuk logout
@@ -101,3 +105,7 @@ Route::get('/bookmark', function () {
 // Route::get('/match-jobs/{id}', [JobMatchingController::class, 'match'])->name('job.match');
 
 Route::get('/job-matching', [JobMatchingController::class, 'index'])->name('job-matching');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/jobs/apply', [JobApplyController::class, 'apply'])->name('jobs.apply');
+});

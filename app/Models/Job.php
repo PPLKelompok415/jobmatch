@@ -36,4 +36,10 @@ class Job extends Model
         return $this->belongsToMany(Skill::class, 'job_soft_skill');
     }
 
+    public function jobApplications()
+    {
+        return $this->hasMany(\App\Models\JobApplication::class);
+    }
+
+
 }
