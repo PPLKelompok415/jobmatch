@@ -10,13 +10,13 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\DashboardCompanyController;
+use App\Http\Controllers\JobMatchingController;
+use App\Http\Controllers\Applicant\JobApplyController;
 use App\Http\Controllers\DashboardApplicantController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
 
 // Applicant Home Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -49,7 +49,16 @@ Route::post('register/applicant', [RegisterController::class, 'register'])->name
 Route::get('login/applicant', [LoginApplicantController::class, 'showLoginForm'])->name('login.applicant');
 Route::post('login/applicant', [LoginApplicantController::class, 'login'])->name('applicant.login.post');
 
-Route::middleware('auth')->get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])->name('applicant.dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])
+         ->name('applicant.dashboard');
+
+    // Endpoint JSON untuk fetch via Alpine
+    Route::get('/applicant/dashboard/data', [DashboardApplicantController::class, 'data'])
+         ->name('applicant.dashboard.data');
+    
+    Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
+});
 
 // Rute untuk logout
 Route::post('/logout', [LoginApplicantController::class, 'logout'])->name('logout');
@@ -91,3 +100,12 @@ Route::get('/chat/company', function () {
 Route::get('/bookmark', function () {
     return view('job-matching.bookmark');
 })->name('bookmark');
+
+//jobmatching
+// Route::get('/match-jobs/{id}', [JobMatchingController::class, 'match'])->name('job.match');
+
+Route::get('/job-matching', [JobMatchingController::class, 'index'])->name('job-matching');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/jobs/apply', [JobApplyController::class, 'apply'])->name('jobs.apply');
+});

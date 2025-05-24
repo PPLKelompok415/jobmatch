@@ -1,212 +1,230 @@
+@extends('layouts.app')
 
-  <header class="topbar">
-    <div><strong>🧊 JOBMATCH</strong></div>
-    <div>🌐 Language &nbsp;&nbsp; | &nbsp;&nbsp; Employer site &nbsp;&nbsp; <img src="https://via.placeholder.com/30" alt="Profile" style="border-radius: 50%;" /></div>
+@section('content')
+  <header class="topbar d-flex justify-content-between align-items-center py-2">
   </header>
 
-  <nav class="menu">
+  <nav class="menu my-3 d-flex gap-3">
     <div>Bookmark</div>
     <div>Community</div>
     <div>Notification & Announcement</div>
   </nav>
 
-  <div class="content">
-    <div class="title">MATCH</div>
-    <div class="subtitle">{{ count($matchingJobs) }} companies</div>
+  <script id="initial-jobs" type="application/json">
+    {!! json_encode($matchingJobs) !!}
+  </script>
 
-    <!-- Jika ada pekerjaan yang cocok, tampilkan -->
-    @if($matchingJobs->isNotEmpty())
-        <div class="card-container">
-            @foreach($matchingJobs as $job)
-                <div class="card">
-                    <div class="company-logo">
-                        <img src="{{ $job->company->logo }}" alt="{{ $job->company->company_name }}">
-                    </div>
-                    <div class="job-info">
-                        <h4>{{ $job->company->company_name }}</h4>
-                        <p><strong>{{ $job->position }}</strong></p>
-                        <div class="meta">
-                            📍 {{ $job->location }} &nbsp;&nbsp; 🕒 {{ $job->deadline }} &nbsp;&nbsp; 🕐 {{ $job->type_of_work }}
-                        </div>
-                    </div>
-                    <div class="match-score">{{ $job->match_score }}%</div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <!-- Tampilkan No Match jika tidak ada pekerjaan yang cocok -->
-        <div class="no-match-box">
-            <i>🗂️</i>
-            <strong>No Match</strong>
-        </div>
-    @endif
+  <div x-data="jobMatchApp()" 
+       x-init="initJobs(JSON.parse(document.getElementById('initial-jobs').textContent))"
+       class="jobmatch">
 
-    <!-- Pekerjaan yang tidak cocok akan ditampilkan hanya jika ada pekerjaan yang cocok -->
-    @if($matchingJobs->isNotEmpty() && $noMatchingJobs->isNotEmpty())
-        <div class="subtitle">No match jobs:</div>
-        <div class="card-container">
-            @foreach($noMatchingJobs as $job)
-                <div class="card">
-                    <div class="company-logo">
-                        <img src="{{ $job->company->logo }}" alt="{{ $job->company->company_name }}">
-                    </div>
-                    <div class="job-info">
-                        <h4>{{ $job->company->company_name }}</h4>
-                        <p><strong>{{ $job->position }}</strong></p>
-                        <div class="meta">
-                            📍 {{ $job->location }} &nbsp;&nbsp; 🕒 {{ $job->deadline }} &nbsp;&nbsp; 🕐 {{ $job->type_of_work }}
-                        </div>
-                    </div>
-                    <div class="match-score">{{ $job->match_score }}%</div>
+    <template x-if="jobs.length">
+      <div class="card-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <template x-for="job in jobs" :key="job.id">
+          <div class="col">
+            <div class="card h-100 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.625rem;">
+              <div class="card-body d-flex gap-3 align-items-center">
+                <div class="company-logo flex-shrink-0">
+                  <img :src="job.company.logo" alt="Company Logo" class="img-fluid" style="max-height: 60px; object-fit: contain;">
                 </div>
-            @endforeach
+                <div class="job-info flex-grow-1">
+                  <h5 class="card-title mb-1" x-text="job.company.company_name"></h5>
+                  <p class="card-text mb-1"><strong x-text="job.title"></strong></p>
+                  
+                  <!-- Salary Range -->
+                  <p class="salary">💰 <span x-text="formatSalaryRange(job.gaji_min, job.gaji_max)"></span></p>
+
+                  <div class="meta small">
+                    📍 <span x-text="job.location"></span> &nbsp;|&nbsp;
+                    🕐 <span x-text="job.type_of_work"></span>
+                  </div>
+                  <button 
+                    @click="showCompanyDetails(job.company)" 
+                    class="btn btn-light btn-sm mt-2"
+                  >Details</button>
+                  
+                  <button 
+                    @click="applyJob(job)" 
+                    :disabled="job.applied || job.loading" 
+                    :class="{
+                      'btn btn-success btn-sm mt-2 ms-2': !job.applied,
+                      'btn btn-secondary btn-sm mt-2 ms-2': job.applied
+                    }"
+                  >
+                    <template x-if="job.loading">
+                      <span><i class="bi bi-hourglass-split me-1"></i>Applying...</span>
+                    </template>
+                    <template x-if="!job.loading && !job.applied">
+                      <span><i class="bi bi-check-circle me-1"></i>Apply</span>
+                    </template>
+                    <template x-if="!job.loading && job.applied">
+                      <span><i class="bi bi-check2-all me-1"></i>Applied</span>
+                    </template>
+                  </button>
+                </div>
+                <div class="match-score fw-bold fs-5" x-text="job.match_score + '%'"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <template x-if="!jobs.length">
+      <div class="no-match-box text-center p-5" style="background: #bcc7cf; border-radius: .625rem;">
+        <i style="font-size: 2rem;">🗂️</i>
+        <div><strong>No Match</strong></div>
+      </div>
+    </template>
+
+    <!-- Bootstrap Modal for Company Details -->
+    <div class="modal fade" tabindex="-1" role="dialog" x-ref="modal">
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" x-text="selectedCompany.company_name"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Address:</strong> <span x-text="selectedCompany.company_address"></span></p>
+            <p><strong>Email:</strong> <span x-text="selectedCompany.company_email"></span></p>
+            <p><strong>Phone:</strong> <span x-text="selectedCompany.company_phone_number"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
         </div>
-    @endif
+      </div>
+    </div>
+
   </div>
 
-  <footer>
+  <footer class="mt-4 d-flex justify-content-center gap-5">
     <div>Terms & Conditions</div>
     <div>Security & Privacy</div>
     <div>Help Centre</div>
   </footer>
+@endsection
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
+@push('scripts')
+<script defer>
+  function jobMatchApp() {
+    return {
+      jobs: [],
+      selectedCompany: {},
+      modalInstance: null,
+
+      initJobs(initial) {
+        this.jobs = initial.map(job => ({
+          ...job,
+          applied: job.applied ?? false,
+          loading: false
+        }));
+      },
+
+      async fetchJobs() {
+        try {
+          let res = await fetch("{{ route('applicant.dashboard.data') }}");
+          if (!res.ok) throw new Error('Network error');
+          let freshJobs = await res.json();
+          this.jobs = freshJobs.map(freshJob => {
+            const existing = this.jobs.find(j => j.id === freshJob.id);
+            return {
+              ...freshJob,
+              applied: existing ? existing.applied : (freshJob.applied ?? false),
+              loading: false,
+            };
+          });
+        } catch (e) {
+          console.error(e);
+          alert('Failed to refresh jobs.');
+        }
+      },
+
+      showCompanyDetails(company) {
+        this.selectedCompany = company;
+
+        if (!this.modalInstance) {
+          this.modalInstance = new bootstrap.Modal(this.$refs.modal);
+          this.$refs.modal.addEventListener('hidden.bs.modal', () => {
+            this.selectedCompany = {};
+          });
+        }
+
+        this.modalInstance.show();
+      },
+
+      applyJob(job) {
+        if (job.applied || job.loading) return;
+
+        job.loading = true;
+
+        fetch("{{ route('jobs.apply') }}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          },
+          body: JSON.stringify({ job_id: job.id }),
+        })
+        .then(res => {
+          if (!res.ok) {
+            if(res.status === 409) throw new Error('You have already applied.');
+            throw new Error('Failed to apply job');
+          }
+          return res.json();
+        })
+        .then(() => {
+          job.applied = true;
+          alert('✅ Successfully applied to job!');
+        })
+        .catch(err => {
+          console.error(err);
+          alert('❌ ' + err.message);
+        })
+        .finally(() => {
+          job.loading = false;
+        });
+      },
+
+      formatSalary(salary) {
+        if (!salary) return 'N/A';
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(salary);
+      },
+
+      formatSalaryRange(min, max) {
+        if (!min && !max) return 'N/A';
+        const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+        if (min && max) return `${formatter.format(min)} - ${formatter.format(max)}`;
+        if (min) return `≥ ${formatter.format(min)}`;
+        if (max) return `≤ ${formatter.format(max)}`;
+        return 'N/A';
+      }
     }
+  }
+</script>
+@endpush
 
-    header, footer {
-      display: flex;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      font-size: 14px;
-      background-color: #fff;
-    }
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  .no-match-box { color: #2e3e4e; }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .menu {
-      display: flex;
-      gap: 40px;
-      font-size: 12px;
-      margin: 0 2rem;
-      border-bottom: 1px solid #000;
-      padding: 10px 0 8px;
-      background-color: #fff;
-    }
-
-    .content {
-      text-align: center;
-      margin-top: 60px;
-    }
-
-    .title {
-      font-size: 28px;
-      font-weight: bold;
-      color: #2e3e4e;
-    }
-
-    .subtitle {
-      font-size: 10px;
-      color: #777;
-      margin-bottom: 40px;
-    }
-
-    .card-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Membuat grid responsif */
-      gap: 20px;
-      max-width: 1000px; /* Maksimal lebar grid */
-      margin: 0 auto; /* Center the grid */
-    }
-
-    .card {
-      background-color: #bcc7cf;
-      border-radius: 10px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      min-width: 250px;  /* Menambahkan lebar minimal */
-      max-width: 400px;  /* Menambahkan lebar maksimal */
-      height: 120px;  /* Sesuaikan dengan tinggi card */
-      overflow: hidden; /* Agar tidak ada elemen yang tumpah */
-    }
-
-    .company-logo img {
-      max-width: 100%; /* Agar gambar tidak melebar */
-      height: auto;    /* Menjaga proporsi gambar */
-      max-height: 60px; /* Menentukan tinggi gambar */
-      object-fit: contain; /* Menjaga gambar agar proporsional */
-    }
-
-    .job-info {
-      flex-grow: 1;
-      text-align: left;
-    }
-
-    .job-info h4 {
-      margin: 0;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .job-info p {
-      margin: 4px 0;
-      font-size: 10px;
-      color: #333;
-    }
-
-    .meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 9px;
-    }
-
-    .match-score {
-      font-weight: bold;
-      font-size: 16px;
-      color: #2e3e4e;
-    }
-
-    footer {
-      font-size: 10px;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 80px;
-      border-top: 1px solid #000;
-      padding: 20px 0;
-      background-color: #fff;
-    }
-
-    .no-match-box {
-      width: 650px;
-      margin: 0 auto;
-      background-color: #bcc7cf;
-      padding: 100px;
-      border-radius: 10px;
-      color: #2e3e4e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .no-match-box i {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-
-    .no-match-box strong {
-      font-size: 14px;
-    }
-  </style>
-
+  .job-info p.salary {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #ffdd57; /* kuning keemasan */
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .job-info p.position-match,
+  .job-info p.salary-match {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #d1d1d1;
+    margin-bottom: 0.3rem;
+  }
+</style>
+@endpush
