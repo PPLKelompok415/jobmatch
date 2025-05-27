@@ -27,4 +27,17 @@ class BookmarkController extends Controller
 
         return response()->json(['message' => 'Job already bookmarked.'], 400);
     }
+
+    public function index()
+    {
+        $userId = auth()->id();
+
+        // Ambil semua bookmark user beserta data pekerjaan (job)
+        $bookmarks = Bookmark::with('job')
+            ->where('user_id', $userId)
+            ->get();
+
+        return view('job-matching.bookmark', compact('bookmarks'));
+    }
+
 }

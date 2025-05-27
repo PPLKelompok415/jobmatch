@@ -7,9 +7,9 @@
   </header>
 
   <nav class="menu my-3 d-flex gap-3">
-    <div>Bookmark</div>
-    <div>Community</div>
-    <div>Notification & Announcement</div>
+    <a class='btn' href="{{route('bookmark.index')}}"><div>Bookmark</div></a>
+    <a class='btn' href="#"><div>Notification & Announcement</div></a>
+    <a class='btn' href="#"><div>Community</div></a>
   </nav>
 
   <!-- Injected JSON data -->
