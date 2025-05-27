@@ -12,6 +12,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\DashboardApplicantController;
+use App\Http\Controllers\JobMatchingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,11 @@ Route::post('login/admin', [LoginSuperAdminController::class, 'login'])->name('l
 // ==============================
 
 Route::middleware('auth')->get('/company/daCompany', [DashboardCompanyController::class, 'showDashboard'])->name('company.dashboard');
-Route::middleware('auth')->get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])->name('applicant.dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])->name('applicant.dashboard');
+    Route::get('/applicant/dashboard/data', [DashboardApplicantController::class, 'data'])->name('applicant.dashboard.data');
+});
 
 // Admin Dashboard (without role middleware yet)
 Route::prefix('admin')->middleware(['auth'])->group(function () {
@@ -78,7 +83,6 @@ Route::get('/chat/company', function () {
     return view('job-matching.companychat');
 })->name('chat_company');
 
-// Versi chat dengan receiver
 Route::middleware(['auth'])->group(function () {
     Route::get('/chat/{receiver}', [ChatController::class, 'index'])->name('chat.with');
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
@@ -101,3 +105,9 @@ Route::get('/bookmark2', function () {
 // ==============================
 
 Route::get('/Company', [CompanyHomeController::class, 'index'])->name('CompanyHome');
+
+// ==============================
+// Job Matching
+// ==============================
+
+Route::get('/job-matching', [JobMatchingController::class, 'index'])->name('job-matching');

@@ -57,14 +57,14 @@ class Applicant extends Model
         return $this->hasMany(Certification::class);
     }
 
-    public function softSkills()
-    {
-        return $this->belongsToMany(Skill::class, 'applicant_skill');
-    }
-
     public function hardSkills()
     {
-        return $this->belongsToMany(Skill::class, 'applicant_skill');
+        return $this->belongsToMany(Skill::class, 'applicant_hard_skill');
+    }
+    
+    public function softSkills()
+    {
+        return $this->belongsToMany(Skill::class, 'applicant_soft_skill');
     }
 
 }
