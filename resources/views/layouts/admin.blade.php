@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Dashboard - JobMatch</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -37,6 +38,7 @@
             color: #ddd;
             padding: 0.75rem 1rem;
             border-left: 4px solid transparent;
+            text-decoration: none;
         }
         .sidebar .nav-link:hover {
             color: #fff;
@@ -59,6 +61,31 @@
         .card {
             margin-bottom: 1.5rem;
             box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+        }
+        
+        /* Custom styles for alerts */
+        .alert {
+            margin-bottom: 1rem;
+        }
+        
+        /* Loading button state */
+        .btn:disabled {
+            opacity: 0.65;
+        }
+        
+        /* Modal customization */
+        .modal-content {
+            border-radius: 0.5rem;
+        }
+        
+        /* Table hover effect */
+        .table tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Active menu styling */
+        .nav-link.active {
+            font-weight: 600;
         }
     </style>
 </head>
@@ -94,78 +121,60 @@
             </ul>
         </div>
     </nav>
-
     <div class="container-fluid">
         <div class="row">
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="sidebar-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ route('admin.dashboard') }}">
+                            <a class="nav-link {{ Route::is('admin.dashboard') ? 'active' : '' }}" 
+                               href="{{ route('admin.dashboard') }}">
                                 <i class="fas fa-tachometer-alt me-2"></i>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-users me-2"></i>
-                                Pengguna
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {{ Route::is('admin.applicants') ? 'active' : '' }}" 
+                               href="{{ route('admin.applicants') }}">
                                 <i class="fas fa-user-tie me-2"></i>
                                 Pelamar
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {{ Route::is('admin.companies') ? 'active' : '' }}" 
+                               href="{{ route('admin.companies') }}">
                                 <i class="fas fa-building me-2"></i>
                                 Perusahaan
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {{ Route::is('admin.job-postings') ? 'active' : '' }}" 
+                               href="{{ route('admin.job-postings') }}">
                                 <i class="fas fa-briefcase me-2"></i>
                                 Lowongan Kerja
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-cogs me-2"></i>
-                                Pengaturan
-                            </a>
-                        </li>
-                    </ul>
-
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Laporan</span>
-                    </h6>
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-file-alt me-2"></i>
-                                Laporan Pengguna
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-chart-bar me-2"></i>
-                                Statistik
                             </a>
                         </li>
                     </ul>
                 </div>
             </nav>
-
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 @yield('content')
             </main>
         </div>
     </div>
-
+    <!-- jQuery (required for Ajax functionality) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- CSRF Token untuk Ajax -->
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     
     <!-- Scripts tambahan -->
     @stack('scripts')
