@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\JobMatchingService;
 use App\Models\Applicant;
 use Illuminate\Http\Request;
-use App\Models\Company;
+use Illuminate\Support\Facades\DB;
 
 class DashboardApplicantController extends Controller
 {
@@ -29,9 +29,7 @@ class DashboardApplicantController extends Controller
         return view('applicant.daApplicant', [
             'matchingJobs' => $matchedJobs
         ]);
-
     }
-
 
     /**
      * Endpoint JSON untuk refresh via Alpine.js.
@@ -41,13 +39,35 @@ class DashboardApplicantController extends Controller
         /** @var Applicant $applicant **/
         $applicant = auth()->user()->applicantProfile;
 
-        // Panggil service yang sama untuk menghitung match_score
-        $matchedJobs = $matchedJobs = JobMatchingService::makeMatches($applicant)
+        $matchedJobs = JobMatchingService::makeMatches($applicant)
                 ->sortByDesc('match_score')
                 ->take(4)
                 ->values()
-                ->toArray(); // Ubah ke array agar bisa di-JSON-kan
+                ->toArray();
 
         return response()->json($matchedJobs);
+    }
+
+    /**
+     * Apply ke pekerjaan tertentu (dari hasil matching).
+     */
+    public function applyJob(Request $request)
+    {
+        $request->validate([
+            'job_id' => 'required|exists:jobs,id',
+        ]);
+
+        $applicant = auth()->user()->applicant;
+
+        if (!$applicant) {
+            return response()->json(['error' => 'Applicant profile not found.'], 403);
+        }
+
+        DB::table('job_applications')->updateOrInsert(
+            ['applicant_id' => $applicant->id, 'job_id' => $request->job_id],
+            ['applied_at' => now()]
+        );
+
+        return response()->json(['message' => 'Job applied successfully.']);
     }
 }

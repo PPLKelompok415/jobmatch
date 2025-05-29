@@ -67,4 +67,10 @@ class Applicant extends Model
         return $this->belongsToMany(Skill::class, 'applicant_soft_skill');
     }
 
+    public function jobApplications()
+    {
+        return $this->hasMany(\App\Models\JobApplication::class);
+    }
+
+
 }
