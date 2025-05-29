@@ -39,5 +39,19 @@ class BookmarkController extends Controller
 
         return view('job-matching.bookmark', compact('bookmarks'));
     }
+    
+    public function destroy($id)
+    {
+        $userId = auth()->id();
 
+        // Hapus bookmark berdasarkan ID dan user_id
+        $bookmark = Bookmark::where('id', $id)->where('user_id', $userId)->first();
+
+        if ($bookmark) {
+            $bookmark->delete();
+            return response()->json(['message' => 'Bookmark deleted successfully.']);
+        }
+
+        return response()->json(['message' => 'Bookmark not found.'], 404);
+    }
 }

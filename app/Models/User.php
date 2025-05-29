@@ -11,10 +11,6 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    public function skills()
-    {
-        return $this->belongsToMany(Skill::class);
-    }
         // Method untuk mengecek role
     // public function hasRole($role)
     // {

@@ -51,16 +51,6 @@ Route::get('login/applicant', [LoginApplicantController::class, 'showLoginForm']
 Route::post('login/applicant', [LoginApplicantController::class, 'login'])->name('applicant.login.post');
 
 Route::middleware('auth')->group(function () {
-    Route::group(function () {
-    Route::get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])
-         
-         ->name('applicant.dashboard');
-    // Endpoint JSON untuk fetch via Alpine
-    Route::get('/applicant/dashboard/data', [DashboardApplicantController::class, 'data'])
-         ->name('applicant.dashboard.data');
-    
-    Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
-});
 
     // Endpoint JSON untuk fetch via Alpine
     Route::get('/applicant/dashboard/data', [DashboardApplicantController::class, 'data'])
@@ -75,6 +65,7 @@ Route::middleware('auth')->group(function () {
     // Bookmark
     Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
     Route::post('/bookmark/save', [BookmarkController::class, 'save'])->name('bookmark.save');
+    Route::delete('/bookmark/{id}', [BookmarkController::class, 'destroy'])->name('bookmark.destroy');
 
 });
 

@@ -1,79 +1,244 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="mb-2 border-bottom pb-2 d-flex justify-content-start gap-4 small text-muted">
-    <a class='btn active' href="{{route('bookmark.index')}}">Bookmark</a>
-    <a class='btn' href="#">Community</a>
-    <a class='btn' href="#">Notification & Announcement</a>
-</div>
-
-<!-- Title -->
-<h3 class="fw-bold mb-3">Bookmark</h3>
-
-<!-- Saved Label -->
-<div class="d-flex align-items-center mb-4">
-    <svg width="24" height="24" fill="currentColor" class="me-2 text-dark" viewBox="0 0 16 16">
-        <path d="M2 2v13.5l5.5-3.5L13 15.5V2z"/>
-    </svg>
-    <span class="text-muted fw-semibold">Saved</span>
-</div>
-
-@if($bookmarks->isEmpty())
-    <!-- Empty State -->
-    <div class="text-center p-5 border rounded-3" style="border-color: #ccc;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#9ca3af" class="mb-3" viewBox="0 0 16 16">
-            <path d="M2 2v13.5l5.5-3.5L13 15.5V2z"/>
-        </svg>
-        <h5 class="fw-bold text-muted">No saved jobs yet</h5>
-        <p class="text-muted">Save jobs you’re interested in so you can come back to them later.</p>
+<div class="container-fluid px-4">
+    <br>
+    <!-- Page Header -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="brand-icon me-3">
+            <i class="bi bi-bookmark-star"></i>
+        </div>
+        <div>
+            <h2 class="fw-bold mb-1 text-primary-custom">My Bookmarks</h2>
+            <p class="text-muted mb-0">Your saved job opportunities</p>
+        </div>
     </div>
-@else
-    @foreach($bookmarks as $bookmark)
-        @php
-            $job = $bookmark->job;
-        @endphp
-        <div class="border rounded-3 p-4 mb-4" style="border-color: #2a3b47;">
-            <h5 class="fw-bold text-dark">{{ $job->title ?? '-' }}</h5>
-            <p class="mb-1">
-                <strong>Type of Work:</strong> {{ $job->type_of_work ?? '-' }} <br>
-                <strong>Bidang:</strong> {{ $job->bidang ?? '-' }}
-            </p>
 
-            <!-- Location -->
-            <div class="d-flex align-items-center text-muted mb-1">
-                <svg width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                    <path d="M8 0a5.53 5.53 0 0 0-5.5 5.5c0 4.4 5.5 10.5 5.5 10.5s5.5-6.1 5.5-10.5A5.53 5.53 0 0 0 8 0zm0 8A2.5 2.5 0 1 1 8 3a2.5 2.5 0 0 1 0 5z"/>
-                </svg>
-                <small>{{ $job->location ?? '-' }}</small>
+    <!-- Saved Label with Modern Styling -->
+    <div class="d-flex align-items-center mb-4 p-3 rounded-3" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1);">
+        <div class="d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
+            <i class="bi bi-bookmark-check text-primary-custom fs-5"></i>
+        </div>
+        <div>
+            <span class="fw-semibold text-primary-custom">Saved Jobs</span>
+            <small class="text-muted d-block">{{ $bookmarks->count() }} job(s) bookmarked</small>
+        </div>
+    </div>
+
+    @if($bookmarks->isEmpty())
+        <!-- Modern Empty State -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <div class="mx-auto d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%); border-radius: 50%;">
+                    <i class="bi bi-bookmark text-primary-custom" style="font-size: 3rem;"></i>
+                </div>
             </div>
-
-            <!-- Salary Range -->
-            <p class="mb-1 text-muted">
-                Gaji: Rp{{ number_format($job->gaji_min ?? 0, 0, ',', '.') }} - Rp{{ number_format($job->gaji_max ?? 0, 0, ',', '.') }}
+            <h4 class="fw-bold text-dark mb-3">No saved jobs yet</h4>
+            <p class="text-muted mb-4 col-md-6 mx-auto">
+                Start exploring amazing job opportunities and save the ones you're interested in. 
+                Your bookmarked jobs will appear here for easy access.
             </p>
-
-            <!-- Post Date -->
-            <small class="text-primary d-block mb-2">
-                Posted 
-                @if($job && $job->created_at)
-                    {{ $job->created_at->diffForHumans() }}
-                @else
-                    some time ago
-                @endif
-            </small>
-
-            <!-- Apply Button -->
-            <a href="{{ route('chat') }}" class="btn btn-dark d-inline-flex align-items-center gap-2">
-                Apply <span>&#8599;</span>
+            <a href="{{ route('jobs.index', ['type' => 'job-seeker']) ?? '#' }}" class="btn btn-navbar-solid">
+                <i class="bi bi-search me-2"></i>
+                Browse Jobs
             </a>
         </div>
-    @endforeach
-@endif
+    @else
+        <!-- Jobs Grid -->
+        <div class="row g-4">
+            @foreach($bookmarks as $bookmark)
+                @php
+                    // Get job data from bookmark relationship
+                    $job = $bookmark->job;
+                    
+                    // Skip if no job data
+                    if (!$job) {
+                        continue;
+                    }
+                    
+                    // Get company data from job relationship
+                    $company = $job->company ?? null;
+                    
+                    // Map the correct field names
+                    $jobTitle = $job->position ?? $job->title ?? 'Job Title Not Available';
+                    $jobType = $job->type_of_work ?? 'Not specified';
+                    $jobLocation = $job->location ?? 'Location not specified';
+                    $companyName = $company ? $company->company_name : 'Company not specified';
+                    $salaryMin = $job->salary_min ?? 0;
+                    $salaryMax = $job->salary_max ?? 0;
+                    $createdAt = $job->created_at ?? null;
+                @endphp
+                <div class="col-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; transition: all 0.3s ease;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-bold text-dark mb-2">{{ $jobTitle }}</h5>
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        @if($jobType)
+                                            <span class="badge bg-light text-primary-custom border" style="border-color: var(--primary-color) !important;">
+                                                <i class="bi bi-briefcase me-1"></i>
+                                                {{ $jobType }}
+                                            </span>
+                                        @endif
+                                        @if($job->bidang ?? false)
+                                            <span class="badge bg-light text-dark border">
+                                                <i class="bi bi-tag me-1"></i>
+                                                {{ $job->bidang }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <button class="btn btn-link text-danger p-2" onclick="removeBookmark({{ $bookmark->id }})" title="Remove bookmark">
+                                    <i class="bi bi-bookmark-x fs-5"></i>
+                                </button>
+                            </div>
 
-<!-- Footer -->
-<footer class="d-flex justify-content-end gap-4 small text-muted mt-4">
-    <a class='btn' href="#">Terms & Conditions</a>
-    <a class='btn' href="#">Security & Privacy</a>
-    <a class='btn' href="#">Help Centre</a>
-</footer>
+                            <!-- Job Details -->
+                            <div class="mb-3">
+                                <!-- Company -->
+                                @if($companyName && $companyName !== 'Company not specified')
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="bi bi-building me-2 text-primary-custom"></i>
+                                        <span class="fw-semibold">{{ $companyName }}</span>
+                                    </div>
+                                @endif
+
+                                <!-- Location -->
+                                @if($jobLocation && $jobLocation !== 'Location not specified')
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="bi bi-geo-alt me-2 text-primary-custom"></i>
+                                        <span>{{ $jobLocation }}</span>
+                                    </div>
+                                @endif
+
+                                <!-- Salary Range -->
+                                @if($salaryMin > 0 || $salaryMax > 0)
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="bi bi-currency-dollar me-2 text-success"></i>
+                                        <span>
+                                            @if($salaryMin > 0 && $salaryMax > 0)
+                                                Rp{{ number_format($salaryMin, 0, ',', '.') }} - Rp{{ number_format($salaryMax, 0, ',', '.') }}
+                                            @elseif($salaryMin > 0)
+                                                From Rp{{ number_format($salaryMin, 0, ',', '.') }}
+                                            @else
+                                                Up to Rp{{ number_format($salaryMax, 0, ',', '.') }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                @endif
+
+                                <!-- Deadline -->
+                                @if($job->deadline ?? false)
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="bi bi-calendar-event me-2 text-warning"></i>
+                                        <span>Deadline: {{ \Carbon\Carbon::parse($job->deadline)->format('d M Y') }}</span>
+                                    </div>
+                                @endif
+
+                                <!-- Post Date -->
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="bi bi-clock me-2 text-warning"></i>
+                                    <small>
+                                        Posted 
+                                        @if($createdAt)
+                                            {{ $createdAt->diffForHumans() }}
+                                        @else
+                                            some time ago
+                                        @endif
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 align-items-center">
+                                <a href="{{ route('chat') }}" class="btn btn-navbar-solid flex-grow-1 text-white">
+                                    <i class="bi bi-send me-2"></i>
+                                    Apply Now
+                                </a>
+                                <a href="#" class="btn btn-navbar-outline">
+                                    <i class="bi bi-eye"></i>
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
 @endsection
+
+@push('styles')
+<style>
+    /* Additional styles for bookmark page */
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+    }
+    
+    /* Remove bookmark button hover effect */
+    .btn-link:hover {
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 8px;
+    }
+    
+    /* Custom scrollbar for this page */
+    .container-fluid {
+        max-height: calc(100vh - var(--navbar-height));
+        overflow-y: auto;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    // Remove bookmark functionality
+    function removeBookmark(bookmarkId) {
+        if (confirm('Are you sure you want to remove this bookmark?')) {
+            // Add AJAX call to remove bookmark
+            fetch(`/bookmarks/${bookmarkId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to remove bookmark. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    }
+    
+    // Add smooth animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate cards on load
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
+@endpush

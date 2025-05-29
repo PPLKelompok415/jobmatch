@@ -24,9 +24,9 @@
     <style>
         /* Semua CSS style Anda tetap sama seperti sebelumnya */
         :root {
-            --primary-color: #3b82f6;
-            --primary-dark: #1e40af;
-            --primary-light: #818cf8;
+            --primary-color: #5B7D87;
+            --primary-dark: #2B4251;
+            --primary-light: #F5F5F5;
             --success-color: #10b981;
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
@@ -580,7 +580,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link-modern" href="#Community">
-                            <i class="fas fa-book me-1"></i>Community
+                            <i class="fas fa-users me-1"></i>Community
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-modern" href="{{ route('bookmark.index') }}">
+                            <i class="fas fa-book me-1"></i>Bookmark
                         </a>
                     </li>
                 </ul>
