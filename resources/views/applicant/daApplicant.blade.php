@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboardapplicant')
 
 @section('content')
   <header class="topbar d-flex justify-content-between align-items-center py-2">
