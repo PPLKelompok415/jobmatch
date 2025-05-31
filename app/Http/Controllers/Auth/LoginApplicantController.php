@@ -11,7 +11,7 @@ class LoginApplicantController extends Controller
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('auth.loginApplicant');  // Tampilkan halaman login
+        return view('Auth.loginApplicant');  // Tampilkan halaman login
     }
 
     // Menangani proses login
