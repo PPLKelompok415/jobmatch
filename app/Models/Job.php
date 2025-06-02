@@ -6,6 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Job extends Model
 {
+
+    protected $fillable = [
+        'company_id',
+        'title',
+        'type_of_work',
+        'location',
+        'gaji_min',
+        'gaji_max',
+        'bidang',
+    ];
+
+    
     public function skills()
     {
         return $this->belongsToMany(Skill::class);
