@@ -8,7 +8,7 @@
     </h1>
     <div class="text-muted">
         <i class="fas fa-calendar-alt me-1"></i>
-        {{ now()->format('d F Y') }}
+        {{ \Carbon\Carbon::now()->format('d F Y') }}
     </div>
 </div>
 
@@ -176,8 +176,12 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <small class="text-muted">{{ $user->created_at->format('d M Y') }}</small><br>
-                                    <small class="text-muted">{{ $user->created_at->format('H:i') }}</small>
+                                    @if($user->created_at)
+                                        <small class="text-muted">{{ $user->created_at->format('d M Y') }}</small><br>
+                                        <small class="text-muted">{{ $user->created_at->format('H:i') }}</small>
+                                    @else
+                                        <small class="text-muted">-</small>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
