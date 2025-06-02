@@ -18,7 +18,7 @@ class DashboardCompanyController extends Controller
                     ->latest()
                     ->get();
 
-        return view('company.daCompany', [
+        return view('Company.daCompany', [
             'myJobs' => $myJobs,
         ]);
     }
