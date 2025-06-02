@@ -1,3 +1,4 @@
+
 @extends('layouts.admin')
 @section('content')
 <div class="container-fluid">
@@ -42,7 +43,11 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title mb-1">Terdaftar Hari Ini</h6>
-                                            <h3 class="mb-0 fw-bold">{{ $applicants->where('created_at', '>=', today())->count() }}</h3>
+                                            <h3 class="mb-0 fw-bold">
+                                                {{ $applicants->filter(function($applicant) {
+                                                    return $applicant->created_at && $applicant->created_at->isToday();
+                                                })->count() }}
+                                            </h3>
                                         </div>
                                         <div>
                                             <i class="fas fa-calendar-day fa-2x opacity-75"></i>
@@ -57,7 +62,11 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title mb-1">Bulan Ini</h6>
-                                            <h3 class="mb-0 fw-bold">{{ $applicants->where('created_at', '>=', now()->startOfMonth())->count() }}</h3>
+                                            <h3 class="mb-0 fw-bold">
+                                                {{ $applicants->filter(function($applicant) {
+                                                    return $applicant->created_at && $applicant->created_at->isCurrentMonth();
+                                                })->count() }}
+                                            </h3>
                                         </div>
                                         <div>
                                             <i class="fas fa-calendar-alt fa-2x opacity-75"></i>
@@ -67,6 +76,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <!-- Search and Filter -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
@@ -132,7 +142,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        @if($applicant->applicant->phone ?? null)
+                                        @if($applicant->applicant && $applicant->applicant->phone)
                                             <a href="tel:{{ $applicant->applicant->phone }}" class="text-decoration-none">
                                                 {{ $applicant->applicant->phone }}
                                             </a>
@@ -141,17 +151,21 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($applicant->applicant->education ?? null)
+                                        @if($applicant->applicant && $applicant->applicant->education)
                                             <span class="badge bg-info text-dark">{{ $applicant->applicant->education }}</span>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
                                     <td>
-                                        <small class="text-muted">
-                                            {{ $applicant->created_at->format('d/m/Y') }}<br>
-                                            {{ $applicant->created_at->format('H:i') }}
-                                        </small>
+                                        @if($applicant->created_at)
+                                            <small class="text-muted">
+                                                {{ $applicant->created_at->format('d/m/Y') }}<br>
+                                                {{ $applicant->created_at->format('H:i') }}
+                                            </small>
+                                        @else
+                                            <small class="text-muted">-</small>
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <span class="badge bg-success">Aktif</span>
@@ -578,29 +592,29 @@ function showUserDetail(userId) {
                                         <div class="col-5"><strong>Terdaftar:</strong></div>
                                         <div class="col-7">
                                             <small>
-                                                ${new Date(user.created_at).toLocaleDateString('id-ID', {
+                                                ${user.created_at ? new Date(user.created_at).toLocaleDateString('id-ID', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: 'numeric'
-                                                })}<br>
-                                                ${new Date(user.created_at).toLocaleTimeString('id-ID', {
+                                                }) : 'Tidak tersedia'}<br>
+                                                ${user.created_at ? new Date(user.created_at).toLocaleTimeString('id-ID', {
                                                     hour: '2-digit',
                                                     minute: '2-digit'
-                                                })}
+                                                }) : ''}
                                             </small>
                                         </div>
                                         <div class="col-5"><strong>Update:</strong></div>
                                         <div class="col-7">
                                             <small>
-                                                ${new Date(user.updated_at).toLocaleDateString('id-ID', {
+                                                ${user.updated_at ? new Date(user.updated_at).toLocaleDateString('id-ID', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: 'numeric'
-                                                })}<br>
-                                                ${new Date(user.updated_at).toLocaleTimeString('id-ID', {
+                                                }) : 'Tidak tersedia'}<br>
+                                                ${user.updated_at ? new Date(user.updated_at).toLocaleTimeString('id-ID', {
                                                     hour: '2-digit',
                                                     minute: '2-digit'
-                                                })}
+                                                }) : ''}
                                             </small>
                                         </div>
                                     </div>
