@@ -31,6 +31,20 @@ Route::get('login/company', [LoginCompanyController::class, 'showLoginForm'])->n
 Route::post('login/company', [LoginCompanyController::class, 'login'])->name('company.login.post');
 Route::middleware('auth')->get('/company/daCompany', [DashboardCompanyController::class, 'showDashboard'])->name('company.dashboard');
 
+// Tambahkan route ini untuk company dashboard yang lebih standar
+Route::middleware('auth')->get('/company/dashboard', [DashboardCompanyController::class, 'showDashboard'])->name('company.dashboard.alternative');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/company/job/create', [CompanyHomeController::class, 'createJob'])->name('company.job.create');
+    Route::post('/company/job/store', [CompanyHomeController::class, 'storeJob'])->name('company.job.store');
+
+     Route::get('company/jobs/{job}/applicants', [DashboardCompanyController::class, 'showApplicants'])
+        ->name('company.job.applicants');
+        
+    Route::put('/applications/{application}', [DashboardCompanyController::class, 'updateApplicationStatus'])
+        ->name('company.applications.update');
+});
+
 // ROUTE BUAT APPLICANT DISINI !
 // Register Applicant (applicant) Routes
 Route::get('register/applicant', [RegisterController::class, 'showRegistrationForm'])->name('register.applicant');
