@@ -18,17 +18,19 @@ class LoginCompanyController extends Controller
     public function login(Request $request)
     {
         // Validasi form login
+
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',  // Sesuaikan dengan panjang password yang dibutuhkan
         ]);
+
 
         // Cek kredensial login
         if (Auth::attempt([
             'email' => $request->email,
             'password' => $request->password,
         ], $request->remember)) {
-            // Jika login berhasil, alihkan ke halaman dashboard applicant
             return redirect()->route('company.dashboard');
         }
 

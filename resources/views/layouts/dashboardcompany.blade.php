@@ -432,110 +432,422 @@
 <body>
     <!-- Dashboard Navbar -->
     <nav class="navbar navbar-expand-lg dashboard-navbar fixed-top" id="dashboardNavbar">
-        <div class="container-fluid px-4">
-            <!-- Brand -->
-            <a class="dashboard-brand" href="{{ route('applicant.dashboard') }}">
-                <div class="dashboard-brand-icon">
-                    <i class="fas fa-briefcase"></i>
-                </div>
-                JOBMATCH
-            </a>
+  <div class="container-fluid px-4">
+    <!-- Brand Logo -->
+    <a class="dashboard-brand" href="{{ route('applicant.dashboard') }}">
+      <div class="dashboard-brand-icon rounded-circle bg-primary">
+        <i class="fas fa-briefcase text-white"></i>
+      </div>
+      <span class="brand-text">JOBMATCH</span>
+    </a>
 
-            <!-- Mobile Menu Toggle -->
-            <button class="mobile-menu-toggle" type="button" onclick="toggleMobileMenu()">
-                <i class="fas fa-bars"></i>
-            </button>
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler mobile-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardNavContent">
+      <i class="fas fa-bars"></i>
+    </button>
 
-            <!-- Navigation Links -->
-            <div class="dashboard-nav-links" id="dashboardNavLinks">
-                <a href="{{ route('applicant.dashboard') }}" class="dashboard-nav-link {{ request()->routeIs('applicant.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#" class="dashboard-nav-link">
-                    <i class="fas fa-search"></i>
-                    <span>Browse Jobs</span>
-                </a>
-                <a href="#" class="dashboard-nav-link">
-                    <i class="fas fa-file-alt"></i>
-                    <span>My Applications</span>
-                </a>
-                <a href="{{ route('chat') }}" class="dashboard-nav-link">
-                    <i class="fas fa-comments"></i>
-                    <span>Messages</span>
-                </a>
-                <a href="{{ route('bookmark') }}" class="dashboard-nav-link">
-                    <i class="fas fa-bookmark"></i>
-                    <span>Saved Jobs</span>
-                </a>
-            </div>
+    <!-- Main Navigation Content -->
+    <div class="collapse navbar-collapse" id="dashboardNavContent">
+      <!-- Left Navigation Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a href="{{ route('applicant.dashboard') }}" class="nav-link {{ request()->routeIs('applicant.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-tachometer-alt me-2"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-search me-2"></i>
+            <span>Browse Jobs</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('chat') }}" class="nav-link">
+            <i class="fas fa-comments me-2"></i>
+            <span>Messages</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('bookmark') }}" class="nav-link">
+            <i class="fas fa-bookmark me-2"></i>
+            <span>Saved Jobs</span>
+          </a>
+        </li>
+        
+        @if(Auth::user()->role === 'company')
+        <li class="nav-item">
+          <a href="{{ route('company.job.create') }}" class="nav-link btn-post-job {{ request()->routeIs('company.job.create') ? 'active' : '' }}">
+            <i class="fas fa-plus-circle me-2"></i>
+            <span>Post a Job</span>
+          </a>
+        </li>
+        @endif
+      </ul>
 
-            <!-- Right Section -->
-            <div class="d-flex align-items-center gap-3">
-                <!-- Search Bar -->
-                <div class="dashboard-search d-none d-lg-block">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" placeholder="Search jobs..." class="form-control">
-                </div>
-
-                <!-- Notifications -->
-                <div class="notification-bell" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-bell text-muted"></i>
-                    <span class="notification-badge">3</span>
-                </div>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><h6 class="dropdown-header">Notifications</h6></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-briefcase text-primary"></i>New job match found</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle text-success"></i>Application accepted</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-envelope text-info"></i>New message from company</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
-                </ul>
-
-                <!-- User Dropdown -->
-                <div class="dropdown">
-                    <div class="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar">
-                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                        </div>
-                        <div class="user-info d-none d-md-block">
-                            <h6>{{ Auth::user()->name ?? 'User' }}</h6>
-                            <span>Job Seeker</span>
-                        </div>
-                        <i class="fas fa-chevron-down text-muted ms-1"></i>
-                    </div>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="dropdown-header">
-                            <div class="d-flex align-items-center">
-                                <div class="user-avatar me-3">
-                                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">{{ Auth::user()->name ?? 'User' }}</h6>
-                                    <small class="text-muted">{{ Auth::user()->email ?? 'user@example.com' }}</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i>My Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-file-alt"></i>My Resume</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i>Account Settings</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-question-circle"></i>Help & Support</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ url('/') }}"><i class="fas fa-home"></i>Back to Main Site</a></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
-                                @csrf
-                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to logout?')">
-                                    <i class="fas fa-sign-out-alt"></i>Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+      <!-- Right Navigation Elements -->
+      <div class="d-flex align-items-center gap-3 ms-auto">
+        <!-- Search Bar -->
+        <div class="dashboard-search d-none d-lg-block">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Search jobs..." class="form-control">
         </div>
-    </nav>
+
+        <!-- Notifications Dropdown -->
+        <div class="dropdown">
+          <button class="btn notification-bell" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-notifications">
+            <li><h6 class="dropdown-header">Notifications</h6></li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <div class="notification-item">
+                  <i class="fas fa-briefcase text-primary"></i>
+                  <div>
+                    <p class="mb-0">New job match found</p>
+                    <small class="text-muted">2 minutes ago</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <div class="notification-item">
+                  <i class="fas fa-check-circle text-success"></i>
+                  <div>
+                    <p class="mb-0">Application accepted</p>
+                    <small class="text-muted">1 hour ago</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <div class="notification-item">
+                  <i class="fas fa-envelope text-info"></i>
+                  <div>
+                    <p class="mb-0">New message from company</p>
+                    <small class="text-muted">3 hours ago</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
+          </ul>
+        </div>
+
+        <!-- User Dropdown -->
+        <div class="dropdown">
+          <button class="btn user-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar bg-primary">
+              {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+            </div>
+            <div class="user-info d-none d-md-block">
+              <h6 class="mb-0">{{ Auth::user()->name ?? 'User' }}</h6>
+              <small class="text-muted">{{ ucfirst(Auth::user()->role) ?? 'User' }}</small>
+            </div>
+            <i class="fas fa-chevron-down text-muted ms-2"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-profile">
+            <li class="dropdown-header">
+              <div class="d-flex align-items-center">
+                <div class="user-avatar bg-primary me-3">
+                  {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                </div>
+                <div>
+                  <h6 class="mb-0">{{ Auth::user()->name ?? 'User' }}</h6>
+                  <small class="text-muted">{{ Auth::user()->email ?? 'user@example.com' }}</small>
+                </div>
+              </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-user me-2"></i>My Profile
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-file-alt me-2"></i>My Resume
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-cog me-2"></i>Account Settings
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-question-circle me-2"></i>Help & Support
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="{{ url('/') }}">
+                <i class="fas fa-home me-2"></i>Back to Main Site
+              </a>
+            </li>
+            <li>
+              <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
+                @csrf
+                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to logout?')">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Navbar Styling */
+  .dashboard-navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+  }
+
+  /* Brand Logo */
+  .dashboard-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+
+  .dashboard-brand-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    background-color: #3498db;
+  }
+
+  .brand-text {
+    margin-left: 0.5rem;
+  }
+
+  /* Navigation Links */
+  .nav-link {
+    color: #7f8c8d;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: #3498db;
+    background-color: rgba(52, 152, 219, 0.1);
+  }
+
+  .nav-link i {
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Post Job Button */
+  .btn-post-job {
+    background-color: #3498db;
+    color: white !important;
+    margin-left: 0.5rem;
+  }
+
+  .btn-post-job:hover {
+    background-color: #2980b9;
+  }
+
+  /* Search Bar */
+  .dashboard-search {
+    position: relative;
+    width: 250px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+  }
+
+  .dashboard-search .form-control {
+    padding-left: 35px;
+    border-radius: 20px;
+    border: 1px solid #ecf0f1;
+    background-color: #f8f9fa;
+  }
+
+  /* Notification Bell */
+  .notification-bell {
+    position: relative;
+    color: #7f8c8d;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* User Dropdown */
+  .user-dropdown {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    color: #2c3e50;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #3498db;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .user-info h6 {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .user-info small {
+    font-size: 0.75rem;
+  }
+
+  /* Dropdown Menus */
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .dropdown-header {
+    padding: 0.5rem 1rem;
+  }
+
+  .dropdown-item {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+  }
+
+  /* Notification Items */
+  .notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .notification-item i {
+    font-size: 1.1rem;
+    margin-top: 2px;
+  }
+
+  .notification-item div p {
+    margin-bottom: 0;
+  }
+
+  /* Mobile Menu Toggle */
+  .mobile-menu-toggle {
+    border: none;
+    background: none;
+    font-size: 1.25rem;
+    color: #7f8c8d;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .dashboard-search {
+      width: 200px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-nav-links {
+      padding: 1rem 0;
+    }
+    
+    .nav-link {
+      padding: 0.75rem 1rem;
+    }
+    
+    .dashboard-search {
+      width: 100%;
+      margin: 1rem 0;
+    }
+  }
+</style>
+
+<script>
+  // Mobile menu toggle functionality
+  function toggleMobileMenu() {
+    const navLinks = document.getElementById('dashboardNavLinks');
+    navLinks.classList.toggle('show');
+  }
+
+  // Initialize Bootstrap dropdowns
+  document.addEventListener('DOMContentLoaded', function() {
+    const dropdownElements = document.querySelectorAll('.dropdown-toggle');
+    dropdownElements.forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        const dropdownMenu = this.nextElementSibling;
+        dropdownMenu.classList.toggle('show');
+      });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.matches('.dropdown-toggle') && !e.target.closest('.dropdown-menu')) {
+        const dropdowns = document.querySelectorAll('.dropdown-menu');
+        dropdowns.forEach(menu => {
+          menu.classList.remove('show');
+        });
+      }
+    });
+  });
+</script>
 
     <!-- Main Content -->
     <main class="dashboard-content">

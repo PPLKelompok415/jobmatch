@@ -1509,29 +1509,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (isValid) {
-            // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // In real app, submit form here
-                console.log('Form submitted successfully');
-                
-                // Reset loading state (remove in production)
+
+            fetch("{{ route('company.login.post') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    email: emailInput.value,
+                    password: passwordInput.value
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Login gagal");
+                return response.json();
+            })
+            .then(data => {
+                showSuccessMessage("Login successful! Redirecting to dashboard...");
+                setTimeout(() => {
+                    window.location.href = "{{ route('company.dashboard') }}";
+                }, 1500);
+            })
+            .catch(error => {
+                console.error("Login failed", error);
+                showFieldError(passwordInput, "Email atau password salah");
+            })
+            .finally(() => {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
-                
-                // Show success message
-                showSuccessMessage('Login successful! Redirecting to dashboard...');
-                
-                // Redirect after delay (simulate)
-                setTimeout(() => {
-                    // window.location.href = '/dashboard';
-                    console.log('Redirecting to dashboard...');
-                }, 1500);
-                
-            }, 2000);
+            });
+        }
         } else {
             // Focus first invalid field
             const firstInvalid = form.querySelector('.field-input.error');

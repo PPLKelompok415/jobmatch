@@ -29,7 +29,22 @@ Route::post('register/company', [RegisterCompanyController::class, 'register'])-
 // Login Routes for Company
 Route::get('login/company', [LoginCompanyController::class, 'showLoginForm'])->name('login.company');
 Route::post('login/company', [LoginCompanyController::class, 'login'])->name('company.login.post');
-Route::middleware('auth')->get('/company/daCompany', [DashboardCompanyController::class, 'showDashboard'])->name('company.dashboard');
+Route::get('/company/daCompany', [DashboardCompanyController::class, 'showDashboard'])
+    ->middleware('auth')
+    ->name('company.dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/company/job/create', [CompanyHomeController::class, 'createJob'])->name('company.job.create');
+    Route::post('/company/job/store', [CompanyHomeController::class, 'storeJob'])->name('company.job.store');
+
+     Route::get('company/jobs/{job}/applicants', [DashboardCompanyController::class, 'showApplicants'])
+        ->name('company.job.applicants');
+        
+    Route::put('/applications/{application}', [DashboardCompanyController::class, 'updateApplicationStatus'])
+        ->name('company.applications.update');
+});
+
+
 
 // ROUTE BUAT APPLICANT DISINI !
 // Register Applicant (applicant) Routes
