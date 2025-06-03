@@ -12,6 +12,9 @@ use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\JobMatchingController;
 use App\Http\Controllers\Applicant\JobApplyController;
 use App\Http\Controllers\DashboardApplicantController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommunityCommentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -134,3 +137,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/jobs/apply', [JobApplyController::class, 'apply'])->name('jobs.apply');
 });
 
+// Community
+Route::middleware('auth')->group(function () {
+    Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
+    Route::post('/community', [CommunityController::class, 'store'])->name('community.store');
+    Route::post('/bookmark/{bookmark}/comment', [CommentController::class, 'store'])->name('bookmark.comment.store');
+    Route::middleware('auth')->post('/community/{community}/comment', [CommunityCommentController::class, 'store'])->name('community.comment.store');
+    Route::post('/community/{id}/like', [App\Http\Controllers\CommunityController::class, 'like'])->name('community.like');
+    Route::get('/community/liked-comments', [\App\Http\Controllers\CommunityController::class, 'likedComments'])->name('community.liked.comments');
+});
