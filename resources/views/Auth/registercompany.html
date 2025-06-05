@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JobMatch Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+      body {
+        background-color: #f9fbfc;
+        font-family: 'Segoe UI', sans-serif;
+      }
+
+      .logo {
+        font-weight: bold;
+        font-size: 20px;
+        margin-left: 10px;
+      }
+
+      .language-switch {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+
+      .dropdown-toggle {
+        background-color: #6c8494;
+        color: white;
+        border-radius: 10px;
+        padding: 10px 15px;
+        border: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dropdown-menu {
+        min-width: 120px;
+        font-size: 14px;
+      }
+
+      .accordion-button::after {
+        transform: rotate(180deg);
+      }
+
+      .accordion-button.collapsed::after {
+        transform: rotate(0deg);
+      }
+
+      .accordion-button {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #2c3e50;
+        background-color: transparent;
+      }
+
+      .card {
+        border: 2px solid #6c8494;
+        border-radius: 12px;
+      }
+
+      .card-header {
+        background-color: transparent;
+        border-bottom: none;
+      }
+
+      .login-text {
+        margin-top: 20px;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .login-text a {
+        text-decoration: none;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5 position-relative">
+      <div class="d-flex align-items-center mb-4">
+        <div class="bg-dark text-white px-2 py-1 rounded">J</div>
+        <div class="logo">JOBMATCH</div>
+      </div>
+
+      <div class="language-switch dropdown">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-globe"></i> Language
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">English</a></li>
+          <li><a class="dropdown-item" href="#">Indonesia</a></li>
+        </ul>
+      </div>
+
+      <p class="mb-3">Register your company</p>
+
+      <div class="card p-4">
+        <h6 class="fw-bold">REGISTER COMPANY</h6>
+        <div class="accordion mt-3" id="registerAccordion">
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#companyData">
+                Company Data
+              </button>
+            </h2>
+            <div id="companyData" class="accordion-collapse collapse" data-bs-parent="#registerAccordion">
+              <div class="accordion-body">
+                <form>
+                  <div class="row g-3 align-items-start">
+                    <div class="col-md-3 text-center">
+                      <label for="companyLogo" class="form-label fw-bold">Logo</label>
+                      <div class="border rounded d-flex align-items-center justify-content-center" style="height: 150px;">
+                        <label for="companyLogo" class="w-100 h-100 d-flex align-items-center justify-content-center cursor-pointer">
+                          <i class="bi bi-camera" style="font-size: 2rem;"></i>
+                          <input type="file" id="companyLogo" class="d-none" accept="image/*">
+                        </label>
+                      </div>
+                    </div>
+                
+                    <div class="col-md-9">
+                      <div class="mb-3">
+                        <label for="companyName" class="form-label">Company name</label>
+                        <input type="text" class="form-control" id="companyName" placeholder="Enter your company name">
+                      </div>
+                      <div class="mb-3">
+                        <label for="companyAddress" class="form-label">Company's address</label>
+                        <input type="text" class="form-control" id="companyAddress" placeholder="Enter your company address">
+                      </div>
+                    </div>
+                  </div>
+                
+                  <div class="mb-3">
+                    <label for="companyWebsite" class="form-label">Website address</label>
+                    <input type="url" class="form-control" id="companyWebsite" placeholder="https://yourcompany.com">
+                  </div>
+                  <div class="mb-3">
+                    <label for="companyEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="companyEmail" placeholder="email@company.com">
+                  </div>
+                  <div class="mb-3">
+                    <label for="companyPhone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="companyPhone" placeholder="+62 81234567890">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobVacancy">
+                Job Vacancy
+              </button>
+            </h2>
+            <div id="jobVacancy" class="accordion-collapse collapse" data-bs-parent="#registerAccordion">
+              <div class="accordion-body">
+                <div class="accordion-body">
+                  <div class="row mb-3">
+                    <div class="col-md-12">
+                      <label for="position" class="form-label">Position</label>
+                      <input type="text" class="form-control" id="position" name="position">
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <label for="typeOfWork" class="form-label">Type of Work</label>
+                      <select class="form-select" id="typeOfWork" name="typeOfWork">
+                        <option selected disabled>Select type</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Internship">Internship</option>
+                        <option value="Remote">Remote</option>
+                      </select>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" placeholder="e.g. Jakarta">
+                      </div>
+                      <div class="col-md-3 mb-3">
+                        <label for="salary_min" class="form-label">Salary Min</label>
+                        <input type="number" class="form-control" id="salary_min" name="salary_min" placeholder="e.g. 7000000">
+                      </div>
+                      <div class="col-md-3 mb-3">
+                        <label for="salary_max" class="form-label">Salary Max</label>
+                        <input type="number" class="form-control" id="salary_max" name="salary_max" placeholder="e.g. 10000000">
+                      </div>
+                    </div>                    
+                  </div>
+
+                  <label class="form-label">Deadline</label>
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <select class="form-select" id="deadlineMonth" name="deadlineMonth">
+                        <option selected disabled>Month</option>
+                        <option>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option>December</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <select class="form-select" id="deadlineDate" name="deadlineDate">
+                        <option selected disabled>Date</option>
+                        {% for i in range(1, 32) %}
+                        <option>{{ i }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <select class="form-select" id="deadlineYear" name="deadlineYear">
+                        <option selected disabled>Year</option>
+                        <option>2024</option>
+                        <option>2025</option>
+                        <option>2026</option>
+                        <option>2027</option>
+                        <option>2028</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="jobDescription" class="form-label">Job Description</label>
+                    <textarea class="form-control" id="jobDescription" name="jobDescription" rows="4"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-grid gap-2 mt-4">
+          <button class="btn btn-secondary btn-lg" type="submit">Register</button>
+        </div>
+        <div class="login-text">
+          Already have an account? <a href="#">Login</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
