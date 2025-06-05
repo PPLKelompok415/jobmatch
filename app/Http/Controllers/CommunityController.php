@@ -9,22 +9,37 @@ class CommunityController extends Controller
     public function index()
     {
         $tab = request('tab');
+        $user = auth()->user();
+
         if ($tab === 'liked') {
-            $user = auth()->user();
             $likedComments = \App\Models\CommunityLike::where('user_id', $user->id)
                 ->with('community.user')
                 ->get();
             return view('community.index', [
                 'tab' => $tab,
                 'likedComments' => $likedComments,
-                'messages' => collect(), // kosongkan messages
+                'messages' => collect(),
+                'historyQuestions' => collect(),
+            ]);
+        } elseif ($tab === 'history') {
+            // Ambil semua pertanyaan (diskusi) yang pernah dibuat user beserta komentarnya
+            $historyQuestions = \App\Models\Community::with(['comments.user'])
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get();
+            return view('community.index', [
+                'tab' => $tab,
+                'historyQuestions' => $historyQuestions,
+                'messages' => collect(),
+                'likedComments' => collect(),
             ]);
         } else {
             $messages = \App\Models\Community::with(['user', 'likes', 'comments.user'])->latest()->get();
             return view('community.index', [
                 'tab' => $tab,
                 'messages' => $messages,
-                'likedComments' => collect(), // kosongkan likedComments
+                'likedComments' => collect(),
+                'historyQuestions' => collect(),
             ]);
         }
     }
@@ -70,5 +85,14 @@ class CommunityController extends Controller
             ->get();
 
         return view('community.liked_comments', compact('likedComments'));
+    }
+
+    public function destroy($id)
+    {
+        $user = auth()->user();
+        $question = \App\Models\Community::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $question->delete();
+
+        return redirect()->route('community.index', ['tab' => 'history'])->with('success', 'Pertanyaan berhasil dihapus.');
     }
 }

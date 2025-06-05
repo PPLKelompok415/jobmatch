@@ -6,24 +6,28 @@
         <!-- Sidebar -->
         <div class="col-md-3 mb-3">
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action btn btn-primary mb-2 text-center"
+                <button type="button" class="list-group-item list-group-item-action btn btn-primary mb-2 text-center"
                    data-bs-toggle="modal" data-bs-target="#askQuestionModal">
                     Ajukan pertanyaan
+                </button>
+                <a href="{{ route('community.index') }}"
+                   class="list-group-item list-group-item-action text-center {{ request('tab') === null ? 'active' : '' }}">
+                    Semua Diskusi
                 </a>
-                <a href="{{ route('community.index', ['tab' => 'liked']) }}" class="list-group-item list-group-item-action text-center">
+                <a href="{{ route('community.index', ['tab' => 'liked']) }}"
+                   class="list-group-item list-group-item-action text-center {{ request('tab') === 'liked' ? 'active' : '' }}">
                     Komentar disukai
+                </a>
+                <a href="{{ route('community.index', ['tab' => 'history']) }}"
+                   class="list-group-item list-group-item-action text-center {{ request('tab') === 'history' ? 'active' : '' }}">
+                    History Komentar
                 </a>
             </div>
         </div>
         <!-- Main Content -->
         <div class="col-md-9">
             @if(request('tab') === 'liked')
-                <div class="d-flex align-items-center mb-3">
-                    <a href="{{ route('community.index') }}" class="btn btn-sm btn-secondary me-2">
-                        &larr; Back
-                    </a>
-                    <h2 class="mb-0">Komentar yang Disukai</h2>
-                </div>
+                <h2>Komentar yang Disukai</h2>
                 <ul class="list-group">
                     @forelse($likedComments as $like)
                         <li class="list-group-item">
@@ -34,6 +38,45 @@
                         </li>
                     @empty
                         <li class="list-group-item">Belum ada komentar yang disukai.</li>
+                    @endforelse
+                </ul>
+            @elseif(request('tab') === 'history')
+                <h2>History Pertanyaan & Komentar Anda</h2>
+                <ul class="list-group">
+                    @forelse($historyQuestions as $question)
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Pertanyaan:</strong> {{ $question->message }}
+                                    <br>
+                                    <small class="text-muted">Dibuat {{ $question->created_at->diffForHumans() }}</small>
+                                    <br>
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        {{ is_countable($question->likes) ? $question->likes->count() : $question->likes }} Like
+                                    </span>
+                                </div>
+                                <form action="{{ route('community.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pertanyaan ini?')" style="margin-left:10px;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            </div>
+                            <div class="mt-2 ms-3">
+                                <strong>Komentar:</strong>
+                                @forelse($question->comments as $comment)
+                                    <div class="border rounded p-2 mb-1">
+                                        <strong>{{ $comment->user->name }}</strong>
+                                        <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                                        <div>{{ $comment->comment }}</div>
+                                    </div>
+                                @empty
+                                    <div class="text-muted">Belum ada komentar.</div>
+                                @endforelse
+                            </div>
+                        </li>
+                    @empty
+                        <li class="list-group-item">Belum ada pertanyaan yang kamu buat.</li>
                     @endforelse
                 </ul>
             @else
