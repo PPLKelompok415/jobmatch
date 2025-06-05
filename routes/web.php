@@ -6,9 +6,9 @@ use App\Http\Controllers\Auth\LoginCompanyController;
 use App\Http\Controllers\Auth\LoginApplicantController;
 use App\Http\Controllers\Auth\LoginSuperAdminController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\CompanyHomeController;
+use App\livewire\Chat;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\JobMatchingController;
@@ -52,15 +52,14 @@ Route::post('login/applicant', [LoginApplicantController::class, 'login'])->name
 
 Route::middleware('auth')->group(function () {
 
-    // Endpoint JSON untuk fetch via Alpine
+    Route::get('/applicant/dashboard', [DashboardApplicantController::class, 'index'])->name('applicant.dashboard');
     Route::get('/applicant/dashboard/data', [DashboardApplicantController::class, 'data'])
          ->name('applicant.dashboard.data');
     
     Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
 
     // Chat
-    Route::get('/chat/{receiver}', [ChatController::class, 'index'])->name('chat.with');
-    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+    Route::get('/chat/{user}', Chat::class)->name('chat.index');
 
     // Bookmark
     Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
@@ -119,31 +118,6 @@ Route::post('logout', function (Request $request) {
     $request->session()->regenerateToken();
     return redirect('/');
 })->name('logout');
-
-// Chat 
-Route::get('/chat', function () {
-    return view('job-matching.chat');
-})->name('chat');
-
-Route::get('/chat', [ChatController::class, 'index'])->name('chat');
-Route::get('/chat/company', function () {
-    return view('job-matching.companychat');
-})->name('chat_company');
-
-// Route::middleware(['auth'])->group(function () {
-//     Route::get('/chat/{receiver}', [ChatController::class, 'index'])->name('chat.with');
-//     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
-//     Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
-//     Route::post('/bookmark/save', [BookmarkController::class, 'save'])->name('bookmark.save');
-// });
-
-// ==============================
-// Bookmark
-// ==============================
-
-// Route::get('/bookmark', function () {
-//     return view('job-matching.bookmark');
-// })->name('bookmark');
 
 //jobmatching
 // Route::get('/match-jobs/{id}', [JobMatchingController::class, 'match'])->name('job.match');

@@ -16,6 +16,7 @@ class DashboardApplicantController extends Controller
     {
         /** @var \App\Models\Applicant $applicant */
         $applicant = auth()->user()->applicant;
+        $userId = auth()->id();
 
         if (!$applicant) {
             abort(403, 'Applicant profile not found.');
@@ -27,7 +28,8 @@ class DashboardApplicantController extends Controller
                 ->values();
 
         return view('applicant.daApplicant', [
-            'matchingJobs' => $matchedJobs
+            'matchingJobs' => $matchedJobs,
+            'userId' => $userId,
         ]);
     }
 

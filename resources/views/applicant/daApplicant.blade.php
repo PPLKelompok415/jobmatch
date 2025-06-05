@@ -4,12 +4,6 @@
   <header class="topbar d-flex justify-content-between align-items-center py-2">
   </header>
 
-  <nav class="menu my-3 d-flex gap-3">
-    <a class='btn' href="{{route('bookmark.index')}}"><div>Bookmark</div></a>
-    <a class='btn' href="#"><div>Notification & Announcement</div></a>
-    <a class='btn' href="#"><div>Community</div></a>
-  </nav>
-
   <script id="initial-jobs" type="application/json">
     {!! json_encode($matchingJobs) !!}
   </script>

@@ -1,11 +1,15 @@
-@extends('layouts.app')
+@extends('layouts.dashboardapplicant')
 
 @section('content')
+<style>
+    
+</style>
+
 <div class="container-fluid px-4">
     <br>
     <!-- Page Header -->
     <div class="d-flex align-items-center mb-4">
-        <div class="brand-icon me-3">
+        <div class="dashboard-brand-icon me-3">
             <i class="bi bi-bookmark-star"></i>
         </div>
         <div>
@@ -152,7 +156,7 @@
 
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2 align-items-center">
-                                <a href="{{ route('chat') }}" class="btn btn-navbar-solid flex-grow-1 text-white">
+                                <a href="{{ route('chat.index', $userId) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
                                     <i class="bi bi-send me-2"></i>
                                     Apply Now
                                 </a>

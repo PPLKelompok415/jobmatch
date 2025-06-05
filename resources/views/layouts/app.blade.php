@@ -583,11 +583,6 @@
                             <i class="fas fa-users me-1"></i>Community
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link-modern" href="{{ route('bookmark.index') }}">
-                            <i class="fas fa-book me-1"></i>Bookmark
-                        </a>
-                    </li>
                 </ul>
 
                 <!-- Right Side Navigation -->

@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Dashboard') - JobMatch</title>
     <meta name="description" content="@yield('description', 'Your personal job matching dashboard')">
-    
+    @livewireScripts
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
@@ -477,7 +478,7 @@
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
                 </a>
-                <a href="{{ route('chat.index', $userId) }}" class="dashboard-nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">
+                <a href="{{ redirect()->back() }}" class="dashboard-nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">
                     <i class="fas fa-comments"></i>
                     <span>Messages</span>
                 </a>
@@ -561,7 +562,7 @@
             @yield('content')
         </div>
     </main>
-        
+
     <!-- Alpine.js -->
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <!-- Bootstrap JS -->

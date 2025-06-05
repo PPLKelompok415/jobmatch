@@ -37,7 +37,7 @@ class BookmarkController extends Controller
             ->where('user_id', $userId)
             ->get();
 
-        return view('job-matching.bookmark', compact('bookmarks'));
+        return view('job-matching.bookmark', compact('bookmarks', 'userId'));
     }
     
     public function destroy($id)
