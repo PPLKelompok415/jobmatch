@@ -125,6 +125,50 @@
                         <p class="text-muted">Access your career dashboard</p>
                     </div>
                     
+                    <!-- Error/Success Notifications -->
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <div>
+                                    <strong>Login Failed!</strong><br>
+                                    {{ session('error') }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>
+                                    <strong>Success!</strong><br>
+                                    {{ session('success') }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                                <div>
+                                    <strong>Please check the following errors:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
                     <!-- Login Card dengan Bootstrap card -->
                     <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-relative">
                         <!-- Top gradient bar dengan Bootstrap utilities -->
@@ -155,9 +199,20 @@
                                         <span class="input-group-text bg-white border-end-0">
                                             <i class="fas fa-envelope text-muted"></i>
                                         </span>
-                                        <input type="email" id="email" name="email" class="form-control border-start-0" placeholder="Enter your email address" required autocomplete="email">
+                                        <input type="email" 
+                                               id="email" 
+                                               name="email" 
+                                               class="form-control border-start-0 @error('email') is-invalid @enderror" 
+                                               placeholder="Enter your email address" 
+                                               value="{{ old('email') }}"
+                                               required 
+                                               autocomplete="email">
                                     </div>
-                                    <div class="invalid-feedback"></div>
+                                    @error('email')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @else
+                                        <div class="invalid-feedback"></div>
+                                    @enderror
                                 </div>
                                 
                                 <!-- Password Field dengan Bootstrap input group -->
@@ -167,18 +222,28 @@
                                         <span class="input-group-text bg-white border-end-0">
                                             <i class="fas fa-lock text-muted"></i>
                                         </span>
-                                        <input type="password" id="password" name="password" class="form-control border-start-0" placeholder="Enter your password" required autocomplete="current-password">
+                                        <input type="password" 
+                                               id="password" 
+                                               name="password" 
+                                               class="form-control border-start-0 @error('password') is-invalid @enderror" 
+                                               placeholder="Enter your password" 
+                                               required 
+                                               autocomplete="current-password">
                                         <button type="button" class="btn btn-light border border-start-0 password-reveal">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
-                                    <div class="invalid-feedback"></div>
+                                    @error('password')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @else
+                                        <div class="invalid-feedback"></div>
+                                    @enderror
                                 </div>
                                 
                                 <!-- Form Options dengan Bootstrap flex utilities -->
                                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                                        <input class="form-check-input" type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
                                         <label class="form-check-label" for="remember">Keep me signed in</label>
                                     </div>
                                     <a href="#" class="text-decoration-none fw-semibold text-success">Forgot password?</a>
@@ -196,6 +261,17 @@
                                         </div>
                                     </div>
                                 </button>
+                                
+                                <!-- Role Restriction Notice -->
+                                <div class="d-flex align-items-start gap-3 bg-warning bg-opacity-10 p-3 rounded-3 border border-warning border-opacity-25 mb-4">
+                                    <div class="text-warning">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block mb-1">Job Seeker Access Only</strong>
+                                        <p class="small text-muted mb-0">This login is specifically for job seekers. Company accounts should use the company login portal.</p>
+                                    </div>
+                                </div>
                                 
                                 <!-- Social Login dengan Bootstrap grid -->
                                 <div class="text-center mb-4">
@@ -352,6 +428,22 @@
     .submit-btn.loading span { opacity: 0; }
     .submit-btn.loading .opacity-0 { opacity: 1 !important; }
 
+    /* Alert animations */
+    .alert {
+        animation: slideInDown 0.3s ease-out;
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
     /* Mobile responsive */
     @media (max-width: 991.98px) {
         .card {
@@ -383,13 +475,33 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(input, message) {
         input.classList.add('is-invalid');
         input.classList.remove('is-valid');
-        input.parentElement.nextElementSibling.textContent = message;
+        const feedback = input.parentElement.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = message;
+        }
     }
     
     function showSuccess(input) {
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
     }
+    
+    function clearError(input) {
+        input.classList.remove('is-invalid', 'is-valid');
+        const feedback = input.parentElement.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback') && !feedback.textContent.includes('{{')) {
+            feedback.textContent = '';
+        }
+    }
+    
+    // Real-time validation
+    emailInput.addEventListener('input', function() {
+        clearError(this);
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        clearError(this);
+    });
     
     // Email validation
     emailInput.addEventListener('blur', function() {
@@ -423,26 +535,43 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let isValid = true;
         
+        // Reset previous states
+        emailInput.classList.remove('is-invalid', 'is-valid');
+        passwordInput.classList.remove('is-invalid', 'is-valid');
+        
+        // Email validation
         if (!emailInput.value) {
             showError(emailInput, 'Email is required');
             isValid = false;
         } else if (!validateEmail(emailInput.value)) {
             showError(emailInput, 'Please enter a valid email address');
             isValid = false;
+        } else {
+            showSuccess(emailInput);
         }
         
+        // Password validation
         if (!passwordInput.value) {
             showError(passwordInput, 'Password is required');
             isValid = false;
         } else if (!validatePassword(passwordInput.value)) {
             showError(passwordInput, 'Password must be at least 6 characters long');
             isValid = false;
+        } else {
+            showSuccess(passwordInput);
         }
         
         if (isValid) {
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-            setTimeout(() => form.submit(), 1000);
+            setTimeout(() => {
+                this.submit();
+            }, 1000);
+        } else {
+            const firstInvalid = form.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
         }
     });
     
@@ -453,10 +582,22 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('active');
         });
     });
+    
+    // Auto-dismiss alerts after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            if (alert && alert.parentNode && typeof bootstrap !== 'undefined') {
+                const bootstrapAlert = new bootstrap.Alert(alert);
+                bootstrapAlert.close();
+            }
+        }, 5000);
+    });
 });
 
 function showSupportModal() {
-    new bootstrap.Modal(document.getElementById('supportModal')).show();
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Modal(document.getElementById('supportModal')).show();
+    }
 }
 </script>
 @endsection
