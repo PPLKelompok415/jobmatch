@@ -658,9 +658,14 @@
                     @else
                         <!-- Login Button based on current context -->
                         @if (request()->is('Company*'))
+                         <li class="nav-item me-2">
+                                <a class="btn-navbar btn-navbar-outline" href="{{ route('login.company') }}">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                                </a>
+                            </li>
                             <li class="nav-item">
-                                <a class="btn-navbar btn-navbar-solid" href="{{ route('login.company') }}">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Company Login
+                                <a class="btn-navbar btn-navbar-solid" href="{{ route('register.company') }}">
+                                    <i class="fas fa-user-plus me-1"></i>Sign Up
                                 </a>
                             </li>
                         @else
@@ -954,7 +959,6 @@
                         if (csrfMeta) {
                             csrfMeta.setAttribute('content', data.token);
                         }
-                        
                         // Update all CSRF input fields
                         document.querySelectorAll('input[name="_token"]').forEach(input => {
                             input.value = data.token;

@@ -1,157 +1,187 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center min-vh-100">
-            <div class="col-lg-6">
-                <div class="hero-content">
-                    <div class="hero-badge mb-4">
-                        <span class="badge bg-primary-soft text-primary px-3 py-2 rounded-pill">
-                            <i class="fas fa-rocket me-2"></i>Find Your Dream Job
+<!-- Hero Section for Job Seekers -->
+<section class="position-relative overflow-hidden min-vh-100 d-flex align-items-center hero-section">
+    
+    <!-- Background Image with Overlay -->
+    <div class="position-absolute w-100 h-100" style="z-index: 1;">
+        <div class="position-absolute w-100 h-100" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(51, 65, 85, 0.75) 100%);"></div>
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+             class="w-100 h-100 object-fit-cover" alt="Team collaboration">
+    </div>
+    <!-- Geometric Shapes -->
+    <div class="position-absolute w-100 h-100 overflow-hidden" style="z-index: 2;">
+        <div class="geometric-shape shape-1"></div>
+        <div class="geometric-shape shape-2"></div>
+        <div class="geometric-shape shape-3"></div>
+        <div class="geometric-shape shape-4"></div>
+        <div class="geometric-shape shape-5"></div>
+        <div class="geometric-shape shape-6"></div>
+    </div>
+    
+    <div class="container-fluid position-relative" style="z-index: 10;">
+        <div class="row g-0 align-items-center min-vh-100">
+            <div class="col-lg-6 order-lg-1 order-2">
+                <div class="p-5">
+                    <!-- Enhanced Badge -->
+                    <div class="badge-container mb-4">
+                        <span class="badge bg-gradient-primary text-white px-4 py-3 rounded-pill fw-bold fs-6 shadow-lg animated-badge">
+                            <i class="fas fa-rocket me-2 pulse-icon"></i>Find Your Dream Job
                         </span>
                     </div>
                     
-                    <h1 class="hero-title display-2 fw-bold mb-4">
-                        <span class="text-primary">MATCH</span><br>
-                        <span class="text-dark">WORK</span><br>
-                        <span class="text-gradient">GROW</span>
+                    <!-- Animated Title -->
+                    <h1 class="display-1 fw-bold mb-4 lh-1 animated-title">
+                        <span class="text-warning glow-text">FIND</span><br>
+                        <span class="text-white">YOUR</span><br>
+                        <span class="text-info glow-text">CAREER</span>
                     </h1>
                     
-                    <p class="hero-subtitle fs-5 text-muted mb-5 lh-lg">
-                        Discover opportunities that align with your skills and aspirations. 
-                        Connect with top companies and take the next step in your career journey.
+                    <!-- Enhanced Description -->
+                    <p class="fs-4 text-white-50 mb-5 lh-base animated-description">
+                        Discover opportunities that align with your skills and aspirations. Connect with top companies and accelerate your career growth journey with AI-powered matching.
                     </p>
                     
-                    <div class="hero-buttons d-flex flex-wrap gap-3 mb-5">
-                        <a href="{{ route('register.applicant') }}" class="btn btn-primary btn-lg px-4 py-3 rounded-pill shadow-sm">
-                            <i class="fas fa-user-plus me-2"></i>Sign Up
+                    <!-- Enhanced Buttons -->
+                    <div class="mb-5 button-group">
+                        <a href="{{ route('register.applicant') }}" class="btn btn-warning btn-lg me-3 mb-3 px-5 py-3 fw-bold rounded-pill shadow-lg hover-lift-lg animated-btn">
+                            <i class="fas fa-user-plus me-2"></i>Start Job Search
+                            <span class="btn-shine"></span>
                         </a>
-                        <a href="{{ route('login.applicant') }}" class="btn btn-outline-primary btn-lg px-4 py-3 rounded-pill">
-                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        <a href="{{ route('login.applicant') }}" class="btn btn-outline-light btn-lg mb-3 px-5 py-3 fw-bold rounded-pill hover-lift-lg glass-btn">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
                         </a>
                     </div>
                     
-                    <!-- Stats -->
-                    <div class="hero-stats d-flex flex-wrap gap-4">
-                        <div class="stat-item">
-                            <h3 class="stat-number text-primary fw-bold mb-0">10K+</h3>
-                            <p class="stat-label text-muted small mb-0">Active Jobs</p>
+                    <!-- Enhanced Benefits -->
+                    <div class="row g-3 benefits-grid">
+                        <div class="col-md-4">
+                            <div class="benefit-card text-center p-4 rounded-4 hover-lift">
+                                <div class="benefit-icon bg-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-brain text-white"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2 text-white">Smart Matching</h6>
+                                <small class="text-white-50">AI-Powered Jobs</small>
+                            </div>
                         </div>
-                        <div class="stat-item">
-                            <h3 class="stat-number text-primary fw-bold mb-0">5K+</h3>
-                            <p class="stat-label text-muted small mb-0">Companies</p>
+                        <div class="col-md-4">
+                            <div class="benefit-card text-center p-4 rounded-4 hover-lift">
+                                <div class="benefit-icon bg-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-building text-white"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2 text-white">Top Companies</h6>
+                                <small class="text-white-50">Verified Employers</small>
+                            </div>
                         </div>
-                        <div class="stat-item">
-                            <h3 class="stat-number text-primary fw-bold mb-0">50K+</h3>
-                            <p class="stat-label text-muted small mb-0">Job Seekers</p>
+                        <div class="col-md-4">
+                            <div class="benefit-card text-center p-4 rounded-4 hover-lift">
+                                <div class="benefit-icon bg-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-rocket text-dark"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2 text-white">Career Growth</h6>
+                                <small class="text-white-50">Fast Track</small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-6">
-                <div class="hero-image-section position-relative">
-                    <!-- Main Hero Image
-                    <div class="main-hero-image text-center mb-4">
-                        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-                             alt="Professional team working" 
-                             class="img-fluid rounded-4 shadow-lg main-image"> -->
-                        
-                        <!-- Overlay Stats Card -->
-                        <div class="stats-overlay card position-absolute shadow-lg border-0 rounded-3">
-                            <div class="card-body p-2 text-center">
-                                <div class="d-flex align-items-center justify-content-center mb-1">
-                                    <i class="fas fa-chart-line text-success me-1"></i>
-                                    <span class="fw-bold text-success small">+250%</span>
+            <div class="col-lg-6 order-lg-2 order-1 d-flex align-items-center justify-content-center min-vh-100 position-relative" style="z-index: 5;">
+                <!-- Enhanced Floating Achievement Cards -->
+                <div class="position-absolute animate-notification d-none d-lg-block floating-card-1">
+                    <div class="card border-0 shadow-2xl rounded-4 p-3 hover-scale glass-card">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-container bg-success rounded-3 me-3 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-trophy text-white"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold text-dark">Achievement Unlocked!</h6>
+                                <small class="text-muted">Sarah completed her profile</small>
+                                <div class="progress mt-2 rounded-pill" style="height: 4px;">
+                                    <div class="progress-bar bg-success progress-animated" style="width: 100%"></div>
                                 </div>
-                                <small class="text-muted" style="font-size: 0.7rem;">Match Rate</small>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="position-absolute animate-notification d-none d-lg-block floating-card-2">
+                    <div class="card border-0 shadow-2xl rounded-4 p-3 hover-scale glass-card">
+                        <div class="d-flex align-items-center">
+                            <div class="position-relative me-3 profile-container">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=45&h=45&fit=crop&crop=face" 
+                                     class="rounded-circle profile-img" width="45" height="45">
+                                <span class="position-absolute bottom-0 end-0 bg-primary rounded-circle p-1 border border-white notification-badge">
+                                    <i class="fas fa-calendar-check text-white" style="font-size: 8px;"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold text-dark">Interview Scheduled</h6>
+                                <small class="text-muted">Alex • Google • Tomorrow 2PM</small>
+                                <div class="mt-1">
+                                    <span class="badge bg-primary bg-opacity-15 text-primary small rounded-pill">Remote</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-         <div class="floating-cards">
-                        <!-- Job Card 1 -->
-                        <div class="job-card floating-card-1">
-                            <div class="card shadow-lg border-0 rounded-3">
-                                <div class="card-body p-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="company-icon rounded-circle me-3">
-                                            <i class="fas fa-laptop fa-2x"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="card-title mb-0 fw-bold">Frontend Developer</h6>
-                                            <small class="text-muted">Tech Innovate</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-success-soft text-success">
-                                            <i class="fas fa-home me-1"></i>Remote
-                                        </span>
-                                        <small class="text-muted fw-bold">$80k - $120k</small>
-                                    </div>
-                                </div>
+                <div class="position-absolute animate-notification d-none d-lg-block floating-card-4">
+                    <div class="card border-0 shadow-2xl rounded-4 p-3 hover-scale glass-card">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-container bg-purple bg-opacity-20 rounded-3 me-3 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-handshake text-purple fa-lg"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold text-dark">Job Offer!</h6>
+                                <small class="text-muted">David got hired at Netflix</small>
+                                <small class="text-success d-block fw-semibold">
+                                    <i class="fas fa-circle pulse-green me-1" style="font-size: 6px;"></i>Just now
+                                </small>
                             </div>
                         </div>
-                        
-                        <!-- Job Card 2 -->
-                        <div class="job-card floating-card-2">
-                            <div class="card shadow-lg border-0 rounded-3">
-                                <div class="card-body p-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="company-icon rounded-circle me-3">
-                                            <i class="fas fa-chart-bar fa-2x"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="card-title mb-0 fw-bold">Data Analyst</h6>
-                                            <small class="text-muted">Analytics Pro</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary-soft text-primary">
-                                            <i class="fas fa-building me-1"></i>Full-time
-                                        </span>
-                                        <small class="text-muted fw-bold">$70k - $100k</small>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Central Stats Display -->
+                <div class="text-center main-card">
+                    <div class="card border-0 shadow-2xl rounded-4 p-4 glass-card-main">
+                        <div class="mb-4">
+                            <div class="main-icon bg-gradient-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-briefcase text-white fa-2x"></i>
                             </div>
+                            <h4 class="fw-bold text-white mb-1 glow-text">Job Opportunities</h4>
+                            <small class="text-white-50">
+                                <i class="fas fa-sync-alt me-1 rotate-icon"></i>Updated every hour
+                            </small>
                         </div>
                         
-                        <!-- Job Card 3 -->
-                        <div class="job-card floating-card-3">
-                            <div class="card shadow-lg border-0 rounded-3">
-                                <div class="card-body p-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="company-icon rounded-circle me-3">
-                                            <i class="fas fa-paint-brush fa-2x"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="card-title mb-0 fw-bold">UI/UX Designer</h6>
-                                            <small class="text-muted">Creative Studios</small>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-warning-soft text-warning">
-                                            <i class="fas fa-clock me-1"></i>Contract
-                                        </span>
-                                        <small class="text-muted fw-bold">$60k - $90k</small>
-                                    </div>
+                        <div class="row g-3 mb-4 stats-row">
+                            <div class="col-4">
+                                <div class="stat-item text-center p-2 rounded-3">
+                                    <h5 class="fw-bold mb-0 text-warning counter glow-number" data-target="10">0</h5>
+                                    <small class="text-white-50">Jobs</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item text-center p-2 rounded-3">
+                                    <h5 class="fw-bold mb-0 text-info counter glow-number" data-target="5">0</h5>
+                                    <small class="text-white-50">Companies</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item text-center p-2 rounded-3">
+                                    <h5 class="fw-bold mb-0 text-success counter glow-number" data-target="95">0</h5>
+                                    <small class="text-white-50">% Success</small>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Additional floating elements -->
-                        <div class="floating-element element-1">
-                            <div class="floating-icon bg-primary-soft text-primary rounded-circle p-3 shadow">
-                                <i class="fas fa-rocket fa-lg"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="floating-element element-2">
-                            <div class="floating-icon bg-success-soft text-success rounded-circle p-3 shadow">
-                                <i class="fas fa-trophy fa-lg"></i>
-                            </div>
+                        <div class="d-grid">
+                            <button class="btn btn-warning fw-bold rounded-pill py-3 hover-lift-lg explore-btn" onclick="openJobSearchDemo()">
+                                <i class="fas fa-search me-2"></i>Explore Jobs
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -160,61 +190,227 @@
     </div>
 </section>
 
-<!-- Features Section -->
-<section class="features-section py-5 bg-light">
+<!-- Enhanced Job Categories Section -->
+<section class="py-5 categories-section">
     <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-12">
-                <h2 class="display-5 fw-bold mb-3">Why Choose JobMatch?</h2>
-                <p class="lead text-muted">Discover what makes us the perfect platform for your career journey</p>
-            </div>
+        <div class="text-center mb-5">
+            <span class="badge bg-primary text-white px-4 py-3 rounded-pill mb-3 fs-6 shadow">
+                <i class="fas fa-briefcase me-2"></i>Popular Categories
+            </span>
+            <h2 class="display-6 fw-bold mb-3">Explore Jobs by Category</h2>
+            <p class="lead text-muted">Find opportunities in your field of expertise</p>
         </div>
         
         <div class="row g-4">
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card card h-100 border-0 shadow-sm rounded-3">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-image mb-3">
-                            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" 
-                                 alt="Smart Job Matching" class="img-fluid rounded-3 mb-2" style="height: 150px; width: 100%; object-fit: cover;">
+            <div class="col-lg-3 col-md-6">
+                <div class="category-card card border-0 shadow-lg h-100 text-center p-4 hover-lift-lg">
+                    <div class="category-icon bg-primary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-laptop-code text-primary fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Technology</h5>
+                    <p class="text-muted mb-2">2,500+ Jobs Available</p>
+                    <small class="text-primary fw-bold">Starting $60K+</small>
+                    <div class="category-overlay"></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="category-card card border-0 shadow-lg h-100 text-center p-4 hover-lift-lg">
+                    <div class="category-icon bg-success bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-chart-line text-success fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Finance</h5>
+                    <p class="text-muted mb-2">1,800+ Jobs Available</p>
+                    <small class="text-success fw-bold">Starting $55K+</small>
+                    <div class="category-overlay"></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="category-card card border-0 shadow-lg h-100 text-center p-4 hover-lift-lg">
+                    <div class="category-icon bg-warning bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-bullhorn text-warning fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Marketing</h5>
+                    <p class="text-muted mb-2">1,200+ Jobs Available</p>
+                    <small class="text-warning fw-bold">Starting $45K+</small>
+                    <div class="category-overlay"></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="category-card card border-0 shadow-lg h-100 text-center p-4 hover-lift-lg">
+                    <div class="category-icon bg-info bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-paint-brush text-info fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Design</h5>
+                    <p class="text-muted mb-2">900+ Jobs Available</p>
+                    <small class="text-info fw-bold">Starting $50K+</small>
+                    <div class="category-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Features Section -->
+<section class="py-5 features-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-success text-white px-4 py-3 rounded-pill mb-3 fs-6 shadow">
+                <i class="fas fa-star me-2"></i>Why JobMatch?
+            </span>
+            <h2 class="display-6 fw-bold mb-3">Your Career Success Partner</h2>
+            <p class="lead text-muted">Everything you need to land your dream job</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="feature-card card border-0 shadow-lg h-100 p-4 hover-lift-lg">
+                    <div class="text-center mb-4">
+                        <div class="feature-icon bg-primary rounded-4 p-4 d-inline-block mb-3">
+                            <i class="fas fa-brain text-white fa-2x"></i>
                         </div>
-                        <div class="feature-icon bg-primary-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-search-plus text-primary fa-lg"></i>
+                        <h4 class="fw-bold">AI Job Matching</h4>
+                    </div>
+                    <p class="text-muted mb-4">Smart algorithms match you with jobs that fit your skills, experience, and career goals perfectly.</p>
+                    <ul class="list-unstyled feature-list">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Personalized recommendations</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Skill-based matching</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Career path suggestions</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="feature-card card border-0 shadow-lg h-100 p-4 hover-lift-lg">
+                    <div class="text-center mb-4">
+                        <div class="feature-icon bg-success rounded-4 p-4 d-inline-block mb-3">
+                            <i class="fas fa-user-friends text-white fa-2x"></i>
                         </div>
-                        <h5 class="card-title fw-bold mb-3">Smart Job Matching</h5>
-                        <p class="card-text text-muted">Our AI-powered algorithm matches you with jobs that perfectly align with your skills and preferences.</p>
+                        <h4 class="fw-bold">Professional Network</h4>
+                    </div>
+                    <p class="text-muted mb-4">Connect with industry professionals, mentors, and recruiters to expand your career opportunities.</p>
+                    <ul class="list-unstyled feature-list">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Industry connections</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Mentorship programs</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional events</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="feature-card card border-0 shadow-lg h-100 p-4 hover-lift-lg">
+                    <div class="text-center mb-4">
+                        <div class="feature-icon bg-warning rounded-4 p-4 d-inline-block mb-3">
+                            <i class="fas fa-graduation-cap text-white fa-2x"></i>
+                        </div>
+                        <h4 class="fw-bold">Career Development</h4>
+                    </div>
+                    <p class="text-muted mb-4">Access courses, certifications, and resources to upskill and advance your career.</p>
+                    <ul class="list-unstyled feature-list">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Online courses</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Industry certifications</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Resume optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Success Stories Section -->
+<section class="py-5 bg-light success-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-info text-white px-4 py-3 rounded-pill mb-3 fs-6 shadow">
+                <i class="fas fa-quote-left me-2"></i>Success Stories
+            </span>
+            <h2 class="display-6 fw-bold mb-3">Career Transformations</h2>
+            <p class="lead text-muted">Real stories from professionals who found their dream jobs</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="testimonial-card card border-0 shadow-lg h-100 hover-lift-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="profile-wrapper me-3">
+                                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b647?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&q=80" 
+                                     class="rounded-circle profile-img" width="60" height="60">
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Sarah Johnson</h6>
+                                <small class="text-muted">Frontend Developer at Google</small>
+                            </div>
+                        </div>
+                        <div class="mb-3 text-warning stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-muted testimonial-text">"JobMatch membantu saya menemukan pekerjaan impian di Google. Algoritma AI-nya sangat akurat dalam matching skills dengan kebutuhan perusahaan."</p>
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-success rounded-pill">+150% Salary</span>
+                            <span class="badge bg-primary rounded-pill">Remote Work</span>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card card h-100 border-0 shadow-sm rounded-3">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-image mb-3">
-                            <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" 
-                                 alt="Trusted Companies" class="img-fluid rounded-3 mb-2" style="height: 150px; width: 100%; object-fit: cover;">
+            <div class="col-lg-4">
+                <div class="testimonial-card card border-0 shadow-lg h-100 hover-lift-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="profile-wrapper me-3">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&q=80" 
+                                     class="rounded-circle profile-img" width="60" height="60">
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Michael Chen</h6>
+                                <small class="text-muted">Data Scientist at Microsoft</small>
+                            </div>
                         </div>
-                        <div class="feature-icon bg-success-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-handshake text-success fa-lg"></i>
+                        <div class="mb-3 text-warning stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <h5 class="card-title fw-bold mb-3">Trusted Companies</h5>
-                        <p class="card-text text-muted">Connect with verified companies and startups that are actively looking for talented professionals.</p>
+                        <p class="text-muted testimonial-text">"Platform ini tidak hanya membantu saya mendapat pekerjaan, tapi juga memberikan guidance untuk pengembangan karir jangka panjang."</p>
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-success rounded-pill">+200% Growth</span>
+                            <span class="badge bg-info rounded-pill">Tech Giant</span>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card card h-100 border-0 shadow-sm rounded-3">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-image mb-3">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" 
-                                 alt="Career Growth" class="img-fluid rounded-3 mb-2" style="height: 150px; width: 100%; object-fit: cover;">
+            <div class="col-lg-4">
+                <div class="testimonial-card card border-0 shadow-lg h-100 hover-lift-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="profile-wrapper me-3">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&q=80" 
+                                     class="rounded-circle profile-img" width="60" height="60">
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Emily Rodriguez</h6>
+                                <small class="text-muted">Product Manager at Shopify</small>
+                            </div>
                         </div>
-                        <div class="feature-icon bg-warning-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-rocket text-warning fa-lg"></i>
+                        <div class="mb-3 text-warning stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <h5 class="card-title fw-bold mb-3">Career Growth</h5>
-                        <p class="card-text text-muted">Access resources, tips, and opportunities that help you advance your career to the next level.</p>
+                        <p class="text-muted testimonial-text">"Dari junior designer menjadi Product Manager dalam 2 tahun. JobMatch memberikan roadmap yang jelas untuk career transition."</p>
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-success rounded-pill">Career Switch</span>
+                            <span class="badge bg-warning rounded-pill">Leadership</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -222,125 +418,49 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section py-5 position-relative overflow-hidden bg-dark text-white">
-    <div class="cta-background"></div>
-    <div class="container position-relative">
+<!-- Enhanced CTA Section -->
+<section class="py-5 text-white position-relative overflow-hidden cta-section">
+    <div class="position-absolute w-100 h-100" style="z-index: 1;">
+        <div class="position-absolute w-100 h-100" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);"></div>
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+             class="w-100 h-100 object-fit-cover" alt="Success celebration">
+    </div>
+    
+    <div class="container position-relative" style="z-index: 10;">
         <div class="row align-items-center">
-            <div class="col-lg-7">
-                <div class="cta-content">
-                    <h2 class="display-6 fw-bold mb-3">✨ Ready to Find Your Dream Job? ✨</h2>
-                    <p class="fs-5 mb-4 opacity-90">Join thousands of professionals who have already found their perfect match.</p>
-                    <div class="d-flex flex-wrap gap-3">
-                        <a href="{{ route('login.applicant') }}" class="btn btn-light btn-lg px-4 py-3 rounded-pill shadow">
-                            <i class="fas fa-user-plus me-2"></i>Start Find A Job!
-                        </a>
-                        <a href="{{ route('CompanyHome') }}" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
-                            <i class="fas fa-building me-2"></i>For Companies
-                        </a>
-                    </div>
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark px-4 py-3 rounded-pill mb-3 fw-bold fs-6 shadow">
+                    <i class="fas fa-rocket me-2"></i>Start Your Journey
+                </span>
+                <h2 class="display-5 fw-bold mb-3 glow-text">Ready to Find Your Dream Job?</h2>
+                <p class="fs-5 mb-4 opacity-75">Join 50,000+ professionals who found their perfect career match. Your next opportunity is waiting.</p>
+                <div class="cta-buttons">
+                    <a href="{{ route('register.applicant') }}" class="btn btn-warning btn-lg me-3 mb-3 px-5 py-3 fw-bold rounded-pill shadow-lg hover-lift-lg animated-btn">
+                        <i class="fas fa-user-plus me-2"></i>Create Free Profile
+                        <span class="btn-shine"></span>
+                    </a>
+                    <button class="btn btn-outline-light btn-lg mb-3 px-5 py-3 fw-bold rounded-pill hover-lift-lg glass-btn" onclick="openJobSearchDemo()">
+                        <i class="fas fa-search me-2"></i>Browse Jobs
+                    </button>
                 </div>
             </div>
-            <div class="col-lg-5">
-                <div class="cta-icons-grid text-center">
-                    <!-- Icon Grid for Key Features -->
+            <div class="col-lg-4">
+                <div class="text-center cta-stats">
                     <div class="row g-3">
                         <div class="col-6">
-                            <div class="cta-icon-card bg-opacity-10 rounded-3 p-4 text-center">
-                                <i class="fas fa-users fa-2x text-light mb-2"></i>
-                                <p class="small mb-0">👥 50K+ Active Users</p>
+                            <div class="stat-card bg-white bg-opacity-15 rounded-4 p-4 hover-lift">
+                                <i class="fas fa-briefcase fa-2x mb-2 text-warning"></i>
+                                <h5 class="fw-bold mb-0 counter glow-number" data-target="10">0</h5>
+                                <small>K+ Jobs</small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="cta-icon-card bg-opacity-10 rounded-3 p-4 text-center">
-                                <i class="fas fa-briefcase fa-2x text-light mb-2"></i>
-                                <p class="small mb-0">📄 10K+ Job Listings</p>
+                            <div class="stat-card bg-white bg-opacity-15 rounded-4 p-4 hover-lift">
+                                <i class="fas fa-users fa-2x mb-2 text-info"></i>
+                                <h5 class="fw-bold mb-0">50K+</h5>
+                                <small>Happy Users</small>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="cta-icon-card bg-opacity-10 rounded-3 p-4 text-center">
-                                <i class="fas fa-handshake fa-2x text-light mb-2"></i>
-                                <p class="small mb-0">🌟 5K+ Success Stories</p>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="cta-icon-card bg-opacity-10 rounded-3 p-4 text-center">
-                                <i class="fas fa-star fa-2x text-light mb-2"></i>
-                                <p class="small mb-0">⭐ 4.9/5 Rating</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- Testimonials Section -->
-<section class="testimonials-section py-5 bg-light">
-    <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-12">
-                <h2 class="display-5 fw-bold mb-3">What Our Users Say</h2>
-                <p class="lead text-muted">Real stories from real people who found their dream jobs</p>
-            </div>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card card h-100 border-0 shadow-sm rounded-3">
-                    <div class="card-body p-4 text-center">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
-                             alt="Sarah Johnson" class="testimonial-avatar rounded-circle mb-3">
-                        <div class="testimonial-stars mb-3">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                        </div>
-                        <p class="card-text text-muted mb-3">"JobMatch helped me find my dream job in tech. The matching algorithm is incredibly accurate!"</p>
-                        <h6 class="card-title fw-bold mb-1">Sarah Johnson</h6>
-                        <small class="text-muted">Software Developer at TechCorp</small>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card card h-100 border-0 shadow-sm rounded-3">
-                    <div class="card-body p-4 text-center">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
-                             alt="Michael Chen" class="testimonial-avatar rounded-circle mb-3">
-                        <div class="testimonial-stars mb-3">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                        </div>
-                        <p class="card-text text-muted mb-3">"As a recruiter, JobMatch has revolutionized how we find qualified candidates. Highly recommended!"</p>
-                        <h6 class="card-title fw-bold mb-1">Michael Chen</h6>
-                        <small class="text-muted">HR Manager at InnovateLab</small>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card card h-100 border-0 shadow-sm rounded-3">
-                    <div class="card-body p-4 text-center">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
-                             alt="Emily Rodriguez" class="testimonial-avatar rounded-circle mb-3">
-                        <div class="testimonial-stars mb-3">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                        </div>
-                        <p class="card-text text-muted mb-3">"The platform is user-friendly and the job recommendations are spot on. Found my perfect role in weeks!"</p>
-                        <h6 class="card-title fw-bold mb-1">Emily Rodriguez</h6>
-                        <small class="text-muted">Marketing Director at CreativeHub</small>
                     </div>
                 </div>
             </div>
@@ -350,350 +470,123 @@
 @endsection
 
 @section('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
 <style>
     :root {
-        --primary-color: #4f46e5;
-        --primary-light: #f0f0ff;
-        --success-color: #10b981;
-        --success-light: #f0fdf4;
-        --warning-color: #f59e0b;
-        --warning-light: #fffbeb;
-        --info-color: #06b6d4;
-        --info-light: #f0fdfa;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        --glow-color: rgba(255, 255, 255, 0.5);
     }
 
-    body {
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        line-height: 1.6;
-    }
-
-    .hero-section {
-        background: linear-gradient(135deg, rgba(79, 70, 229, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%),
-                    url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.1);
-        z-index: 1;
-    }
-
-    .hero-section .container {
-        position: relative;
-        z-index: 2;
-    }
-
-    .main-image {
-        max-height: 250px;
-        object-fit: cover;
-        width: 100%;
-        max-width: 350px;
-    }
-
-    .hero-image-section {
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    .stats-overlay {
-        bottom: 10px;
-        right: 10px;
-        min-width: 100px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-    }
-
-    .company-avatar {
-        width: 30px;
-        height: 30px;
+    /* Background Images */
+    .object-fit-cover {
         object-fit: cover;
     }
 
-    .floating-element {
+    /* Enhanced Particles */
+    .particle {
         position: absolute;
-        animation: float 4s ease-in-out infinite;
+        border-radius: 50%;
+        pointer-events: none;
     }
 
-    .element-1 {
-        top: 60px;
-        left: 20px;
-        animation-delay: 1s;
-    }
+    .particle-1 { width: 100px; height: 100px; top: 15%; left: 5%; animation: float 20s ease-in-out infinite; }
+    .particle-2 { width: 150px; height: 150px; top: 60%; right: 8%; animation: float 25s ease-in-out infinite reverse; }
+    .particle-3 { width: 80px; height: 80px; top: 35%; right: 25%; animation: float 22s ease-in-out infinite; }
+    .particle-4 { width: 120px; height: 120px; bottom: 25%; left: 15%; animation: float 18s ease-in-out infinite reverse; }
+    .particle-5 { width: 60px; height: 60px; top: 25%; left: 30%; animation: float 24s ease-in-out infinite; }
+    .particle-6 { width: 90px; height: 90px; bottom: 40%; right: 35%; animation: float 21s ease-in-out infinite reverse; }
+    .particle-7 { width: 70px; height: 70px; top: 70%; left: 70%; animation: float 19s ease-in-out infinite; }
+    .particle-8 { width: 110px; height: 110px; bottom: 60%; left: 40%; animation: float 23s ease-in-out infinite reverse; }
 
-    .element-2 {
-        bottom: 100px;
-        left: 60px;
-        animation-delay: 3s;
-    }
-
-    .floating-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .job-card {
+    /* Geometric Shapes */
+    .geometric-shape {
         position: absolute;
-        width: 220px;
-        animation: float 6s ease-in-out infinite;
-    }
-
-    .floating-card-1 {
-        top: 40px;
-        right: 60px;
-        animation-delay: 0s;
-    }
-
-    .floating-card-2 {
-        top: 160px;
-        right: 180px;
-        animation-delay: 2s;
-    }
-
-    .floating-card-3 {
-        top: 280px;
-        right: 30px;
-        animation-delay: 4s;
-    }
-
-    .feature-icon {
-        width: 60px;
-        height: 60px;
-    }
-
-    .cta-icon-card {
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-    }
-
-    .cta-icon-card:hover {
-        background: rgba(255, 255, 255, 0.2) !important;
-        transform: translateY(-5px);
-    }
-
-    .cta-section {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #06b6d4 100%);
-    }
-
-    .cta-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-        background-size: cover;
-        background-position: center;
+        pointer-events: none;
         opacity: 0.1;
     }
 
-    .testimonial-avatar {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
+    .shape-1 {
+        width: 200px;
+        height: 200px;
+        border: 2px solid #fff;
+        border-radius: 30px;
+        top: 10%;
+        right: 20%;
+        animation: rotate 30s linear infinite;
     }
 
-    .testimonial-stars {
-        font-size: 1.2rem;
+    .shape-2 {
+        width: 150px;
+        height: 150px;
+        border: 2px solid #fbbf24;
+        border-radius: 50%;
+        bottom: 20%;
+        left: 10%;
+        animation: rotate 25s linear infinite reverse;
     }
 
-    .feature-image img {
-        transition: transform 0.3s ease;
+    .shape-3 {
+        width: 100px;
+        height: 100px;
+        border: 2px solid #06b6d4;
+        transform: rotate(45deg);
+        top: 50%;
+        left: 80%;
+        animation: float 20s ease-in-out infinite;
     }
 
-    .feature-card:hover .feature-image img {
-        transform: scale(1.05);
-    }
-
-    .text-gradient {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #06b6d4 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .bg-primary-soft {
-        background-color: var(--primary-light) !important;
-    }
-
-    .bg-success-soft {
-        background-color: var(--success-light) !important;
-    }
-
-    .bg-warning-soft {
-        background-color: var(--warning-light) !important;
-    }
-
-    .bg-info-soft {
-        background-color: var(--info-light) !important;
-    }
-
-    .text-primary { color: var(--primary-color) !important; }
-    .text-success { color: var(--success-color) !important; }
-    .text-warning { color: var(--warning-color) !important; }
-    .text-info { color: var(--info-color) !important; }
-
-    .hero-title {
-        line-height: 1.1;
-        letter-spacing: -0.02em;
-    }
-
-    .btn {
-        font-weight: 600;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .floating-cards {
-        position: relative;
-        height: 500px;
-    }
-
-    .job-card {
-        position: absolute;
-        width: 280px;
-        animation: float 6s ease-in-out infinite;
-    }
-
-    .floating-card-1 {
-        top: 50px;
-        right: 100px;
-        animation-delay: 0s;
-    }
-
-    .floating-card-2 {
-        top: 200px;
-        right: 250px;
-        animation-delay: 2s;
-    }
-
-    .floating-card-3 {
-        top: 350px;
-        right: 50px;
-        animation-delay: 4s;
-    }
-
+    /* Animations */
     @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(5deg); }
+        66% { transform: translateY(-10px) rotate(-5deg); }
     }
 
-    .company-logo {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
 
-    .feature-icon {
-        width: 80px;
-        height: 80px;
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 
-    .feature-card {
-        transition: all 0.3s ease;
+    @keyframes shine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
     }
 
-    .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    @keyframes glow {
+        0%, 100% { text-shadow: 0 0 20px var(--glow-color); }
+        50% { text-shadow: 0 0 30px var(--glow-color), 0 0 40px var(--glow-color); }
     }
 
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #06b6d4 100%);
+    /* Enhanced Typography */
+    .glow-text {
+        animation: glow 3s ease-in-out infinite;
     }
 
-    .cta-card {
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+    .glow-number {
+        animation: glow 2s ease-in-out infinite;
     }
 
-    .stat-item {
-        text-align: center;
-    }
-
-    .stat-number {
-        font-size: 2rem;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 3rem;
-        }
-        
-        .floating-cards,
-        .floating-element {
-            display: none;
-        }
-        
-        .main-hero-image {
-            margin-bottom: 2rem;
-        }
-        
-        .hero-buttons {
-            justify-content: center;
-        }
-        
-        .hero-stats {
-            justify-content: center;
-            text-align: center;
-        }
-        
-        .cta-content {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .feature-image {
-            margin-bottom: 1rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        
-        .hero-section {
-            padding: 2rem 0;
-        }
-        
-        .btn-lg {
-            font-size: 1rem;
-            padding: 0.75rem 1.5rem;
-        }
-    }
-
-    /* Additional animations */
-    .hero-content {
+    .animated-title {
         animation: fadeInUp 1s ease-out;
     }
 
-    .feature-card {
-        animation: fadeInUp 1s ease-out;
+    .animated-description {
+        animation: fadeInUp 1s ease-out 0.3s both;
     }
 
-    .feature-card:nth-child(1) { animation-delay: 0.2s; }
-    .feature-card:nth-child(2) { animation-delay: 0.4s; }
-    .feature-card:nth-child(3) { animation-delay: 0.6s; }
+    .animated-badge {
+        animation: fadeInDown 1s ease-out 0.1s both;
+    }
 
     @keyframes fadeInUp {
         from {
@@ -705,5 +598,614 @@
             transform: translateY(0);
         }
     }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Enhanced Buttons */
+    .animated-btn {
+        position: relative;
+        overflow: hidden;
+        transform: perspective(1px) translateZ(0);
+        transition: all 0.3s ease;
+    }
+
+    .btn-shine {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shine 2s infinite;
+    }
+
+    .glass-btn {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Enhanced Cards */
+    .glass-card {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .glass-card-main {
+        backdrop-filter: blur(20px);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+    }
+
+    .shadow-2xl {
+        box-shadow: var(--shadow-xl);
+    }
+
+    /* Enhanced Hover Effects */
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .hover-lift-lg {
+        transition: all 0.4s ease;
+    }
+
+    .hover-lift-lg:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+
+    .hover-scale {
+        transition: all 0.3s ease;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+    /* Enhanced Icons */
+    .pulse-icon {
+        animation: pulse 2s infinite;
+    }
+
+    .rotate-icon {
+        animation: rotate 2s linear infinite;
+    }
+
+    .benefit-icon, .icon-container, .icon-large {
+        width: 60px;
+        height: 60px;
+        transition: all 0.3s ease;
+    }
+
+    .benefit-icon:hover, .icon-container:hover {
+        transform: scale(1.1);
+    }
+
+    .main-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Floating Cards Positioning */
+    .floating-card-1 { top: 8%; left: -15%; animation: floatNotification 10s ease-in-out infinite; }
+    .floating-card-2 { top: 25%; right: -18%; animation: floatNotification 10s ease-in-out infinite 3s; }
+    .floating-card-3 { bottom: 30%; left: -12%; animation: floatNotification 10s ease-in-out infinite 6s; }
+    .floating-card-4 { bottom: 8%; right: -10%; animation: floatNotification 10s ease-in-out infinite 12s; }
+    .floating-card-5 { top: 60%; right: -15%; animation: floatNotification 10s ease-in-out infinite 9s; }
+
+    @keyframes floatNotification {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+
+    /* Enhanced Category Cards */
+    .category-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .category-card:hover {
+        transform: translateY(-15px);
+    }
+
+    .category-overlay {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .category-card:hover .category-overlay {
+        left: 100%;
+    }
+
+    .category-icon {
+        width: 90px;
+        height: 90px;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .category-icon {
+        transform: scale(1.1);
+    }
+
+    /* Enhanced Feature Cards */
+    .feature-card {
+        transition: all 0.4s ease;
+        border-radius: 16px;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon {
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.05);
+    }
+
+    /* Enhanced Testimonial Cards */
+    .testimonial-card {
+        transition: all 0.4s ease;
+        border-radius: 16px;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .profile-wrapper {
+        position: relative;
+    }
+
+    .profile-img {
+        border: 3px solid #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover .profile-img {
+        transform: scale(1.05);
+    }
+
+    .stars {
+        font-size: 1.2rem;
+    }
+
+    /* Enhanced Progress and Indicators */
+    .progress-animated {
+        animation: progressFill 2s ease-in-out;
+    }
+
+    @keyframes progressFill {
+        from { width: 0%; }
+        to { width: 100%; }
+    }
+
+    .company-dot {
+        width: 8px;
+        height: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .pulse-dot {
+        animation: pulse 2s infinite;
+    }
+
+    .pulse-green {
+        color: #10b981;
+        animation: pulse 1s infinite;
+    }
+
+    .notification-badge {
+        animation: pulse 2s infinite;
+    }
+
+    /* Background Patterns */
+    .bg-purple {
+        background-color: var(--bs-purple, #6f42c1) !important;
+    }
+
+    .text-purple {
+        color: var(--bs-purple, #6f42c1) !important;
+    }
+
+    .bg-gradient-primary {
+        background: var(--primary-gradient) !important;
+    }
+
+    /* Section Specific Styles */
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .categories-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .features-section {
+        background: #ffffff;
+    }
+
+    .success-section {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    .cta-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Stats Enhancement */
+    .stats-row .stat-item {
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .stats-row .stat-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+
+    .stat-card {
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-card:hover {
+        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .display-1 {
+            font-size: 3rem !important;
+        }
+        
+        .floating-card-1, .floating-card-2, .floating-card-3, .floating-card-4, .floating-card-5 {
+            display: none !important;
+        }
+        
+        .particle {
+            display: none;
+        }
+        
+        .geometric-shape {
+            display: none;
+        }
+        
+        .main-card {
+            margin-top: 2rem;
+        }
+    }
+
+    /* Additional Enhancements */
+    .badge {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .badge::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shine 3s infinite;
+    }
+
+    .counter {
+        transition: all 0.3s ease;
+        color: inherit;
+    }
+
+    /* Feature List Enhancement */
+    .feature-list li {
+        transition: all 0.3s ease;
+        padding: 0.25rem 0;
+    }
+
+    .feature-list li:hover {
+        transform: translateX(5px);
+    }
+
+    /* Button Group Enhancement */
+    .button-group .btn {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-buttons .btn {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Benefits Grid Enhancement */
+    .benefits-grid .benefit-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .benefits-grid .benefit-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-5px);
+    }
 </style>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Job Search Demo Function
+    function openJobSearchDemo() {
+        const modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.id = 'jobSearchModal';
+        modal.setAttribute('tabindex', '-1');
+        
+        modal.innerHTML = `
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow-2xl">
+                    <div class="modal-header bg-primary text-white rounded-top-4">
+                        <h5 class="modal-title fw-bold">
+                            <i class="fas fa-search me-2"></i>Browse Available Jobs
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light rounded-3 hover-lift">
+                                    <div class="card-body p-3">
+                                        <h6 class="fw-bold mb-2">🚀 Frontend Developer</h6>
+                                        <small class="text-muted">PT Tech Innovate • Remote</small>
+                                        <div class="mt-2">
+                                            <span class="badge bg-success rounded-pill">$80K</span>
+                                            <span class="badge bg-primary rounded-pill">Remote</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light rounded-3 hover-lift">
+                                    <div class="card-body p-3">
+                                        <h6 class="fw-bold mb-2">📊 Data Scientist</h6>
+                                        <small class="text-muted">Microsoft • Seattle</small>
+                                        <div class="mt-2">
+                                            <span class="badge bg-success rounded-pill">$120K</span>
+                                            <span class="badge bg-info rounded-pill">Full-time</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light rounded-3 hover-lift">
+                                    <div class="card-body p-3">
+                                        <h6 class="fw-bold mb-2">🎨 UI/UX Designer</h6>
+                                        <small class="text-muted">Creative Studio • Hybrid</small>
+                                        <div class="mt-2">
+                                            <span class="badge bg-success rounded-pill">$70K</span>
+                                            <span class="badge bg-warning rounded-pill">Hybrid</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light rounded-3 hover-lift">
+                                    <div class="card-body p-3">
+                                        <h6 class="fw-bold mb-2">⚡ Full Stack Developer</h6>
+                                        <small class="text-muted">StartupTech • On-site</small>
+                                        <div class="mt-2">
+                                            <span class="badge bg-success rounded-pill">$90K</span>
+                                            <span class="badge bg-danger rounded-pill">On-site</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-briefcase text-primary fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">Ready to start your job search?</h5>
+                            <p class="text-muted mb-3">Join thousands of professionals who found their dream jobs with us</p>
+                            <a href="{{ route('register.applicant') }}" class="btn btn-primary btn-lg rounded-pill px-4">
+                                <i class="fas fa-user-plus me-2"></i>Create Free Account
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+        
+        modal.addEventListener('hidden.bs.modal', function () {
+            document.body.removeChild(modal);
+        });
+    }
+
+    window.openJobSearchDemo = openJobSearchDemo;
+
+    // Enhanced Counter animation
+    function animateCounter(element, target) {
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+                element.classList.add('glow-number');
+            }
+            element.textContent = Math.floor(current);
+        }, 40);
+    }
+
+    // Initialize counters with intersection observer
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                const target = parseInt(entry.target.getAttribute('data-target'));
+                animateCounter(entry.target, target);
+                entry.target.classList.add('counted');
+            }
+        });
+    });
+
+    document.querySelectorAll('.counter').forEach(counter => {
+        counterObserver.observe(counter);
+    });
+
+    // Enhanced notification interactions
+    document.querySelectorAll('.animate-notification').forEach((notification, index) => {
+        notification.addEventListener('click', function() {
+            const title = this.querySelector('h6')?.textContent || 'Notification';
+            const subtitle = this.querySelector('.text-muted')?.textContent || '';
+            
+            // Create enhanced toast
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1055';
+            
+            toast.innerHTML = `
+                <div class="toast show border-0 shadow-2xl rounded-4" role="alert">
+                    <div class="toast-header bg-primary text-white border-0 rounded-top-4">
+                        <i class="fas fa-bell text-warning me-2"></i>
+                        <strong class="me-auto">${title}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body p-3">
+                        ${subtitle}
+                        <div class="mt-2">
+                            <small class="text-success">
+                                <i class="fas fa-check-circle me-1"></i>Notification viewed
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Add animation class
+            setTimeout(() => {
+                toast.querySelector('.toast').classList.add('hover-lift');
+            }, 100);
+            
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 5000);
+        });
+
+        // Add hover glow effect
+        notification.addEventListener('mouseenter', function() {
+            this.style.filter = 'drop-shadow(0 0 20px rgba(59, 130, 246, 0.5))';
+        });
+
+        notification.addEventListener('mouseleave', function() {
+            this.style.filter = 'none';
+        });
+    });
+
+    // Parallax effect for background elements
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.particle');
+        
+        parallaxElements.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            const yPos = -(scrolled * speed);
+            element.style.transform = `translateY(${yPos}px)`;
+        });
+    });
+
+    // Add scroll reveal animations
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+
+    // Apply reveal animation to sections
+    document.querySelectorAll('.category-card, .feature-card, .testimonial-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease';
+        revealObserver.observe(card);
+    });
+
+    // Enhanced button interactions
+    document.querySelectorAll('.animated-btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Dynamic background particles
+    function createDynamicParticle() {
+        const particle = document.createElement('div');
+        particle.className = 'position-absolute rounded-circle opacity-10';
+        particle.style.width = Math.random() * 20 + 10 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = '100%';
+        particle.style.backgroundColor = ['#fbbf24', '#06b6d4', '#10b981', '#3b82f6'][Math.floor(Math.random() * 4)];
+        particle.style.animation = `float ${Math.random() * 10 + 15}s linear infinite`;
+        particle.style.zIndex = '1';
+
+        document.querySelector('.hero-section').appendChild(particle);
+
+        setTimeout(() => {
+            particle.remove();
+        }, 20000);
+    }
+
+    // Create particles periodically
+    setInterval(createDynamicParticle, 3000);
+
+    console.log('🚀 Enhanced JobMatch Applicant Homepage loaded successfully!');
+});
+</script>
 @endsection

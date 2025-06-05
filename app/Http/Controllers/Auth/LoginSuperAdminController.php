@@ -8,7 +8,7 @@ class LoginSuperAdminController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.loginSuperAdmin');
+        return view('Auth.loginSuperAdmin');
     }
     
     public function login(Request $request)
