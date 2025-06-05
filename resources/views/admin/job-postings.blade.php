@@ -188,31 +188,10 @@
     </div>
 </div>
 
-<!-- Modal Approve/Reject -->
-<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="statusModalLabel">Konfirmasi Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="statusModalBody">
-                <!-- Content will be filled by JavaScript -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="confirmStatus">Konfirmasi</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let jobToDelete = null;
-    let jobToUpdate = null;
-    let statusAction = null;
     
     // CSRF Token setup for AJAX
     $.ajaxSetup({
@@ -233,36 +212,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const jobTitle = $(this).data('job-title');
         $('#deleteJobTitle').text(jobTitle);
         $('#deleteModal').modal('show');
-    });
-    
-    // Handle Approve Job
-    $(document).on('click', '.approve-job', function() {
-        jobToUpdate = $(this).data('job-id');
-        statusAction = 'approve';
-        $('#statusModalLabel').text('Approve Lowongan');
-        $('#statusModalBody').html('<p>Apakah Anda yakin ingin menyetujui lowongan ini?</p>');
-        $('#confirmStatus').removeClass('btn-danger').addClass('btn-success').text('Approve');
-        $('#statusModal').modal('show');
-    });
-    
-    // Handle Reject Job
-    $(document).on('click', '.reject-job', function() {
-        jobToUpdate = $(this).data('job-id');
-        statusAction = 'reject';
-        $('#statusModalLabel').text('Reject Lowongan');
-        $('#statusModalBody').html('<p>Apakah Anda yakin ingin menolak lowongan ini?</p>');
-        $('#confirmStatus').removeClass('btn-success').addClass('btn-danger').text('Reject');
-        $('#statusModal').modal('show');
-    });
-    
-    // Handle Reactivate Job
-    $(document).on('click', '.reactivate-job', function() {
-        jobToUpdate = $(this).data('job-id');
-        statusAction = 'reactivate';
-        $('#statusModalLabel').text('Reaktivasi Lowongan');
-        $('#statusModalBody').html('<p>Apakah Anda yakin ingin mengaktifkan kembali lowongan ini?</p>');
-        $('#confirmStatus').removeClass('btn-danger').addClass('btn-primary').text('Reaktivasi');
-        $('#statusModal').modal('show');
     });
     
     // Confirm delete
@@ -288,37 +237,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 complete: function() {
                     jobToDelete = null;
-                }
-            });
-        }
-    });
-    
-    // Confirm status change
-    $('#confirmStatus').click(function() {
-        if (jobToUpdate && statusAction) {
-            $.ajax({
-                url: `/admin/jobs/${jobToUpdate}/status`,
-                method: 'PATCH',
-                data: {
-                    action: statusAction
-                },
-                success: function(response) {
-                    if (response.success) {
-                        updateJobRowStatus(jobToUpdate, response.newStatus);
-                        $('#statusModal').modal('hide');
-                        showAlert('success', response.message);
-                        updateStatistics();
-                    } else {
-                        showAlert('error', response.message);
-                    }
-                },
-                error: function(xhr) {
-                    const response = xhr.responseJSON;
-                    showAlert('error', response?.message || 'Gagal mengupdate status lowongan');
-                },
-                complete: function() {
-                    jobToUpdate = null;
-                    statusAction = null;
                 }
             });
         }
@@ -414,71 +332,6 @@ function showJobDetail(jobId) {
             $('#detailModalBody').html('<div class="alert alert-danger">Terjadi kesalahan saat memuat data</div>');
         }
     });
-}
-
-// Update job row status
-function updateJobRowStatus(jobId, newStatus) {
-    const row = $(`#job-row-${jobId}`);
-    const statusCell = row.find('.job-status');
-    const actionCell = row.find('.job-actions');
-    
-    // Update status badge
-    let statusBadge = '';
-    let actionButtons = '';
-    
-    switch(newStatus) {
-        case 'active':
-            statusBadge = '<span class="badge bg-success">Aktif</span>';
-            actionButtons = `
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-info detail-job" data-job-id="${jobId}" title="Detail">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-warning edit-job" data-job-id="${jobId}" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger delete-job" data-job-id="${jobId}" data-job-title="" title="Hapus">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            break;
-        case 'rejected':
-            statusBadge = '<span class="badge bg-danger">Ditolak</span>';
-            actionButtons = `
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-info detail-job" data-job-id="${jobId}" title="Detail">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-success approve-job" data-job-id="${jobId}" title="Approve">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger delete-job" data-job-id="${jobId}" data-job-title="" title="Hapus">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            break;
-        case 'pending':
-            statusBadge = '<span class="badge bg-warning">Menunggu</span>';
-            actionButtons = `
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-info detail-job" data-job-id="${jobId}" title="Detail">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-success approve-job" data-job-id="${jobId}" title="Approve">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger reject-job" data-job-id="${jobId}" title="Reject">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            break;
-    }
-    
-    statusCell.html(statusBadge);
-    actionCell.html(actionButtons);
 }
 
 // Update statistics

@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a href="#" onclick="showUsersByRole('all'); return false;" 
+                    <a href="#" onclick="showUsersByRole('all', 1); return false;" 
                        class="btn btn-primary btn-sm">
                         <i class="fas fa-eye me-1"></i>Lihat Detail
                     </a>
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a href="#" onclick="showUsersByRole('applicant'); return false;" 
+                    <a href="#" onclick="showUsersByRole('applicant', 1); return false;" 
                        class="btn btn-success btn-sm">
                         <i class="fas fa-eye me-1"></i>Lihat Detail
                     </a>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a href="#" onclick="showUsersByRole('company'); return false;" 
+                    <a href="#" onclick="showUsersByRole('company', 1); return false;" 
                        class="btn btn-warning btn-sm">
                         <i class="fas fa-eye me-1"></i>Lihat Detail
                     </a>
@@ -107,7 +107,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a href="#" onclick="showUsersByRole('admin'); return false;" 
+                    <a href="#" onclick="showUsersByRole('admin', 1); return false;" 
                        class="btn btn-info btn-sm">
                         <i class="fas fa-eye me-1"></i>Lihat Detail
                     </a>
@@ -134,25 +134,26 @@
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                         aria-labelledby="dropdownMenuLink">
                         <div class="dropdown-header">Aksi:</div>
-                        <a class="dropdown-item" href="#" onclick="showUsersByRole('all')">Lihat Semua</a>
+                        <a class="dropdown-item" href="#" onclick="showUsersByRole('all', 1)">Lihat Semua</a>
                         <a class="dropdown-item" href="#" onclick="location.reload()">Refresh Data</a>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
-                        <thead class="table-dark">
+                <!-- Table Container with Custom Height and Scroll -->
+                <div id="recentUsersContainer" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                    <table class="table table-bordered table-hover" id="usersTable" width="100%" cellspacing="0">
+                        <thead class="table-dark sticky-top">
                             <tr>
-                                <th>ID</th>
-                                <th>Nama</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Tanggal Daftar</th>
-                                <th>Aksi</th>
+                                <th style="min-width: 60px;">ID</th>
+                                <th style="min-width: 200px;">Nama</th>
+                                <th style="min-width: 200px;">Email</th>
+                                <th style="min-width: 120px;">Role</th>
+                                <th style="min-width: 140px;">Tanggal Daftar</th>
+                                <th style="min-width: 100px;">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="usersTableBody">
                             @forelse($recentUsers as $user)
                             <tr id="user-row-{{ $user->id }}">
                                 <td class="text-center font-weight-bold">#{{ $user->id }}</td>
@@ -170,7 +171,7 @@
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    <span class="badge badge-{{ $user->role == 'applicant' ? 'success' : ($user->role == 'company' ? 'warning' : 'primary') }}">
+                                    <span class="badge" style="background-color: transparent; color: black;">
                                         <i class="fas fa-{{ $user->role == 'applicant' ? 'user-tie' : ($user->role == 'company' ? 'building' : 'user-shield') }} me-1"></i>
                                         {{ ucfirst($user->role) }}
                                     </span>
@@ -226,13 +227,13 @@
                 </div>
                 <div class="mt-4 text-center small">
                     <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Pelamar
+                        <i class="fas fa-circle text-success"></i> Pelamar ({{ $totalApplicants }})
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-warning"></i> Perusahaan
+                        <i class="fas fa-circle text-warning"></i> Perusahaan ({{ $totalCompanies }})
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> Admin
+                        <i class="fas fa-circle text-primary"></i> Admin ({{ $totalUsers - $totalApplicants - $totalCompanies }})
                     </span>
                 </div>
             </div>
@@ -252,19 +253,19 @@
             <div class="card-body">
                 <div class="row text-center">
                     <div class="col-md-3 mb-3">
-                        <button class="btn btn-outline-primary btn-lg w-100" onclick="showUsersByRole('all')">
+                        <button class="btn btn-outline-primary btn-lg w-100" onclick="showUsersByRole('all', 1)">
                             <i class="fas fa-users fa-2x mb-2"></i><br>
                             <span>Kelola Semua User</span>
                         </button>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <button class="btn btn-outline-success btn-lg w-100" onclick="showUsersByRole('applicant')">
+                        <button class="btn btn-outline-success btn-lg w-100" onclick="showUsersByRole('applicant', 1)">
                             <i class="fas fa-user-tie fa-2x mb-2"></i><br>
                             <span>Kelola Pelamar</span>
                         </button>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <button class="btn btn-outline-warning btn-lg w-100" onclick="showUsersByRole('company')">
+                        <button class="btn btn-outline-warning btn-lg w-100" onclick="showUsersByRole('company', 1)">
                             <i class="fas fa-building fa-2x mb-2"></i><br>
                             <span>Kelola Perusahaan</span>
                         </button>
@@ -457,6 +458,59 @@
     .font-weight-bold {
         font-weight: 700 !important;
     }
+    
+    /* Custom scrollbar untuk tabel */
+    #recentUsersContainer::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    #recentUsersContainer::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    #recentUsersContainer::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+    
+    #recentUsersContainer::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    
+    /* Sticky header */
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    /* Table container improvements */
+    #recentUsersContainer {
+        border: 1px solid #e3e6f0;
+        border-radius: 0.25rem;
+    }
+    
+    .table-responsive {
+        overflow: visible;
+    }
+    
+    /* Badge styling */
+    .badge-success {
+        background-color: #1cc88a !important;
+        color: white !important;
+    }
+    
+    .badge-warning {
+        background-color: #f6c23e !important;
+        color: white !important;
+    }
+    
+    .badge-primary {
+        background-color: #4e73df !important;
+        color: white !important;
+    }
 </style>
 @endpush
 
@@ -468,6 +522,11 @@
     var totalApplicants = {{ $totalApplicants }};
     var totalCompanies = {{ $totalCompanies }};
     var adminCount = {{ $totalUsers - $totalApplicants - $totalCompanies }};
+    
+    // Pagination variables
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMoreUsers = true;
     
     // CSRF Token untuk Ajax
     $.ajaxSetup({
@@ -561,6 +620,104 @@
         });
     }
     
+    // Load more users function for main table
+    function loadMoreUsers() {
+        if (isLoading || !hasMoreUsers) return;
+        
+        isLoading = true;
+        currentPage++;
+        
+        $('#loadMoreBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Memuat...');
+        
+        $.ajax({
+            url: '/admin/users/recent',
+            type: 'GET',
+            data: {
+                page: currentPage,
+                per_page: 10
+            },
+            success: function(response) {
+                if (response.success && response.data.length > 0) {
+                    const users = response.data;
+                    let newRows = '';
+                    
+                    users.forEach(user => {
+                        const roleClass = user.role === 'applicant' ? 'success' : (user.role === 'company' ? 'warning' : 'primary');
+                        const roleIcon = user.role === 'applicant' ? 'user-tie' : (user.role === 'company' ? 'building' : 'user-shield');
+                        const createdAt = new Date(user.created_at);
+                        
+                        newRows += `
+                            <tr id="user-row-${user.id}">
+                                <td class="text-center font-weight-bold">#${user.id}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-3">
+                                            <div class="avatar-initial bg-${roleClass} rounded-circle">
+                                                ${user.name.charAt(0).toUpperCase()}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="font-weight-bold">${user.name}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${user.email}</td>
+                                <td>
+                                    <span class="badge badge-${roleClass}">
+                                        <i class="fas fa-${roleIcon} me-1"></i>
+                                        ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">${createdAt.toLocaleDateString('id-ID', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}</small><br>
+                                    <small class="text-muted">${createdAt.toLocaleTimeString('id-ID', {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-info btn-sm detail-user" 
+                                                data-user-id="${user.id}" title="Lihat Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm delete-user" 
+                                                data-user-id="${user.id}" 
+                                                data-user-name="${user.name}" title="Hapus User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    $('#usersTableBody').append(newRows);
+                    
+                    // Check if has more
+                    if (response.pagination && response.pagination.current_page >= response.pagination.last_page) {
+                        hasMoreUsers = false;
+                        $('#loadMoreBtn').hide();
+                    }
+                } else {
+                    hasMoreUsers = false;
+                    $('#loadMoreBtn').hide();
+                }
+            },
+            error: function() {
+                showAlert('error', 'Gagal memuat data pengguna');
+            },
+            complete: function() {
+                isLoading = false;
+                $('#loadMoreBtn').prop('disabled', false).html('<i class="fas fa-plus-circle me-1"></i>Muat Lebih Banyak');
+            }
+        });
+    }
+    
     function showUserDetail(userId) {
         $('#detailModal').modal('show');
         
@@ -596,7 +753,7 @@
                                         ${user.applicant_data.address ? `<p><strong>Alamat:</strong> ${user.applicant_data.address}</p>` : ''}
                                         ${user.applicant_data.education ? `<p><strong>Pendidikan:</strong> ${user.applicant_data.education}</p>` : ''}
                                         ${user.applicant_data.experience ? `<p><strong>Pengalaman:</strong> ${user.applicant_data.experience}</p>` : ''}
-                                        ${Object.keys(user.applicant_data).length === 1 ? '<p class="text-muted mb-0">Belum ada data tambahan</p>' : ''}
+                                        ${!user.applicant_data || Object.keys(user.applicant_data).length === 0 ? '<p class="text-muted mb-0">Belum ada data tambahan</p>' : ''}
                                     </div>
                                 </div>
                             </div>
@@ -614,7 +771,7 @@
                                         ${user.company_data.address ? `<p><strong>Alamat:</strong> ${user.company_data.address}</p>` : ''}
                                         ${user.company_data.phone ? `<p><strong>Telepon:</strong> ${user.company_data.phone}</p>` : ''}
                                         ${user.company_data.website ? `<p><strong>Website:</strong> <a href="${user.company_data.website}" target="_blank" class="text-decoration-none">${user.company_data.website}</a></p>` : ''}
-                                        ${Object.keys(user.company_data).length === 1 ? '<p class="text-muted mb-0">Belum ada data tambahan</p>' : ''}
+                                        ${!user.company_data || Object.keys(user.company_data).length === 0 ? '<p class="text-muted mb-0">Belum ada data tambahan</p>' : ''}
                                     </div>
                                 </div>
                             </div>
@@ -718,7 +875,8 @@
         });
     }
     
-    window.showUsersByRole = function(role) {
+    // Optimized showUsersByRole with pagination
+    window.showUsersByRole = function(role, page = 1) {
         let title = '';
         let icon = '';
         switch(role) {
@@ -746,25 +904,32 @@
         $('#usersListModalLabel').html(`<i class="fas fa-${icon} me-2"></i>${title}`);
         $('#usersListModal').modal('show');
         
-        // Reset modal content
-        $('#usersListModalBody').html(`
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                    <span class="visually-hidden">Loading...</span>
+        // Show loading only if it's the first page
+        if (page === 1) {
+            $('#usersListModalBody').html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Memuat daftar users...</p>
                 </div>
-                <p class="mt-3 text-muted">Memuat daftar users...</p>
-            </div>
-        `);
+            `);
+        }
         
-        // Fetch users by role
+        // Fetch users by role with pagination
         $.ajax({
             url: `/admin/users/by-role/${role}`,
             type: 'GET',
+            data: {
+                page: page,
+                per_page: 15 // Load 15 users per page
+            },
             success: function(response) {
                 if (response.success) {
                     const users = response.data;
+                    const pagination = response.pagination;
                     
-                    if (users.length === 0) {
+                    if (users.length === 0 && page === 1) {
                         $('#usersListModalBody').html(`
                             <div class="text-center py-5">
                                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
@@ -776,9 +941,17 @@
                     }
                     
                     let tableHtml = `
-                        <div class="table-responsive">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">
+                                Menampilkan ${pagination.from || 0} - ${pagination.to || 0} dari ${pagination.total} users
+                            </h6>
+                            <button class="btn btn-outline-primary btn-sm" onclick="showUsersByRole('${role}', 1)">
+                                <i class="fas fa-sync-alt me-1"></i>Refresh
+                            </button>
+                        </div>
+                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                             <table class="table table-hover">
-                                <thead class="table-dark">
+                                <thead class="table-dark sticky-top">
                                     <tr>
                                         <th>ID</th>
                                         <th>Nama</th>
@@ -844,13 +1017,12 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="text-muted">Total: <strong>${users.length}</strong> user(s)</small>
-                            <button class="btn btn-outline-primary btn-sm" onclick="location.reload()">
-                                <i class="fas fa-sync-alt me-1"></i>Refresh Data
-                            </button>
-                        </div>
                     `;
+                    
+                    // Add pagination controls
+                    if (pagination.last_page > 1) {
+                        tableHtml += generatePaginationHtml(role, pagination);
+                    }
                     
                     $('#usersListModalBody').html(tableHtml);
                 } else {
@@ -874,6 +1046,58 @@
         });
     }
     
+    function generatePaginationHtml(role, pagination) {
+        let paginationHtml = `
+            <nav aria-label="User pagination" class="mt-3">
+                <ul class="pagination justify-content-center">
+        `;
+        
+        // Previous button
+        if (pagination.current_page > 1) {
+            paginationHtml += `
+                <li class="page-item">
+                    <button class="page-link" onclick="showUsersByRole('${role}', ${pagination.current_page - 1})" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
+            `;
+        }
+        
+        // Page numbers (show max 5 pages)
+        let startPage = Math.max(1, pagination.current_page - 2);
+        let endPage = Math.min(pagination.last_page, startPage + 4);
+        
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHtml += `
+                <li class="page-item ${i === pagination.current_page ? 'active' : ''}">
+                    <button class="page-link" onclick="showUsersByRole('${role}', ${i})">${i}</button>
+                </li>
+            `;
+        }
+        
+        // Next button
+        if (pagination.current_page < pagination.last_page) {
+            paginationHtml += `
+                <li class="page-item">
+                    <button class="page-link" onclick="showUsersByRole('${role}', ${pagination.current_page + 1})" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
+            `;
+        }
+        
+        paginationHtml += `
+                </ul>
+            </nav>
+        `;
+        
+        return paginationHtml;
+    }
+    
     function deleteUser(userId) {
         $.ajax({
             url: `/admin/users/${userId}`,
@@ -888,8 +1112,8 @@
                         $(this).remove();
                         
                         // Check if table is empty
-                        if ($('#usersTable tbody tr').length === 0) {
-                            $('#usersTable tbody').html(`
+                        if ($('#usersTableBody tr').length === 0) {
+                            $('#usersTableBody').html(`
                                 <tr>
                                     <td colspan="6" class="text-center text-muted">
                                         <i class="fas fa-inbox fa-2x mb-2"></i><br>

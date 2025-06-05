@@ -83,30 +83,17 @@
             </td>
             <td>
                 <div class="btn-group" role="group">
+                    <!-- Detail Button (Read-only) -->
                     <button type="button" class="btn btn-sm btn-info detail-job" 
                             data-job-id="{{ $job->id }}" title="Detail">
                         <i class="fas fa-eye"></i>
                     </button>
                     
-                    @php
-                        $isExpired = $job->company->deadline && $job->company->deadline < now();
-                    @endphp
-                    
-                    @if($isExpired)
-                        <button type="button" class="btn btn-sm btn-secondary reactivate-job" 
-                                data-job-id="{{ $job->id }}" title="Reactivate">
-                            <i class="fas fa-redo"></i>
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-sm btn-warning edit-job" 
-                                data-job-id="{{ $job->id }}" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    @endif
-                    
+                    <!-- Delete Button -->
                     <button type="button" class="btn btn-sm btn-danger delete-job" 
                             data-job-id="{{ $job->id }}" 
-                            data-job-title="{{ $job->company->position ?? 'Lowongan' }}" title="Hapus">
+                            data-job-title="{{ $job->company->position ?? 'N/A' }}" 
+                            title="Hapus">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
