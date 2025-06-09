@@ -10,3 +10,10 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.profile-logo-img {
+  height: 40px !important; /* Atur tinggi gambar */
+  width: 40px !important;  /* Atur lebar gambar */
+  border-radius: 50%; /* Membuat gambar berbentuk bulat */
+  object-fit: cover; /* Memastikan gambar mengisi area tanpa terdistorsi */
+}

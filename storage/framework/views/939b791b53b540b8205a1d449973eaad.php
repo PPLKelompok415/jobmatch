@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>JobMatch - @yield('title', 'Find Your Perfect Match')</title>
-    <meta name="description" content="@yield('description', 'Connect talented professionals with amazing companies. JobMatch is the premier platform for recruitment and job searching in Indonesia.')">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title>JobMatch - <?php echo $__env->yieldContent('title', 'Find Your Perfect Match'); ?></title>
+    <meta name="description" content="<?php echo $__env->yieldContent('description', 'Connect talented professionals with amazing companies. JobMatch is the premier platform for recruitment and job searching in Indonesia.'); ?>">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -282,10 +282,10 @@
         }
     </style>
     
-    @yield('styles')
-    @stack('styles')
+    <?php echo $__env->yieldContent('styles'); ?>
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
-<body class="{{ request()->is('login/*') || request()->is('register/*') ? 'no-navbar' : '' }}">
+<body class="<?php echo e(request()->is('login/*') || request()->is('register/*') ? 'no-navbar' : ''); ?>">
     <!-- Loading Spinner -->
     <div class="loading-spinner" id="loadingSpinner">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -294,11 +294,11 @@
     </div>
 
     <!-- Navbar - Hidden on login/register pages -->
-    @if (!request()->is('login/*') && !request()->is('register/*'))
+    <?php if(!request()->is('login/*') && !request()->is('register/*')): ?>
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNavbar">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo e(url('/')); ?>">
                 <div class="brand-icon">
                     <i class="fas fa-briefcase"></i>
                 </div>
@@ -315,12 +315,12 @@
                 <!-- Left Navigation -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">
+                        <a class="nav-link <?php echo e(request()->is('/') ? 'active' : ''); ?>" href="<?php echo e(url('/')); ?>">
                             <i class="fas fa-home me-2"></i>Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        @php
+                        <?php
                             $communityLink = '#Community'; // Default placeholder
                             $communityOnClick = '';
                             
@@ -335,10 +335,10 @@
                                 }
                                 $communityOnClick = "handleCommunityClick(event, '{$communityLink}')";
                             }
-                        @endphp
-                        <a class="nav-link {{ request()->is('*community*') ? 'active' : '' }}"
-                           href="{{ $communityLink }}"
-                           @if(!Auth::check()) onclick="{{ $communityOnClick }}" @endif>
+                        ?>
+                        <a class="nav-link <?php echo e(request()->is('*community*') ? 'active' : ''); ?>"
+                           href="<?php echo e($communityLink); ?>"
+                           <?php if(!Auth::check()): ?> onclick="<?php echo e($communityOnClick); ?>" <?php endif; ?>>
                             <i class="fas fa-users me-2"></i>Community
                         </a>
                     </li>
@@ -349,71 +349,71 @@
                     <!-- Navigation Switcher -->
                     <div class="nav-switcher d-none d-lg-flex align-items-center gap-2">
                         <small class="text-muted fw-medium">You're in:</small>
-                        @if (request()->is('Company*'))
+                        <?php if(request()->is('Company*')): ?>
                             <div class="d-flex align-items-center gap-1">
-                                <a href="{{ route('home') }}" class="switcher-option" onclick="handleSwitcherClick(event, '{{ route('home') }}')">
+                                <a href="<?php echo e(route('home')); ?>" class="switcher-option" onclick="handleSwitcherClick(event, '<?php echo e(route('home')); ?>')">
                                     <i class="fas fa-user me-1"></i>Job Seekers
                                 </a>
                                 <span class="switcher-active">
                                     <i class="fas fa-building me-1"></i>Companies
                                 </span>
                             </div>
-                        @else
+                        <?php else: ?>
                             <div class="d-flex align-items-center gap-1">
                                 <span class="switcher-active">
                                     <i class="fas fa-user me-1"></i>Job Seekers
                                 </span>
-                                <a href="{{ route('CompanyHome') }}" class="switcher-option" onclick="handleSwitcherClick(event, '{{ route('CompanyHome') }}')">
+                                <a href="<?php echo e(route('CompanyHome')); ?>" class="switcher-option" onclick="handleSwitcherClick(event, '<?php echo e(route('CompanyHome')); ?>')">
                                     <i class="fas fa-building me-1"></i>Companies
                                 </a>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
 
                     <!-- Authentication Section -->
-                    @auth
+                    <?php if(auth()->guard()->check()): ?>
                         <!-- Dashboard Button -->
-                        @if (Auth::user()->role === 'company')
-                            <a href="{{ route('company.dashboard') }}" class="btn btn-dashboard">
+                        <?php if(Auth::user()->role === 'company'): ?>
+                            <a href="<?php echo e(route('company.dashboard')); ?>" class="btn btn-dashboard">
                                 <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                             </a>
-                        @elseif (Auth::user()->role === 'applicant')
-                            <a href="{{ route('applicant.dashboard') }}" class="btn btn-dashboard">
+                        <?php elseif(Auth::user()->role === 'applicant'): ?>
+                            <a href="<?php echo e(route('applicant.dashboard')); ?>" class="btn btn-dashboard">
                                 <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                             </a>
-                        @elseif (Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}" class="btn btn-warning text-white fw-semibold" style="border-radius: 25px;">
+                        <?php elseif(Auth::user()->role === 'admin'): ?>
+                            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-warning text-white fw-semibold" style="border-radius: 25px;">
                                 <i class="fas fa-shield-alt me-2"></i>Admin Panel
                             </a>
-                        @endif
+                        <?php endif; ?>
 
-                        {{-- DYNAMIC RIGHT-SIDE LOGO/PROFILE PICTURE --}}
-                        {{-- This section will either show the company logo (if set by child blade) or the user profile photo. --}}
-                        @yield('right_navbar_logo')
+                        
+                        
+                        <?php echo $__env->yieldContent('right_navbar_logo'); ?>
 
-                        {{-- Fallback: If no 'right_navbar_logo' is yielded, show the default user dropdown. --}}
-                        @if (!View::hasSection('right_navbar_logo'))
+                        
+                        <?php if(!View::hasSection('right_navbar_logo')): ?>
                             <div class="dropdown">
                                 <button class="btn btn-outline-custom dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                                    {{-- Use user's profile photo from applicant model, or default --}}
-                                    @php
+                                    
+                                    <?php
                                         $user = Auth::user();
                                         $applicant = $user->applicant ?? null;
                                         $profilePhoto = $applicant && $applicant->photo ? asset('storage/' . $applicant->photo) : asset('images/default_profile.png');
-                                    @endphp
-                                    <img src="{{ $profilePhoto }}?v={{ $applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp }}" alt="Profile" class="navbar-profile-pic me-2">
-                                    <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                                    ?>
+                                    <img src="<?php echo e($profilePhoto); ?>?v=<?php echo e($applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp); ?>" alt="Profile" class="navbar-profile-pic me-2">
+                                    <span class="d-none d-md-inline"><?php echo e(Auth::user()->name); ?></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
                                     <!-- User Info Header -->
                                     <li class="dropdown-header-custom">
                                         <div class="d-flex align-items-center">
-                                            {{-- Use user's profile photo from applicant model, or default --}}
-                                            <img src="{{ $profilePhoto }}?v={{ $applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp }}" alt="Profile" class="navbar-profile-pic me-3" style="width: 50px; height: 50px;">
+                                            
+                                            <img src="<?php echo e($profilePhoto); ?>?v=<?php echo e($applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp); ?>" alt="Profile" class="navbar-profile-pic me-3" style="width: 50px; height: 50px;">
                                             <div>
-                                                <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
-                                                <small class="text-muted">{{ Auth::user()->email }}</small>
-                                                <br><span class="badge bg-primary mt-1">{{ ucfirst(Auth::user()->role) }}</span>
+                                                <h6 class="mb-0 fw-bold"><?php echo e(Auth::user()->name); ?></h6>
+                                                <small class="text-muted"><?php echo e(Auth::user()->email); ?></small>
+                                                <br><span class="badge bg-primary mt-1"><?php echo e(ucfirst(Auth::user()->role)); ?></span>
                                             </div>
                                         </div>
                                     </li>
@@ -422,23 +422,23 @@
                                     
                                     <!-- Menu Items -->
                                     <li>
-                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('profile.show') }}">
+                                        <a class="dropdown-item dropdown-item-custom" href="<?php echo e(route('profile.show')); ?>">
                                             <i class="fas fa-user me-3 text-primary"></i>My Profile
                                         </a>
                                     </li>
                                     
-                                    @if (Auth::user()->role === 'applicant')
+                                    <?php if(Auth::user()->role === 'applicant'): ?>
                                         <li>
                                             <a class="dropdown-item dropdown-item-custom" href="#">
                                                 <i class="fas fa-briefcase me-3 text-success"></i>My Applications
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark') }}">
+                                            <a class="dropdown-item dropdown-item-custom" href="<?php echo e(route('bookmark')); ?>">
                                                 <i class="fas fa-bookmark me-3 text-warning"></i>Bookmarks
                                             </a>
                                         </li>
-                                    @elseif (Auth::user()->role === 'company')
+                                    <?php elseif(Auth::user()->role === 'company'): ?>
                                         <li>
                                             <a class="dropdown-item dropdown-item-custom" href="#">
                                                 <i class="fas fa-building me-3 text-success"></i>Company Profile
@@ -449,7 +449,7 @@
                                                 <i class="fas fa-users me-3 text-info"></i>Job Applications
                                             </a>
                                         </li>
-                                    @endif
+                                    <?php endif; ?>
                                     
                                     <li>
                                         <a class="dropdown-item dropdown-item-custom" href="#">
@@ -460,8 +460,8 @@
                                     <li><hr class="dropdown-divider"></li>
                                     
                                     <li>
-                                        <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
-                                            @csrf
+                                        <form action="<?php echo e(route('logout')); ?>" method="POST" class="d-inline w-100">
+                                            <?php echo csrf_field(); ?>
                                             <button type="submit" class="dropdown-item dropdown-item-custom text-danger w-100 text-start border-0 bg-transparent" onclick="return confirm('Are you sure you want to logout?')">
                                                 <i class="fas fa-sign-out-alt me-3"></i>Logout
                                             </button>
@@ -469,40 +469,40 @@
                                     </li>
                                 </ul>
                             </div>
-                        @endif
-                    @else
+                        <?php endif; ?>
+                    <?php else: ?>
                         <!-- Login/Register Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
-                            @if (request()->is('Company*'))
-                                <a href="{{ route('login.company') }}" class="btn btn-outline-custom">
+                            <?php if(request()->is('Company*')): ?>
+                                <a href="<?php echo e(route('login.company')); ?>" class="btn btn-outline-custom">
                                     <i class="fas fa-sign-in-alt me-2"></i>Sign In
                                 </a>
-                                <a href="{{ route('register.company') }}" class="btn btn-custom-primary">
+                                <a href="<?php echo e(route('register.company')); ?>" class="btn btn-custom-primary">
                                     <i class="fas fa-user-plus me-2"></i>Sign Up
                                 </a>
-                            @else
-                                <a href="{{ route('login.applicant') }}" class="btn btn-outline-custom">
+                            <?php else: ?>
+                                <a href="<?php echo e(route('login.applicant')); ?>" class="btn btn-outline-custom">
                                     <i class="fas fa-sign-in-alt me-2"></i>Sign In
                                 </a>
-                                <a href="{{ route('register.applicant') }}" class="btn btn-custom-primary">
+                                <a href="<?php echo e(route('register.applicant')); ?>" class="btn btn-custom-primary">
                                     <i class="fas fa-user-plus me-2"></i>Sign Up
                                 </a>
-                            @endif
+                            <?php endif; ?>
                         </div>
-                    @endauth
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </nav>
-    @endif
+    <?php endif; ?>
 
     <!-- Main Content -->
-    <main class="min-vh-100" style="{{ request()->is('login/*') || request()->is('register/*') ? 'padding-top: 0;' : '' }}">
-        @yield('content')
+    <main class="min-vh-100" style="<?php echo e(request()->is('login/*') || request()->is('register/*') ? 'padding-top: 0;' : ''); ?>">
+        <?php echo $__env->yieldContent('content'); ?>
     </main>
 
     <!-- Footer - Hidden on login/register pages -->
-    @if (!request()->is('login/*') && !request()->is('register/*'))
+    <?php if(!request()->is('login/*') && !request()->is('register/*')): ?>
     <footer class="bg-dark text-white py-5 mt-5">
         <div class="container">
             <div class="row">
@@ -591,7 +591,7 @@
             </div>
         </div>
     </footer>
-    @endif
+    <?php endif; ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -647,8 +647,8 @@
             });
 
             // Role-based access control
-            @auth
-                const userRole = '{{ Auth::user()->role }}';
+            <?php if(auth()->guard()->check()): ?>
+                const userRole = '<?php echo e(Auth::user()->role); ?>';
                 const currentPath = window.location.pathname;
                 
                 if (userRole === 'applicant' && currentPath.includes('/company/dashboard')) {
@@ -656,7 +656,7 @@
                         'Access Denied',
                         'You are not authorized to access company dashboard. Please login with a company account.',
                         'Redirecting to Applicant Dashboard...',
-                        '{{ route('applicant.dashboard') }}'
+                        '<?php echo e(route('applicant.dashboard')); ?>'
                     );
                 }
                 
@@ -665,7 +665,7 @@
                         'Access Denied',
                         'You are not authorized to access applicant dashboard. Please login with an applicant account.',
                         'Redirecting to Company Dashboard...',
-                        '{{ route('company.dashboard') }}'
+                        '<?php echo e(route('company.dashboard')); ?>'
                     );
                 }
                 
@@ -674,10 +674,10 @@
                         'Admin Access Required',
                         'You need administrator privileges to access this area.',
                         'Redirecting to your Dashboard...',
-                        userRole === 'company' ? '{{ route('company.dashboard') }}' : '{{ route('applicant.dashboard') }}'
+                        userRole === 'company' ? '<?php echo e(route('company.dashboard')); ?>' : '<?php echo e(route('applicant.dashboard')); ?>'
                     );
                 }
-            @endauth
+            <?php endif; ?>
 
             console.log('JobMatch layout initialized successfully!');
         });
@@ -774,6 +774,7 @@
             }
         }
     </script>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH C:\Users\REDMI\Documents\jobmatch_finaly\resources\views/layouts/app.blade.php ENDPATH**/ ?>
