@@ -310,12 +310,7 @@
                             <i class="fas fa-home me-2"></i>Home
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#jobs">
-                            <i class="fas fa-search me-2"></i>Find Jobs
-                        </a>
-                    </li>
-                    <li class="nav-item">
+                     <li class="nav-item">
                         @php
                             $communityLink = '#Community';
                             $communityTarget = '';
@@ -346,6 +341,7 @@
                             <i class="fas fa-users me-2"></i>Community
                         </a>
                     </li>
+                </ul>
                 </ul>
 
                 <!-- Right Navigation -->
