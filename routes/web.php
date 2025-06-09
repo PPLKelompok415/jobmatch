@@ -65,6 +65,8 @@ Route::middleware('auth')->group(function () {
          ->name('applicant.dashboard.data');
     
     Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
+    Route::get('/applicant/findjobs', [DashboardApplicantController::class, 'findJobs'])->name('applicant.findjobs');
+    Route::get('/applicant/jobs/{job}', [DashboardApplicantController::class, 'viewJobDetails'])->name('applicant.jobs.details');
 });
 
 // Rute untuk logout
