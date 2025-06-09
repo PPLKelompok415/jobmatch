@@ -42,7 +42,7 @@
                 Start exploring amazing job opportunities and save the ones you're interested in. 
                 Your bookmarked jobs will appear here for easy access.
             </p>
-            <a href="{{ route('jobs.index', ['type' => 'job-seeker']) ?? '#' }}" class="btn btn-navbar-solid">
+            <a href="{{ route('applicant.dashboard')}}" class="btn btn-navbar-solid">
                 <i class="bi bi-search me-2"></i>
                 Browse Jobs
             </a>
@@ -156,10 +156,17 @@
 
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2 align-items-center">
-                                <a href="{{ route('chat.index', $userId) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
-                                    <i class="bi bi-send me-2"></i>
-                                    Apply Now
-                                </a>
+                                @if($bookmark->has_chat)
+                                    <a href="{{ url('/chat/' . $bookmark->company_user_id) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
+                                        <i class="bi bi-chat-dots me-2"></i>
+                                        Go to Chat
+                                    </a>
+                                @else
+                                    <a href="{{ url('/chat/' . $bookmark->company_user_id) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
+                                        <i class="bi bi-send me-2"></i>
+                                        Apply Now
+                                    </a>
+                                @endif
                                 <a href="#" class="btn btn-navbar-outline">
                                     <i class="bi bi-eye"></i>
                                     View Details

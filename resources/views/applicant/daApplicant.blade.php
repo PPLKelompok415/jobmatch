@@ -38,22 +38,37 @@
                   >Details</button>
                   
                   <button 
-                    @click="applyJob(job)" 
-                    :disabled="job.applied || job.loading" 
-                    :class="{
-                      'btn btn-success btn-sm mt-2 ms-2': !job.applied,
-                      'btn btn-secondary btn-sm mt-2 ms-2': job.applied
-                    }"
+                      x-show="!job.has_chat"
+                      @click="window.location.href = `/chat/${job.company.user_id}/${job.id}`"
+                      :disabled="job.loading"
+                      :class="{
+                          'btn btn-success btn-sm mt-2 ms-2': !job.loading,
+                          'btn btn-secondary btn-sm mt-2 ms-2': job.loading
+                      }"
                   >
-                    <template x-if="job.loading">
-                      <span><i class="bi bi-hourglass-split me-1"></i>Applying...</span>
-                    </template>
-                    <template x-if="!job.loading && !job.applied">
-                      <span><i class="bi bi-check-circle me-1"></i>Apply</span>
-                    </template>
-                    <template x-if="!job.loading && job.applied">
-                      <span><i class="bi bi-check2-all me-1"></i>Applied</span>
-                    </template>
+                      <template x-if="job.loading">
+                          <span><i class="bi bi-hourglass-split me-1"></i>Applying...</span>
+                      </template>
+                      <template x-if="!job.loading">
+                          <span><i class="bi bi-check-circle me-1"></i>Apply & Chat</span>
+                      </template>
+                  </button>
+                  <a 
+                      x-show="job.has_chat"
+                      :href="`/chat/${job.company.user_id}/${job.id}`"
+                      class="btn btn-primary btn-sm mt-2 ms-2"
+                  >
+                      <i class="bi bi-chat-dots me-1"></i>Go to Chat
+                  </a>
+                  <button 
+                      class="btn btn-sm position-absolute top-0 end-0 m-2"
+                      :class="job.is_bookmarked ? 'btn-secondary' : 'btn-primary'"
+                      title="Bookmark"
+                      @click.prevent="bookmarkJob(job)"
+                      :data-bs-toggle="job.is_bookmarked ? 'tooltip' : null"
+                      :data-bs-title="job.is_bookmarked ? 'Job sudah di-bookmark' : 'Bookmark'"
+                  >
+                      <i class="bi bi-bookmark"></i>
                   </button>
                 </div>
                 <div class="match-score fw-bold fs-5" x-text="job.match_score + '%'"></div>
@@ -112,7 +127,9 @@
         this.jobs = initial.map(job => ({
           ...job,
           applied: job.applied ?? false,
-          loading: false
+          loading: false,
+          has_chat: job.has_chat ?? false,
+          is_bookmarked: job.is_bookmarked ?? false,
         }));
       },
 
@@ -193,9 +210,41 @@
         if (min) return `≥ ${formatter.format(min)}`;
         if (max) return `≤ ${formatter.format(max)}`;
         return 'N/A';
-      }
+      },
+      
+      bookmarkJob(job) {
+          if (job.is_bookmarked) return;
+          fetch("{{ route('bookmark.store') }}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content'),
+              },
+              body: JSON.stringify({ job_id: job.id }),
+          })
+          .then(res => {
+              if (!res.ok) throw new Error('Gagal bookmark');
+              return res.json();
+          })
+          .then(() => {
+              job.is_bookmarked = true;
+              alert('Job berhasil di-bookmark!');
+          })
+          .catch(err => {
+              alert('Gagal bookmark: ' + err.message);
+          });
+      },
     }
   }
+
+  document.addEventListener('alpine:init', () => {
+      setTimeout(() => {
+          var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+          tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl)
+          })
+      }, 500);
+  });
 </script>
 @endpush
 

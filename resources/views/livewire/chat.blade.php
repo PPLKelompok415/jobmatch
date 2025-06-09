@@ -1,7 +1,7 @@
-<div class="container-fluid px-0" style="max-width: 800px;">
+<div class="chat-container">
     <!-- Chat Header -->
-    <div class="bg-gradient-primary text-white rounded-3 d-flex align-items-center p-4 mb-3 shadow-sm position-sticky top-0" style="z-index: 100;">
-        <a href="{{ url()->previous() }}" class="text-white me-3 fs-4 text-decoration-none hover-scale" title="Go back">
+    <div class="chat-header text-white rounded-3 d-flex align-items-center p-4 mb-3 shadow-sm position-sticky top-0" style="z-index: 100;">
+        <a href="{{ route('chat.index') }}" class="text-white me-3 fs-4 text-decoration-none hover-scale" title="Go back">
             <i class="bi bi-arrow-left"></i>
         </a>
         <div class="d-flex align-items-center flex-grow-1">
@@ -13,7 +13,13 @@
             </div>
             <div class="flex-grow-1">
                 <div class="fw-bold fs-5 mb-0">{{ $user->name }}</div>
-                <small class="opacity-75">HR Department</small>
+                <small class="opacity-75">
+                    @if ($user->company)
+                        HR Department of {{ $user->company->company_name }}, {{$job_title}} application
+                    @else
+                        Applicant
+                    @endif
+                </small>
             </div>
         </div>
         <div class="dropdown">
@@ -21,10 +27,11 @@
                 <i class="bi bi-three-dots-vertical fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>View Profile</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-flag me-2"></i>Report</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-x-circle me-2"></i>End Chat</a></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="#" wire:click.prevent="endChat">
+                        <i class="bi bi-x-circle me-2"></i>End Chat
+                    </a>
+                </li> 
             </ul>
         </div>
     </div>
@@ -79,7 +86,7 @@
                                     </div>
                                     <small class="fw-semibold">{{ $user->name }}</small>
                                 </div>
-                                <small class="text-muted ms-auto">{{ $message->created_at->format('H:i') }}</small>
+                                <small class="text-white ms-auto">{{ $message->created_at->format('H:i') }}</small>
                             </div>
                             <div class="message-content">
                                 {{ $message->message }}
@@ -97,11 +104,6 @@
     <!-- Chat Input -->
     <div class="sticky-bottom bg-white border-top p-3" style="box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);">
         <form wire:submit.prevent="sendMessage" class="d-flex align-items-end gap-3">
-            <!-- Attachment Button -->
-            <button type="button" class="btn btn-link text-muted p-2 rounded-circle hover-bg" title="Attach file">
-                <i class="bi bi-paperclip fs-5"></i>
-            </button>
-
             <!-- Message Input Container -->
             <div class="flex-grow-1 position-relative">
                 <textarea 
@@ -110,22 +112,15 @@
                     placeholder="Type your message..."
                     rows="1"
                     style="max-height: 120px; border-color: rgba(59, 130, 246, 0.3); transition: all 0.3s ease;"
-                    wire:model.defer="messageContent"
+                    wire:model="messageContent"
+                    wire:keydown.enter.prevent="sendMessage"
                 ></textarea>
-
-                <!-- Emoji Button -->
-                <button type="button" class="btn btn-link text-muted position-absolute end-0 top-50 translate-middle-y me-2" title="Add emoji">
-                    <i class="bi bi-emoji-smile"></i>
-                </button>
             </div>
 
             <!-- Send/Voice Button -->
             <div class="d-flex flex-column gap-2">
                 <button type="submit" class="btn btn-navbar-solid rounded-circle p-2" title="Send message" style="width: 45px; height: 45px;">
                     <i class="bi bi-send-fill"></i>
-                </button>
-                <button type="button" class="btn btn-navbar-outline rounded-circle p-2" title="Voice message" style="width: 45px; height: 45px;">
-                    <i class="bi bi-mic-fill"></i>
                 </button>
             </div>
         </form>
@@ -138,7 +133,7 @@
                     <span></span>
                     <span></span>
                 </div>
-                <span>Raisa is typing...</span>
+                <span>{{$user->name}} is typing...</span>
             </div>
         </div>
     </div>

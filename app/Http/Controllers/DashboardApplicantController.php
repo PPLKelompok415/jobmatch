@@ -6,6 +6,9 @@ use App\Services\JobMatchingService;
 use App\Models\Applicant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Message;
+use App\Models\Bookmark;
+use App\Models\User;
 
 class DashboardApplicantController extends Controller
 {
@@ -27,6 +30,23 @@ class DashboardApplicantController extends Controller
                 ->take(4)
                 ->values();
 
+        $matchedJobs = $matchedJobs->map(function ($job) use ($userId) {
+            $companyUserId = $job->company->user_id ?? null;
+            $jobId = $job->id;
+            $hasChat = false;
+            if ($companyUserId && $jobId) {
+                $hasChat = Message::where(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $companyUserId)->where('job_id', $jobId);
+                })->orWhere(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $companyUserId)->where('receiver_id', $userId)->where('job_id', $jobId);
+                })->exists();
+            }
+            $job->has_chat = $hasChat;
+            $job->is_bookmarked = Bookmark::where('user_id', $userId)->where('job_id', $job->id)->exists();
+
+            return $job;
+        });
+
         return view('applicant.daApplicant', [
             'matchingJobs' => $matchedJobs,
             'userId' => $userId,
@@ -46,6 +66,21 @@ class DashboardApplicantController extends Controller
                 ->take(4)
                 ->values()
                 ->toArray();
+
+        $matchedJobs = $matchedJobs->map(function ($job) use ($userId) {
+            $companyUserId = $job->company->user_id ?? null;
+            $jobId = $job->id;
+            $hasChat = false;
+            if ($companyUserId && $jobId) {
+                $hasChat = Message::where(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $companyUserId)->where('job_id', $jobId);
+                })->orWhere(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $companyUserId)->where('receiver_id', $userId)->where('job_id', $jobId);
+                })->exists();
+            }
+            $job->has_chat = $hasChat;
+            return $job;
+        });
 
         return response()->json($matchedJobs);
     }

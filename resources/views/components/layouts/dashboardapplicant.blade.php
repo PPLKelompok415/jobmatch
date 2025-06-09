@@ -6,6 +6,7 @@
     <title>@yield('title', 'Dashboard') - JobMatch</title>
     <meta name="description" content="@yield('description', 'Your personal job matching dashboard')">
     @livewireScripts
+    @livewireStyles
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -443,6 +444,264 @@
             background: linear-gradient(135deg, var(--warning-color) 0%, #92400e 100%);
             box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
         }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 2rem;
+            min-height: calc(100vh - 140px);
+            max-width: 1280px;
+            margin: 2rem auto;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chat-search {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .chat-search input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-search input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .chat-search input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-search .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .chat-list {
+            padding: 0;
+            max-height: calc(100vh - 240px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .chat-item:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+            transform: translateX(5px);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .chat-item.unread {
+            background: linear-gradient(135deg, rgba(91, 125, 135, 0.08) 0%, rgba(91, 125, 135, 0.03) 100%);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .chat-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            margin-right: 1rem;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-avatar.recruiter {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        }
+
+        .chat-avatar.company {
+            background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: var(--success-color);
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .chat-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .chat-company {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .chat-job-title {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .chat-time {
+            font-size: 0.75rem;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .chat-preview {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 300px;
+        }
+
+        .chat-preview.unread {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .chat-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .unread-count {
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .priority-badge {
+            background: var(--warning-color);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 0.1rem 0.4rem;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .chat-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .chat-search {
+                max-width: 100%;
+            }
+
+            .chat-item {
+                padding: 1rem;
+            }
+
+            .chat-preview {
+                max-width: 200px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .chat-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .chat-preview {
+                max-width: 150px;
+            }
+        }
     </style>
     
     @stack('styles')
@@ -478,7 +737,7 @@
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
                 </a>
-                <a href="{{ redirect()->back() }}" class="dashboard-nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">
+                <a href="{{ route('chat.index') }}" class="dashboard-nav-link {{ request()->routeIs('chat.show') ? 'active' : '' }}">
                     <i class="fas fa-comments"></i>
                     <span>Messages</span>
                 </a>

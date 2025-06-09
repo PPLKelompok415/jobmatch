@@ -7,7 +7,7 @@ use App\Models\Bookmark; // Model untuk bookmark
 
 class BookmarkController extends Controller
 {
-    public function save(Request $request)
+    public function store(Request $request)
     {
         $jobId = $request->input('job_id');
         $userId = auth()->id(); // Ambil ID pengguna yang sedang login
@@ -36,6 +36,21 @@ class BookmarkController extends Controller
         $bookmarks = Bookmark::with('job')
             ->where('user_id', $userId)
             ->get();
+
+        foreach ($bookmarks as $bookmark) {
+            $job = $bookmark->job;
+            $companyUserId = $job?->company?->user_id ?? null;
+            $hasChat = false;
+            if ($companyUserId) {
+                $hasChat = \App\Models\Message::where(function($q) use ($userId, $companyUserId, $job) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $companyUserId)->where('job_id', $job->id);
+                })->orWhere(function($q) use ($userId, $companyUserId, $job) {
+                    $q->where('sender_id', $companyUserId)->where('receiver_id', $userId)->where('job_id', $job->id);
+                })->exists();
+            }
+            $bookmark->has_chat = $hasChat;
+            $bookmark->company_user_id = $companyUserId;
+        }
 
         return view('job-matching.bookmark', compact('bookmarks', 'userId'));
     }

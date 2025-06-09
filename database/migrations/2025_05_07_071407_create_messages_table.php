@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sender_id');     // user ID pengirim
             $table->unsignedBigInteger('receiver_id');   // user ID penerima
+            $table->unsignedBigInteger('job_id');
             $table->text('message');
-            $table->boolean('is_system')->default(false);
+            $table->text('read_at')->nullable();
             $table->timestamps();
         
+            $table->foreign('job_id')->references('id')->on('jobs')->onDelete('cascade');   
             $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('receiver_id')->references('id')->on('users')->onDelete('cascade');
         });

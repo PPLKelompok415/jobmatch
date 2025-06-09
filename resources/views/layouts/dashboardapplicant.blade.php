@@ -479,7 +479,7 @@
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
                 </a>
-                <a href="{{ route('chat.index', $userId) }}" class="dashboard-nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">
+                <a href="{{ route('chat.index') }}" class="dashboard-nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">
                     <i class="fas fa-comments"></i>
                     <span>Messages</span>
                 </a>

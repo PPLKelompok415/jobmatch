@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\CompanyHomeController;
 use App\livewire\Chat;
+use App\livewire\ChatList;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\JobMatchingController;
@@ -74,11 +75,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
 
     // Chat
-    Route::get('/chat/{user}', Chat::class)->name('chat.index');
-
+    Route::get('/chat/{user}/{job}', Chat::class)->name('chat.show');
+    Route::get('/chat', ChatList::class)->name('chat.index');
+    
     // Bookmark
     Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
-    Route::post('/bookmark/save', [BookmarkController::class, 'save'])->name('bookmark.save');
+    Route::post('/bookmark/store', [BookmarkController::class, 'store'])->name('bookmark.store');
     Route::delete('/bookmark/{id}', [BookmarkController::class, 'destroy'])->name('bookmark.destroy');
 
 });
