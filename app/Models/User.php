@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles; // Import Spatie HasRoles trait
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; // Import BelongsTo untuk relasi location()
+use Spatie\Permission\Traits\HasRoles; // Diperlukan untuk manajemen peran
+use Illuminate\Database\Eloquent\Relations\HasOne; // Diperlukan untuk relasi HasOne
+use Illuminate\Database\Eloquent\Relations\HasMany; // Diperlukan untuk relasi HasMany
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // Diperlukan untuk relasi BelongsTo
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // Diperlukan untuk relasi BelongsToMany (skills)
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles; // Tambahkan HasRoles trait
+    use HasFactory, Notifiable, HasRoles; // Menggunakan trait HasFactory, Notifiable, dan HasRoles
 
     /**
      * The attributes that are mass assignable.
@@ -42,7 +43,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array // Menggunakan sintaks method untuk casts
+    protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
@@ -56,6 +57,7 @@ class User extends Authenticatable
 
     /**
      * Get the applicant record associated with the user.
+     * @return HasOne
      */
     public function applicant(): HasOne
     {
@@ -65,28 +67,32 @@ class User extends Authenticatable
     /**
      * Get the company record associated with the user.
      * Karena users.id adalah foreign key di companies.user_id, ini adalah relasi hasOne.
+     * @return HasOne
      */
     public function company(): HasOne
     {
-        return $this->hasOne(Company::class, 'user_id'); // Pastikan 'user_id' adalah nama kolom foreign key di tabel 'companies'
+        // Pastikan 'user_id' adalah nama kolom foreign key di tabel 'companies'
+        return $this->hasOne(Company::class, 'user_id'); 
     }
 
     /**
-     * Get the jobs posted by the company associated with this user (if the user is a company).
-     * Ini bisa berguna jika Anda ingin mengakses langsung lowongan dari objek User.
-     * Perlu diingat, ini akan berfungsi jika User memiliki relasi company dan Company memiliki relasi jobs.
+     * Get the jobs posted by the company associated with this user (if the user is a company),
+     * atau jobs yang diposting langsung oleh user (jika skemanya demikian).
+     * @return HasMany
      */
     public function jobs(): HasMany
     {
-        return $this->hasMany(Job::class); // Asumsi user langsung memiliki banyak job, atau melalui Company.
-                                            // Jika melalui Company, logikanya akan lebih kompleks dan biasanya diakses via Auth::user()->company->jobs
+        // Asumsi user langsung memiliki banyak job, atau melalui Company.
+        // Jika melalui Company, logikanya akan lebih kompleks dan biasanya diakses via Auth::user()->company->jobs
+        return $this->hasMany(Job::class); 
     }
 
     /**
      * Get the skills associated with the user.
      * Asumsi relasi many-to-many dengan model Skill.
+     * @return BelongsToMany
      */
-    public function skills()
+    public function skills(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class);
     }
@@ -94,6 +100,7 @@ class User extends Authenticatable
     /**
      * Get the location associated with the user.
      * Asumsi relasi many-to-one (User belongs to Location).
+     * @return BelongsTo
      */
     public function location(): BelongsTo
     {
@@ -119,6 +126,9 @@ class User extends Authenticatable
 
     /**
      * Scope a query to search by name or email.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $search
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSearch($query, $search)
     {
@@ -133,6 +143,9 @@ class User extends Authenticatable
 
     /**
      * Scope a query to filter by user role.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $role
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeByRole($query, $role)
     {

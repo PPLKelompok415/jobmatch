@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Job; // Pastikan model Job di-import
-use App\Models\JobApplication; // Asumsikan Anda memiliki model JobApplication
-use App\Models\Company; // Pastikan model Company di-import
-use Illuminate\Validation\Rule; // Pastikan Rule di-import untuk validasi
-use Illuminate\Support\Collection; // Import Collection untuk inisialisasi kosong
+use Illuminate\Support\Facades\Auth; // Diperlukan untuk Auth::user()
+use App\Models\Job; // Diperlukan
+use App\Models\JobApplication; // Diperlukan
+use App\Models\Company; // Diperlukan, berguna untuk relasi atau akses langsung
+use Illuminate\Validation\Rule; // Diperlukan untuk validasi status
+use Illuminate\Support\Collection; // Diperlukan untuk inisialisasi Collection kosong
 
 class DashboardCompanyController extends Controller
 {
     /**
      * Tampilkan dashboard utama untuk perusahaan.
-     * Sekarang akan langsung menampilkan daftar lowongan pekerjaan perusahaan,
+     * Akan langsung menampilkan daftar lowongan pekerjaan perusahaan,
      * atau pesan jika profil perusahaan belum lengkap / tidak ada lowongan.
      *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
@@ -27,15 +27,14 @@ class DashboardCompanyController extends Controller
 
         // Pastikan pengguna yang login adalah perusahaan
         if ($user && $user->role === 'company') {
-            // Cek apakah ada profil perusahaan yang terhubung
-            if ($user->company) {
+            // Cek apakah ada profil perusahaan yang terhubung dengan user
+            if ($user->company) { // Menggunakan relasi 'company' dari model User
                 $companyProfileExists = true;
                 // Ambil semua lowongan pekerjaan yang diposting oleh perusahaan ini
-                // PENTING: Pastikan 'with('company')' ada agar relasi company dimuat
-                $myJobs = Job::where('company_id', $user->company->id)
-                           ->with('company') 
-                           ->latest()
-                           ->get();
+                $myJobs = Job::where('company_id', $user->company->id) // Menggunakan ID perusahaan dari relasi
+                             ->with('company') // Muat relasi company dari Job
+                             ->latest() // Urutkan berdasarkan yang terbaru
+                             ->get();
             }
 
             // Selalu tampilkan view company.daCompany jika pengguna adalah perusahaan.
@@ -50,6 +49,7 @@ class DashboardCompanyController extends Controller
 
     /**
      * Tampilkan daftar pelamar untuk lowongan pekerjaan tertentu yang diposting oleh perusahaan.
+     * Menggunakan Route Model Binding untuk Job, memastikan pekerjaan ada dan milik perusahaan.
      *
      * @param  \App\Models\Job  $job
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
@@ -59,11 +59,14 @@ class DashboardCompanyController extends Controller
         $user = Auth::user();
 
         // Pastikan pengguna yang login adalah perusahaan dan ini adalah pekerjaan mereka
+        // ($job sudah otomatis ditemukan oleh Route Model Binding)
         if ($user && $user->role === 'company' && $user->company && $job->company_id === $user->company->id) {
             $applicants = JobApplication::where('job_id', $job->id)
                                         ->with('applicant.user') // Muat relasi applicant dan user-nya
+                                        ->orderBy('applied_at', 'desc') // Urutkan berdasarkan waktu apply terbaru
                                         ->get();
-            return view('company.job.applicants', compact('job', 'applicants')); // Asumsikan view ini ada
+            // Asumsikan view ini ada, atau sesuaikan jika nama view di cabang lain berbeda
+            return view('company.job.applicants', compact('job', 'applicants')); 
         }
 
         // Jika tidak diizinkan, arahkan kembali atau tampilkan error
@@ -72,6 +75,7 @@ class DashboardCompanyController extends Controller
 
     /**
      * Perbarui status aplikasi pelamar.
+     * Menggunakan Route Model Binding untuk JobApplication, memastikan aplikasi ada.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\JobApplication  $application
@@ -82,13 +86,15 @@ class DashboardCompanyController extends Controller
         $user = Auth::user();
 
         // Pastikan pengguna yang login adalah perusahaan dan ini adalah aplikasi untuk pekerjaan mereka
+        // ($application sudah otomatis ditemukan oleh Route Model Binding)
         if ($user && $user->role === 'company' && $user->company && $application->job->company_id === $user->company->id) {
             $request->validate([
+                // Memasukkan 'interview' sebagai status yang valid
                 'status' => ['required', 'string', Rule::in(['pending', 'accepted', 'rejected', 'interview'])],
             ]);
 
             $application->status = $request->status;
-            $application->save();
+            $application->save(); // Simpan perubahan status
 
             return redirect()->back()->with('success', 'Status aplikasi berhasil diperbarui.');
         }

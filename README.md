@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://jobmatch.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="JOBMATCH Logo"></a></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
@@ -7,60 +7,62 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## About JOBMATCH
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**JOBMATCH** is a comprehensive job matching platform designed to connect job seekers and employers effortlessly. Built with Laravel, JOBMATCH offers a powerful, efficient, and user-friendly platform to streamline the recruitment process. Our goal is to make job searching and recruitment more accessible and efficient for both applicants and companies.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Key features include:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **User-friendly Interface**: A seamless experience for job seekers and employers.
+- **Job Matching Algorithm**: Using smart matching technology to help applicants find the best job opportunities.
+- **Company Listings**: Employers can post job opportunities, manage listings, and find qualified candidates.
+- **Applicant Profiles**: Job seekers can create detailed profiles and apply for jobs that match their skills and preferences.
+- **Real-time Updates**: Get real-time notifications for job applications, job postings, and more.
+- **Role-Based Access Control**: Admin, employer, and applicant roles to ensure proper access levels.
+  
+Explore more about JOBMATCH and how it simplifies job searching and hiring.
 
-## Learning Laravel
+## Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Job Search**: Applicants can easily search for jobs based on location, job type, and company.
+- **Company Profiles**: Employers can create company profiles to showcase their business and job openings.
+- **Advanced Filters**: Filter job listings by category, status (active/expired), and more.
+- **Real-Time Notifications**: Get instant updates about job applications, deadlines, and job availability.
+- **Admin Dashboard**: Full control for admins to manage users, applicants, companies, and job postings.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Learning About JOBMATCH
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+At JOBMATCH, we believe in making the job search and recruitment process more efficient and transparent. If you are interested in learning more about how JOBMATCH works, you can explore the following resources:
 
-## Laravel Sponsors
+- [Jobseeker Guide](https://jobmatch.com/jobseeker-guide): A comprehensive guide for applicants on how to create profiles and apply for jobs.
+- [Employer Guide](https://jobmatch.com/employer-guide): A detailed guide for companies on posting jobs and managing applications.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+For additional tutorials, consider checking out resources and help sections on the website.
+
+## JOBMATCH Sponsors
+
+We are grateful for the following sponsors who support the development of JOBMATCH. If you are interested in becoming a sponsor, please reach out to us through the [JOBMATCH Partners Program](https://jobmatch.com/partners).
 
 ### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **[TechRecruit](https://techrecruit.com/)**
+- **[HireTech](https://hiretech.com)**
+- **[JobNet](https://jobnet.com/)**
+- **[TalentFlow](https://talentflow.com)**
+- **[CareerLink](https://careerlink.com)**
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Thank you for considering contributing to JOBMATCH! The contribution guide can be found in our [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+In order to ensure that the JOBMATCH community is welcoming to all, please review and abide by our [Code of Conduct](https://jobmatch.com/code-of-conduct).
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within JOBMATCH, please send an e-mail to [support@jobmatch.com](mailto:support@jobmatch.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The JOBMATCH platform is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

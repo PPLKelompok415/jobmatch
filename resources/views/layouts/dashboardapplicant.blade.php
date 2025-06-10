@@ -452,9 +452,14 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="dashboard-nav-link">
+<a href="{{ route('community.index') }}" class="dashboard-nav-link {{ request()->routeIs('community.index') ? 'active' : '' }}">
+                    <i class="fas fa-users"></i>
+                    <span>Community</span>
+                </a>
+
+                <a href="{{ route('applicant.findjobs') }}" class="dashboard-nav-link {{ request()->routeIs('applicant.findjobs') ? 'active' : '' }}">
                     <i class="fas fa-search"></i>
-                    <span>Browse Jobs</span>
+                    <span>Find Jobs</span>
                 </a>
                 <a href="#" class="dashboard-nav-link">
                     <i class="fas fa-file-alt"></i>
@@ -540,8 +545,7 @@
     <!-- Main Content -->
     <main class="dashboard-content">
         <div class="container-fluid px-4">
-            <!-- Breadcrumb -->
-            @if(!request()->routeIs('applicant.dashboard'))
+@if(!request()->routeIs('applicant.dashboard'))
             <nav class="dashboard-breadcrumb" aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('applicant.dashboard') }}">Dashboard</a></li>

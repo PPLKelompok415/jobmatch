@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterCompanyController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -11,12 +12,12 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\JobMatchingController;
 use App\Http\Controllers\Applicant\JobApplyController;
-use App\Http\Controllers\DashboardApplicantController; // Perbaikan: Mengubah '->' menjadi '\'
-use App\Http\Controllers\CommunityController; // Perbaikan: Mengubah '->' menjadi '\'
+use App\Http\Controllers\DashboardApplicantController;
+use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CommunityCommentController;
-use App\Http\Controllers\JobController; // Perbaikan: Mengubah '->' menjadi '\'
-use App\Http\Controllers\ProfileController; // Perbaikan: Mengubah '->' menjadi '\'
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -67,6 +68,7 @@ Route::get('login/admin', [LoginSuperAdminController::class, 'showLoginForm'])->
 Route::post('login/admin', [LoginSuperAdminController::class, 'login'])->name('login.admin.post');
 
 // Logout Route (generik untuk semua jenis user)
+// Dipindahkan di luar group middleware auth agar bisa diakses saat sudah login
 Route::post('logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
@@ -84,7 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/daCompany', [DashboardCompanyController::class, 'showDashboard'])->name('company.dashboard');
     Route::get('/company/dashboard', [DashboardCompanyController::class, 'showDashboard'])->name('company.dashboard.alternative'); // Route alternatif
 
-    // Company Job Management (sesuai yang Anda miliki)
+    // Company Job Management
     Route::get('/company/job/create', [CompanyHomeController::class, 'createJob'])->name('company.job.create');
     Route::post('/company/job/store', [CompanyHomeController::class, 'storeJob'])->name('company.job.store');
     Route::get('company/jobs/{job}/applicants', [DashboardCompanyController::class, 'showApplicants'])->name('company.job.applicants');
@@ -100,7 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/applicant/findjobs', [DashboardApplicantController::class, 'findJobs'])->name('applicant.findjobs');
     Route::get('/applicant/jobs/{job}', [DashboardApplicantController::class, 'viewJobDetails'])->name('applicant.jobs.details');
 
-    // Admin Routes (diperbarui dengan prefix dan nama rute)
+    // Admin Routes
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/applicants', [AdminDashboardController::class, 'applicants'])->name('applicants');
@@ -112,7 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{user}/detail', [AdminDashboardController::class, 'getUserDetail'])->name('users.detail');
         Route::get('/users/by-role/{role}', [AdminDashboardController::class, 'getUsersByRole'])->name('users.by-role');
         
-        // Job Management Routes for Admin
+        // Job Management Routes for Admin (JobController logic)
         Route::get('/jobs', [AdminDashboardController::class, 'jobPostings'])->name('jobs.index'); // Admin job listings
         Route::get('/jobs/filter', [AdminDashboardController::class, 'filterJobs'])->name('jobs.filter');
         Route::get('/jobs/statistics', [AdminDashboardController::class, 'getJobStatistics'])->name('jobs.statistics');
@@ -138,7 +140,7 @@ Route::middleware('auth')->group(function () {
 
     // Job Matching
     Route::get('/job-matching', [JobMatchingController::class, 'index'])->name('job-matching');
-    Route::post('/jobs/apply', [JobApplyController::class, 'apply'])->name('jobs.apply');
+    Route::post('/jobs/apply', [JobApplyController::class, 'apply'])->name('jobs.apply'); // Ini ada di dua tempat, pastikan hanya ada satu.
 
     // Community
     Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
@@ -180,4 +182,4 @@ Route::middleware('auth')->group(function () {
     Route::put('/companies/{company}', [JobController::class, 'updateCompany'])->name('companies.update');
     Route::delete('/companies/{company}', [JobController::class, 'destroyCompany'])->name('companies.destroy');
 
-});
+}); // Akhir dari group middleware 'auth'
