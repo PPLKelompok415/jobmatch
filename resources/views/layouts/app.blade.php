@@ -271,7 +271,6 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
     </style>
     
     @yield('styles')
@@ -311,49 +310,39 @@
                             <i class="fas fa-home me-2"></i>Home
                         </a>
                     </li>
-<li class="nav-item">
-    @php
-        $communityLink = '#Community';
-        $communityTarget = ''; // Dipertahankan dari 'main'
-        $communityOnClick = '';
-        
-        if (Auth::check()) {
-            // Menggunakan logika peran yang lebih spesifik dari 'main'
-            if (Auth::user()->role === 'applicant') {
-                $communityLink = route('community.index');
-            } elseif (Auth::user()->role === 'company') {
-                $communityLink = route('community.index');
-            } else {
-                $communityLink = route('community'); // Untuk admin atau role lain
-            }
-        } else {
-            // Logika untuk user belum login, konsisten di kedua cabang
-            if (request()->is('Company*')) {
-                $communityLink = route('login.company');
-            } else {
-                $communityLink = route('login.applicant');
-            }
-        }
-    @endphp
-    {{-- Pastikan ada tag <a> yang menggunakan variabel-variabel di atas. Contoh: --}}
-    {{-- <a class="nav-link" href="{{ $communityLink }}" {{ $communityTarget }} {{ $communityOnClick }}>Community</a> --}}
-</li>
+                     <li class="nav-item">
+                        @php
+                            $communityLink = '#Community';
+                            $communityTarget = '';
+                            $communityOnClick = '';
+                            
+                            if (Auth::check()) {
+                                // Jika sudah login, arahkan ke community berdasarkan role
+                                if (Auth::user()->role === 'applicant') {
+                                    $communityLink = route('community.index');
+                                } elseif (Auth::user()->role === 'company') {
+                                    $communityLink = route('community.index');
+                                } else {
+                                    $communityLink = route('community'); // untuk admin atau role lain
+                                }
+                            } else {
+                                // Jika belum login, arahkan ke login sesuai context
+                                if (request()->is('Company*')) {
+                                    $communityLink = route('login.company');
+                                } else {
+                                    $communityLink = route('login.applicant');
                                 }
                                 $communityOnClick = "handleCommunityClick(event, '{$communityLink}')";
                             }
                         @endphp
-                        
-<a class="nav-link {{ request()->is('*community*') ? 'active' : '' }}"
-    href="{{ $communityLink }}"
-    
+                        <a class="nav-link {{ request()->is('*community*') ? 'active' : '' }}" 
+                           href="{{ $communityLink }}" 
                            @if(!Auth::check()) onclick="{{ $communityOnClick }}" @endif>
                             <i class="fas fa-users me-2"></i>Community
                         </a>
                     </li>
                 </ul>
-
                 </ul>
-
 
                 <!-- Right Navigation -->
                 <div class="d-flex align-items-center gap-3 flex-wrap">
@@ -398,87 +387,76 @@
                             </a>
                         @endif
 
-{{-- DYNAMIC RIGHT-SIDE LOGO/PROFILE PICTURE --}}
-                        {{-- This section will either show the company logo (if set by child blade) or the user profile photo. --}}
-                        @yield('right_navbar_logo')
-
-                        {{-- Fallback: If no 'right_navbar_logo' is yielded, show the default user dropdown. --}}
-                        @if (!View::hasSection('right_navbar_logo'))
-                            <div class="dropdown">
-                                <button class="btn btn-outline-custom dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                                    {{-- Use user's profile photo from applicant model, or default --}}
-                                    @php
-                                        $user = Auth::user();
-                                        $applicant = $user->applicant ?? null;
-                                        $profilePhoto = $applicant && $applicant->photo ? asset('storage/' . $applicant->photo) : asset('images/default_profile.png');
-                                    @endphp
-                                    <img src="{{ $profilePhoto }}?v={{ $applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp }}" alt="Profile" class="navbar-profile-pic me-2">
-                                    <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
-                                    <li class="dropdown-header-custom">
-                                        <div class="d-flex align-items-center">
-                                            {{-- Use user's profile photo from applicant model, or default --}}
-                                            <img src="{{ $profilePhoto }}?v={{ $applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp }}" alt="Profile" class="navbar-profile-pic me-3" style="width: 50px; height: 50px;">
-                                            <div>
-                                                <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
-                                                <small class="text-muted">{{ Auth::user()->email }}</small>
-                                                <br><span class="badge bg-primary mt-1">{{ ucfirst(Auth::user()->role) }}</span>
-                                            </div>
+                        <!-- User Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-custom dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-2"></i>
+                                <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                                <!-- User Info Header -->
+                                <li class="dropdown-header-custom">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle text-primary fs-2 me-3"></i>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
+                                            <small class="text-muted">{{ Auth::user()->email }}</small>
+                                            <br><span class="badge bg-primary mt-1">{{ ucfirst(Auth::user()->role) }}</span>
                                         </div>
-                                    </li>
-                                    
-                                    <li><hr class="dropdown-divider"></li>
-                                    
-                                    <li>
-                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('profile.show') }}">
-                                            <i class="fas fa-user me-3 text-primary"></i>My Profile
-                                        </a>
-                                    </li>
-                                    
-                                    @if (Auth::user()->role === 'applicant')
-                                        <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="#">
-                                                <i class="fas fa-briefcase me-3 text-success"></i>My Applications
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark') }}">
-                                                <i class="fas fa-bookmark me-3 text-warning"></i>Bookmarks
-                                            </a>
-                                        </li>
-                                    @elseif (Auth::user()->role === 'company')
-                                        <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="#">
-                                                <i class="fas fa-building me-3 text-success"></i>Company Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="#">
-                                                <i class="fas fa-users me-3 text-info"></i>Job Applications
-                                            </a>
-                                        </li>
-                                    @endif
-                                    
+                                    </div>
+                                </li>
+                                
+                                <li><hr class="dropdown-divider"></li>
+                                
+                                <!-- Menu Items -->
+                                <li>
+                                    <a class="dropdown-item dropdown-item-custom" href="#">
+                                        <i class="fas fa-user me-3 text-primary"></i>My Profile
+                                    </a>
+                                </li>
+                                
+                                @if (Auth::user()->role === 'applicant')
                                     <li>
                                         <a class="dropdown-item dropdown-item-custom" href="#">
-                                            <i class="fas fa-cog me-3 text-info"></i>Settings
+                                            <i class="fas fa-briefcase me-3 text-success"></i>My Applications
                                         </a>
                                     </li>
-                                    
-                                    <li><hr class="dropdown-divider"></li>
-                                    
                                     <li>
-                                        <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item dropdown-item-custom text-danger w-100 text-start border-0 bg-transparent" onclick="return confirm('Are you sure you want to logout?')">
-                                                <i class="fas fa-sign-out-alt me-3"></i>Logout
-                                            </button>
-                                        </form>
+                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark') }}">
+                                            <i class="fas fa-bookmark me-3 text-warning"></i>Bookmarks
+                                        </a>
                                     </li>
-                                </ul>
-                            </div>
-                        @endif
+                                @elseif (Auth::user()->role === 'company')
+                                    <li>
+                                        <a class="dropdown-item dropdown-item-custom" href="#">
+                                            <i class="fas fa-building me-3 text-success"></i>Company Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item dropdown-item-custom" href="#">
+                                            <i class="fas fa-users me-3 text-info"></i>Job Applications
+                                        </a>
+                                    </li>
+                                @endif
+                                
+                                <li>
+                                    <a class="dropdown-item dropdown-item-custom" href="#">
+                                        <i class="fas fa-cog me-3 text-info"></i>Settings
+                                    </a>
+                                </li>
+                                
+                                <li><hr class="dropdown-divider"></li>
+                                
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item dropdown-item-custom text-danger w-100 text-start border-0 bg-transparent" onclick="return confirm('Are you sure you want to logout?')">
+                                            <i class="fas fa-sign-out-alt me-3"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     @else
                         <!-- Login/Register Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
@@ -520,7 +498,7 @@
                         <i class="fas fa-briefcase me-2"></i>JOBMATCH
                     </h5>
                     <p class="text-white-50 mb-3">
-Connecting talented professionals with amazing companies.
+                        Connecting talented professionals with amazing companies. 
                         Your career journey starts here.
                     </p>
                     <div class="d-flex gap-2">
@@ -662,7 +640,7 @@ Connecting talented professionals with amazing companies.
                 
                 if (userRole === 'applicant' && currentPath.includes('/company/dashboard')) {
                     showAccessDenied(
-                        'Access Denied',
+                        'Access Denied', 
                         'You are not authorized to access company dashboard. Please login with a company account.',
                         'Redirecting to Applicant Dashboard...',
                         '{{ route('applicant.dashboard') }}'
@@ -671,9 +649,7 @@ Connecting talented professionals with amazing companies.
                 
                 if (userRole === 'company' && currentPath.includes('/applicant/dashboard')) {
                     showAccessDenied(
-
-                        'Access Denied',
-
+                        'Access Denied', 
                         'You are not authorized to access applicant dashboard. Please login with an applicant account.',
                         'Redirecting to Company Dashboard...',
                         '{{ route('company.dashboard') }}'
@@ -682,9 +658,7 @@ Connecting talented professionals with amazing companies.
                 
                 if (userRole !== 'admin' && currentPath.includes('/admin/dashboard')) {
                     showAccessDenied(
-
                         'Admin Access Required', 
-
                         'You need administrator privileges to access this area.',
                         'Redirecting to your Dashboard...',
                         userRole === 'company' ? '{{ route('company.dashboard') }}' : '{{ route('applicant.dashboard') }}'
@@ -749,22 +723,20 @@ Connecting talented professionals with amazing companies.
             document.body.appendChild(backdrop);
             document.body.appendChild(modal);
             
-setTimeout(() => window.location.href = redirectUrl, 3000); // Redirect after 3 seconds
-            // Menambahkan logika pembersihan modal dari 'main'
+            setTimeout(() => window.location.href = redirectUrl, 3000);
             setTimeout(() => {
                 if (backdrop.parentNode) backdrop.remove();
                 if (modal.parentNode) modal.remove();
-            }, 4000); // Menghapus setelah redirect dimulai, memberi waktu lebih
+            }, 4000);
         }
 
-        // Info modal (untuk login yang dibutuhkan, dll.) - menggunakan tanda tangan fungsi dari 'nyayu'
-        function showInfoModal(title, message, redirectMsg = null, redirectUrl = null) {
+        // Info modal
+        function showInfoModal(title, message, redirectMsg) {
             const backdrop = document.createElement('div');
             backdrop.className = 'modal-backdrop-custom';
             
             const modal = document.createElement('div');
             modal.className = 'access-denied-modal p-4';
-
             modal.innerHTML = `
                 <div class="text-center">
                     <div class="text-primary mb-4">
@@ -772,32 +744,27 @@ setTimeout(() => window.location.href = redirectUrl, 3000); // Redirect after 3 
                     </div>
                     <h3 class="text-primary mb-3 fw-bold">${title}</h3>
                     <p class="text-muted mb-4">${message}</p>
-${redirectMsg ? `
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 mb-3">
-                            <small class="text-primary fw-medium">
-                                <i class="fas fa-clock me-2"></i>${redirectMsg}
-                            </small>
-                        </div>
-                        <div class="progress" style="height: 4px;">
-                            <div class="progress-bar bg-primary progress-bar-animated" role="progressbar" style="width: 100%"></div>
-                        </div>
-                    ` : ''}
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-3 mb-3">
+                        <small class="text-primary fw-medium">
+                            <i class="fas fa-clock me-2"></i>${redirectMsg}
+                        </small>
+                    </div>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-primary progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                    </div>
                 </div>
             `;
             
             document.body.appendChild(backdrop);
             document.body.appendChild(modal);
-if (redirectUrl) {
-                setTimeout(() => window.location.href = redirectUrl, 2000);
-            }
-            // Menambahkan pembersihan modal dari 'main' ke dalam showAccessDeniedModal
+            
             setTimeout(() => {
                 if (backdrop.parentNode) backdrop.remove();
                 if (modal.parentNode) modal.remove();
-            }, 3000); // Memberi waktu redirect untuk memulai sebelum dibersihkan
+            }, 3000);
         }
 
-        // Auto-redirect untuk pengguna yang sudah login (dari 'main')
+        // Auto-redirect for logged in users
         @auth
             const currentPath = window.location.pathname;
             const userRole = '{{ Auth::user()->role }}';
@@ -828,10 +795,7 @@ if (redirectUrl) {
         @endauth
     </script>
 
-    @yield('scripts') {{-- Memungkinkan injeksi skrip tunggal dari child view --}}
-    @stack('scripts') {{-- Memungkinkan penambahan beberapa blok skrip dari child view --}}
-</body>
-</html>
+    @yield('scripts')
     @stack('scripts')
 </body>
 </html>

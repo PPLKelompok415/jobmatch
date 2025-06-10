@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Dashboard') - JobMatch</title>
     <meta name="description" content="@yield('description', 'Your personal job matching dashboard')">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -452,15 +454,17 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-<a href="{{ route('community.index') }}" class="dashboard-nav-link {{ request()->routeIs('community.index') ? 'active' : '' }}">
+                <a href="{{ route('community.index') }}" class="dashboard-nav-link {{ request()->routeIs('community.index') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span>Community</span>
                 </a>
+
 
                 <a href="{{ route('applicant.findjobs') }}" class="dashboard-nav-link {{ request()->routeIs('applicant.findjobs') ? 'active' : '' }}">
                     <i class="fas fa-search"></i>
                     <span>Find Jobs</span>
                 </a>
+                
                 <a href="#" class="dashboard-nav-link">
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
@@ -545,14 +549,6 @@
     <!-- Main Content -->
     <main class="dashboard-content">
         <div class="container-fluid px-4">
-@if(!request()->routeIs('applicant.dashboard'))
-            <nav class="dashboard-breadcrumb" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('applicant.dashboard') }}">Dashboard</a></li>
-                    @yield('breadcrumb')
-                </ol>
-            </nav>
-            @endif
 
             <!-- Page Content -->
             @yield('content')
