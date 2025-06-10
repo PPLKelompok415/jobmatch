@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Applicant;
 use App\Models\Company;
-use App\Models\Job; // Import Job model
+use App\Models\Job;
 
 class AdminDashboardController extends Controller
 {
@@ -18,12 +18,12 @@ class AdminDashboardController extends Controller
             abort(403, 'Unauthorized access');
         }
         
-        // Ambil data untuk ditampilkan di dashboard
+        // Ambil data statistik
         $totalUsers = User::count();
         $totalApplicants = User::where('role', 'applicant')->count();
         $totalCompanies = User::where('role', 'company')->count();
         
-        // Tambahkan statistik job - menggunakan struktur database yang ada
+        // Tambahkan statistik job
         $totalJobs = Job::count();
         $activeJobs = Job::whereHas('company', function($query) {
             $query->where('deadline', '>=', now());
@@ -31,10 +31,16 @@ class AdminDashboardController extends Controller
         $expiredJobs = Job::whereHas('company', function($query) {
             $query->where('deadline', '<', now());
         })->count();
-        $pendingJobs = 0; // Bisa disesuaikan dengan logika bisnis
+        $pendingJobs = 0;
         
-        // Data tambahan yang mungkin dibutuhkan
-        $recentUsers = User::latest()->take(5)->get();
+        // Ambil pengguna terbaru dengan relasi yang diperlukan (hanya 10 pertama)
+        $recentUsers = User::with(['applicant', 'company'])
+                          ->select('id', 'name', 'email', 'role', 'created_at', 'updated_at')
+                          ->orderBy('created_at', 'desc')
+                          ->limit(10)
+                          ->get();
+        
+        // Ambil job terbaru
         $recentJobs = Job::with(['company'])->latest()->take(5)->get();
         
         return view('admin.dashboard', compact(
@@ -50,7 +56,233 @@ class AdminDashboardController extends Controller
         ));
     }
     
-    // HALAMAN KHUSUS PELAMAR (tidak diubah)
+    // Method untuk load more users via AJAX (untuk tabel utama)
+    public function getRecentUsers(Request $request)
+    {
+        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+        
+        try {
+            $page = $request->get('page', 1);
+            $perPage = $request->get('per_page', 10);
+            
+            // Skip users yang sudah ditampilkan di halaman sebelumnya
+            $skip = ($page - 1) * $perPage;
+            
+            $users = User::with(['applicant', 'company'])
+                        ->select('id', 'name', 'email', 'role', 'created_at', 'updated_at')
+                        ->orderBy('created_at', 'desc')
+                        ->skip($skip)
+                        ->take($perPage)
+                        ->get();
+            
+            // Hitung total untuk pagination info
+            $totalUsers = User::count();
+            $currentPage = $page;
+            $lastPage = ceil($totalUsers / $perPage);
+            $hasMorePages = $currentPage < $lastPage;
+            
+            return response()->json([
+                'success' => true,
+                'data' => $users,
+                'pagination' => [
+                    'current_page' => $currentPage,
+                    'last_page' => $lastPage,
+                    'per_page' => $perPage,
+                    'total' => $totalUsers,
+                    'from' => $skip + 1,
+                    'to' => min($skip + $perPage, $totalUsers),
+                    'has_more' => $hasMorePages
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error getting recent users: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data users: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    // Method untuk get users by role dengan pagination (untuk modal)
+    public function getUsersByRole($role, Request $request)
+    {
+        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+        
+        try {
+            $page = $request->get('page', 1);
+            $perPage = $request->get('per_page', 15);
+            
+            $query = User::with(['applicant', 'company'])
+                        ->select('id', 'name', 'email', 'role', 'created_at', 'updated_at')
+                        ->orderBy('created_at', 'desc');
+            
+            // Filter berdasarkan role jika bukan 'all'
+            if ($role !== 'all') {
+                $validRoles = ['applicant', 'company', 'admin', 'super_admin'];
+                if (in_array($role, $validRoles)) {
+                    if ($role === 'admin') {
+                        // Untuk admin, ambil yang role admin atau super_admin
+                        $query->whereIn('role', ['admin', 'super_admin']);
+                    } else {
+                        $query->where('role', $role);
+                    }
+                }
+            }
+            
+            $users = $query->paginate($perPage);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $users->items(),
+                'pagination' => [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'per_page' => $users->perPage(),
+                    'total' => $users->total(),
+                    'from' => $users->firstItem(),
+                    'to' => $users->lastItem(),
+                    'has_more' => $users->hasMorePages()
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in getUsersByRole: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data users: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    // Method untuk get user detail
+    public function getUserDetail($id)
+    {
+        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+        
+        try {
+            $user = User::with(['applicant', 'company'])->findOrFail($id);
+            
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ];
+            
+            // Tambahkan data spesifik berdasarkan role
+            if ($user->role === 'applicant' && $user->applicant) {
+                $userData['applicant_data'] = [
+                    'phone' => $user->applicant->phone ?? null,
+                    'address' => $user->applicant->address ?? null,
+                    'education' => $user->applicant->education ?? null,
+                    'experience' => $user->applicant->experience ?? null,
+                    'birth_date' => $user->applicant->birth_date ?? null,
+                    'gender' => $user->applicant->gender ?? null,
+                ];
+            } 
+            elseif ($user->role === 'company' && $user->company) {
+                $userData['company_data'] = [
+                    'company_name' => $user->company->company_name ?? null,
+                    'industry' => $user->company->industry ?? null,
+                    'address' => $user->company->address ?? null,
+                    'phone' => $user->company->phone ?? null,
+                    'website' => $user->company->website ?? null,
+                    'company_email' => $user->company->company_email ?? null,
+                    'description' => $user->company->description ?? null,
+                ];
+                
+                // Tambahan statistik job untuk company
+                $userData['job_stats'] = [
+                    'total_jobs' => Job::where('company_id', $user->company->id)->count(),
+                    'active_jobs' => Job::where('company_id', $user->company->id)
+                                       ->whereHas('company', function($q) {
+                                           $q->where('deadline', '>=', now());
+                                       })->count(),
+                ];
+            }
+            
+            return response()->json([
+                'success' => true,
+                'data' => $userData
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error getting user detail: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil detail user: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    // Method untuk delete user
+    public function deleteUser($id)
+    {
+        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+        
+        try {
+            $user = User::findOrFail($id);
+            
+            if ($user->id === Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak dapat menghapus akun Anda sendiri'
+                ], 400);
+            }
+            
+            DB::beginTransaction();
+            
+            $userName = $user->name;
+            
+            // Hapus data terkait berdasarkan role
+            if ($user->role === 'applicant') {
+                Applicant::where('user_id', $user->id)->delete();
+            } 
+            elseif ($user->role === 'company') {
+                // Hapus job postings terkait terlebih dahulu
+                if ($user->company) {
+                    Job::where('company_id', $user->company->id)->delete();
+                }
+                Company::where('user_id', $user->id)->delete();
+            }
+            
+            $user->delete();
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => "User '{$userName}' berhasil dihapus dari sistem"
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error deleting user: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus user: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Sisanya method lain tetap sama seperti sebelumnya...
     public function applicants()
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
@@ -65,7 +297,6 @@ class AdminDashboardController extends Controller
         return view('admin.applicants', compact('applicants'));
     }
     
-    // HALAMAN KHUSUS PERUSAHAAN (tidak diubah)
     public function companies()
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
@@ -80,17 +311,14 @@ class AdminDashboardController extends Controller
         return view('admin.companies', compact('companies'));
     }
     
-    // HALAMAN KHUSUS LOWONGAN KERJA - MENGGUNAKAN STRUKTUR DATABASE YANG ADA
     public function jobPostings(Request $request)
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
             abort(403, 'Unauthorized access');
         }
         
-        // Query menggunakan struktur database yang ada
         $query = Job::with(['company']);
 
-        // Apply search filter
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $query->whereHas('company', function($q) use ($searchTerm) {
@@ -99,7 +327,6 @@ class AdminDashboardController extends Controller
             });
         }
 
-        // Apply status filter berdasarkan deadline
         if ($request->has('status') && $request->status !== 'all') {
             switch($request->status) {
                 case 'active':
@@ -115,26 +342,18 @@ class AdminDashboardController extends Controller
             }
         }
 
-        // Apply category filter berdasarkan type_of_work
         if ($request->has('category') && $request->category !== 'all') {
             $query->whereHas('company', function($q) use ($request) {
                 $q->where('type_of_work', $request->category);
             });
         }
 
-        // Apply sorting
         $sortBy = $request->get('sort', 'newest');
         switch ($sortBy) {
             case 'oldest':
                 $query->orderBy('created_at', 'asc');
                 break;
-            case 'title_asc':
-            case 'title_desc':
-                // Karena title ada di tabel company, kita sort berdasarkan created_at
-                $query->orderBy('created_at', $sortBy == 'title_asc' ? 'asc' : 'desc');
-                break;
             case 'deadline':
-                // Sort berdasarkan deadline di tabel company
                 $query->join('companies', 'jobs.company_id', '=', 'companies.id')
                       ->orderBy('companies.deadline', 'asc')
                       ->select('jobs.*');
@@ -146,19 +365,17 @@ class AdminDashboardController extends Controller
 
         $jobs = $query->paginate(15);
         
-        // Hitung statistik
         $statistics = [
             'total' => Job::count(),
             'active' => Job::whereHas('company', function($q) {
                 $q->where('deadline', '>=', now());
             })->count(),
-            'pending' => 0, // Bisa disesuaikan
+            'pending' => 0,
             'expired' => Job::whereHas('company', function($q) {
                 $q->where('deadline', '<', now());
             })->count()
         ];
 
-        // Kategori berdasarkan type_of_work
         $categories = [
             'full_time' => 'Full Time',
             'part_time' => 'Part Time',
@@ -170,7 +387,6 @@ class AdminDashboardController extends Controller
         return view('admin.job-postings', compact('jobs', 'statistics', 'categories'));
     }
     
-    // METHOD UNTUK FILTER JOBS VIA AJAX
     public function filterJobs(Request $request)
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
@@ -180,7 +396,6 @@ class AdminDashboardController extends Controller
         try {
             $query = Job::with(['company']);
 
-            // Apply search
             if ($request->has('search') && $request->search) {
                 $searchTerm = $request->search;
                 $query->whereHas('company', function($q) use ($searchTerm) {
@@ -189,7 +404,6 @@ class AdminDashboardController extends Controller
                 });
             }
 
-            // Apply status filter
             if ($request->has('status') && $request->status !== 'all') {
                 switch($request->status) {
                     case 'active':
@@ -205,14 +419,12 @@ class AdminDashboardController extends Controller
                 }
             }
 
-            // Apply category filter
             if ($request->has('category') && $request->category !== 'all') {
                 $query->whereHas('company', function($q) use ($request) {
                     $q->where('type_of_work', $request->category);
                 });
             }
 
-            // Apply sorting
             $sortBy = $request->get('sort', 'newest');
             switch ($sortBy) {
                 case 'oldest':
@@ -246,7 +458,6 @@ class AdminDashboardController extends Controller
         }
     }
     
-    // METHOD UNTUK SHOW JOB DETAIL
     public function showJob(Job $job)
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
@@ -256,7 +467,6 @@ class AdminDashboardController extends Controller
         try {
             $job->load(['company']);
             
-            // Hitung statistik aplikasi (jika ada tabel job_applications)
             $applicationStats = [
                 'total' => 0,
                 'pending' => 0,
@@ -266,7 +476,6 @@ class AdminDashboardController extends Controller
                 'rejected' => 0,
             ];
 
-            // Jika ada method jobApplications di model Job
             if (method_exists($job, 'jobApplications') && $job->jobApplications) {
                 $applications = $job->jobApplications;
                 $applicationStats = [
@@ -298,7 +507,6 @@ class AdminDashboardController extends Controller
         }
     }
     
-    // METHOD UNTUK DELETE JOB
     public function deleteJob(Job $job)
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
@@ -324,7 +532,6 @@ class AdminDashboardController extends Controller
         }
     }
     
-    // METHOD UNTUK GET JOB STATISTICS
     public function getJobStatistics()
     {
         if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
@@ -337,7 +544,7 @@ class AdminDashboardController extends Controller
                 'active' => Job::whereHas('company', function($q) {
                     $q->where('deadline', '>=', now());
                 })->count(),
-                'pending' => 0, // Sesuaikan dengan logika bisnis
+                'pending' => 0,
                 'expired' => Job::whereHas('company', function($q) {
                     $q->where('deadline', '<', now());
                 })->count()
@@ -358,145 +565,6 @@ class AdminDashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil statistik: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    
-    // METHOD YANG SUDAH ADA (tidak diubah)
-    public function deleteUser(User $user)
-    {
-        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized access'
-            ], 403);
-        }
-        
-        if ($user->id === Auth::id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Anda tidak dapat menghapus akun Anda sendiri'
-            ], 400);
-        }
-        
-        try {
-            DB::beginTransaction();
-            
-            if ($user->role === 'applicant') {
-                Applicant::where('user_id', $user->id)->delete();
-            } 
-            elseif ($user->role === 'company') {
-                Company::where('user_id', $user->id)->delete();
-                // Hapus job postings terkait
-                Job::where('company_id', function($query) use ($user) {
-                    $query->select('id')->from('companies')->where('user_id', $user->id);
-                })->delete();
-            }
-            
-            $user->delete();
-            DB::commit();
-            
-            return response()->json([
-                'success' => true,
-                'message' => ucfirst($user->role) . ' berhasil dihapus dari sistem'
-            ]);
-            
-        } catch (\Exception $e) {
-            DB::rollback();
-            \Log::error('Error deleting user: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus user: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    
-    public function getUserDetail(User $user)
-    {
-        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized access'
-            ], 403);
-        }
-        
-        try {
-            $userData = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at,
-            ];
-            
-            if ($user->role === 'applicant') {
-                $applicant = Applicant::where('user_id', $user->id)->first();
-                $userData['applicant_data'] = $applicant;
-            } 
-            elseif ($user->role === 'company') {
-                $company = Company::where('user_id', $user->id)->first();
-                $userData['company_data'] = $company;
-                
-                if($company) {
-                    $userData['job_stats'] = [
-                        'total_jobs' => Job::where('company_id', $company->id)->count(),
-                        'active_jobs' => Job::where('company_id', $company->id)
-                                           ->whereHas('company', function($q) {
-                                               $q->where('deadline', '>=', now());
-                                           })->count(),
-                    ];
-                }
-            }
-            
-            return response()->json([
-                'success' => true,
-                'data' => $userData
-            ]);
-            
-        } catch (\Exception $e) {
-            \Log::error('Error getting user detail: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengambil detail user: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    
-    public function getUsersByRole($role)
-    {
-        if (!Auth::user() || !Auth::user()->hasRole('super_admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized access'
-            ], 403);
-        }
-        
-        try {
-            $query = User::select('id', 'name', 'email', 'role', 'created_at')
-                         ->orderBy('created_at', 'desc')
-                         ->limit(100);
-            
-            if ($role !== 'all') {
-                $query->where('role', $role);
-            }
-            
-            $users = $query->get();
-            
-            return response()->json([
-                'success' => true,
-                'data' => $users,
-                'total' => $users->count()
-            ]);
-            
-        } catch (\Exception $e) {
-            \Log::error('Error in getUsersByRole: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengambil data users: ' . $e->getMessage()
             ], 500);
         }
     }

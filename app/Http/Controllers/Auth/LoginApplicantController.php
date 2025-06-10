@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;  // Tambahkan ini untuk autentikasi
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginApplicantController extends Controller
 {
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('Auth.loginApplicant');  // Tampilkan halaman login
+        return view('Auth.loginApplicant');
     }
 
     // Menangani proses login
@@ -20,7 +20,7 @@ class LoginApplicantController extends Controller
         // Validasi form login
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:6',  // Sesuaikan dengan panjang password yang dibutuhkan
+            'password' => 'required|min:6',
         ]);
 
         // Cek kredensial login
@@ -28,18 +28,45 @@ class LoginApplicantController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ], $request->remember)) {
-            // Jika login berhasil, alihkan ke halaman dashboard applicant
-            return redirect()->route('applicant.dashboard');
+            
+            $user = Auth::user();
+            
+            // Validasi role - hanya applicant yang boleh login
+            if ($user->role !== 'applicant') {
+                Auth::logout(); // Logout user yang bukan applicant
+                
+                // Redirect ke login yang sesuai berdasarkan role
+                if ($user->role === 'company') {
+                    return redirect()->route('login.company')
+                        ->with('error', 'Akun perusahaan tidak dapat menggunakan portal login pelamar. Silakan gunakan portal login perusahaan.');
+                } elseif ($user->role === 'admin' || $user->role === 'super_admin') {
+                    return redirect()->route('login.admin')
+                        ->with('error', 'Akun admin tidak dapat menggunakan portal login pelamar. Silakan gunakan portal login admin.');
+                } else {
+                    return redirect()->back()
+                        ->with('error', 'Tipe akun Anda tidak dapat menggunakan portal login pelamar.');
+                }
+            }
+            
+            // Jika role adalah applicant, regenerate session dan redirect ke dashboard
+            $request->session()->regenerate();
+            return redirect()->intended(route('applicant.dashboard'));
         }
 
-        // Jika login gagal, kembali ke halaman login dengan pesan error
-        return redirect()->back()->withErrors(['email' => 'These credentials do not match our records.']);
+        // Jika kredensial salah
+        return redirect()->back()
+            ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.'])
+            ->withInput($request->except('password'));
     }
 
     // Logout function
     public function logout(Request $request)
     {
         Auth::logout();
-        return redirect('/');  // Redirect ke halaman home setelah logout
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('home')
+            ->with('success', 'Anda telah berhasil logout.');
     }
 }

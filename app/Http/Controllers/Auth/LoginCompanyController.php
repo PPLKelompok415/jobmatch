@@ -11,7 +11,7 @@ class LoginCompanyController extends Controller
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('Auth.loginCompany');  // Pastikan Anda memiliki file auth/login.blade.php
+        return view('Auth.loginCompany');
     }
 
     // Menangani proses login
@@ -20,7 +20,7 @@ class LoginCompanyController extends Controller
         // Validasi form login
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:6',  // Sesuaikan dengan panjang password yang dibutuhkan
+            'password' => 'required|min:6',
         ]);
 
         // Cek kredensial login
@@ -28,18 +28,45 @@ class LoginCompanyController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ], $request->remember)) {
-            // Jika login berhasil, alihkan ke halaman dashboard applicant
-            return redirect()->route('company.dashboard');
+            
+            $user = Auth::user();
+            
+            // Validasi role - hanya company yang boleh login
+            if ($user->role !== 'company') {
+                Auth::logout(); // Logout user yang bukan company
+                
+                // Redirect ke login yang sesuai berdasarkan role
+                if ($user->role === 'applicant') {
+                    return redirect()->route('login.applicant')
+                        ->with('error', 'Akun pelamar tidak dapat menggunakan portal login perusahaan. Silakan gunakan portal login pelamar.');
+                } elseif ($user->role === 'admin' || $user->role === 'super_admin') {
+                    return redirect()->route('login.admin')
+                        ->with('error', 'Akun admin tidak dapat menggunakan portal login perusahaan. Silakan gunakan portal login admin.');
+                } else {
+                    return redirect()->back()
+                        ->with('error', 'Tipe akun Anda tidak dapat menggunakan portal login perusahaan.');
+                }
+            }
+            
+            // Jika role adalah company, regenerate session dan redirect ke dashboard
+            $request->session()->regenerate();
+            return redirect()->intended(route('company.dashboard'));
         }
 
-        // Jika login gagal, kembali ke halaman login dengan pesan error
-        return redirect()->back()->withErrors(['email' => 'These credentials do not match our records.']);
+        // Jika kredensial salah
+        return redirect()->back()
+            ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.'])
+            ->withInput($request->except('password'));
     }
 
     // Logout function
     public function logout(Request $request)
     {
         Auth::logout();
-        return redirect('/');  // Redirect ke halaman home setelah logout
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('home')
+            ->with('success', 'Anda telah berhasil logout.');
     }
 }

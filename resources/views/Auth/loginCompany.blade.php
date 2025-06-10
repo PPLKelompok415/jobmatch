@@ -125,6 +125,50 @@
                         <p class="text-muted">Access your recruitment dashboard</p>
                     </div>
                     
+                    <!-- Error/Success Notifications -->
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <div>
+                                    <strong>Login Failed!</strong><br>
+                                    {{ session('error') }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>
+                                    <strong>Success!</strong><br>
+                                    {{ session('success') }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                                <div>
+                                    <strong>Please check the following errors:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
                     <!-- Login Card dengan Bootstrap card -->
                     <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-relative">
                         <!-- Top gradient bar dengan Bootstrap utilities -->
@@ -148,6 +192,9 @@
                             <form action="{{ route('company.login.post') }}" method="POST" class="needs-validation" novalidate>
                                 @csrf
                                 
+                                <!-- Hidden field to identify this as company login -->
+                                <input type="hidden" name="user_type" value="company">
+                                
                                 <!-- Email Field dengan Bootstrap input group -->
                                 <div class="mb-4">
                                     <label for="email" class="form-label fw-semibold">Company Email Address</label>
@@ -155,9 +202,20 @@
                                         <span class="input-group-text bg-white border-end-0">
                                             <i class="fas fa-envelope text-muted"></i>
                                         </span>
-                                        <input type="email" id="email" name="email" class="form-control border-start-0" placeholder="Enter your company email" required autocomplete="email">
+                                        <input type="email" 
+                                               id="email" 
+                                               name="email" 
+                                               class="form-control border-start-0 @error('email') is-invalid @enderror" 
+                                               placeholder="Enter your company email" 
+                                               value="{{ old('email') }}"
+                                               required 
+                                               autocomplete="email">
                                     </div>
-                                    <div class="invalid-feedback"></div>
+                                    @error('email')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @else
+                                        <div class="invalid-feedback"></div>
+                                    @enderror
                                 </div>
                                 
                                 <!-- Password Field dengan Bootstrap input group -->
@@ -167,18 +225,28 @@
                                         <span class="input-group-text bg-white border-end-0">
                                             <i class="fas fa-lock text-muted"></i>
                                         </span>
-                                        <input type="password" id="password" name="password" class="form-control border-start-0" placeholder="Enter your password" required autocomplete="current-password">
+                                        <input type="password" 
+                                               id="password" 
+                                               name="password" 
+                                               class="form-control border-start-0 @error('password') is-invalid @enderror" 
+                                               placeholder="Enter your password" 
+                                               required 
+                                               autocomplete="current-password">
                                         <button type="button" class="btn btn-light border border-start-0 password-reveal">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
-                                    <div class="invalid-feedback"></div>
+                                    @error('password')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @else
+                                        <div class="invalid-feedback"></div>
+                                    @enderror
                                 </div>
                                 
                                 <!-- Form Options dengan Bootstrap flex utilities -->
                                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                                        <input class="form-check-input" type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
                                         <label class="form-check-label" for="remember">Keep me signed in</label>
                                     </div>
                                     <a href="#" class="text-decoration-none fw-semibold text-primary">Forgot password?</a>
@@ -197,6 +265,21 @@
                                     </div>
                                 </button>
                                 
+                                <!-- Enhanced Role Restriction Notice -->
+                                <div class="d-flex align-items-start gap-3 bg-danger bg-opacity-10 p-3 rounded-3 border border-danger border-opacity-25 mb-4">
+                                    <div class="text-danger">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block mb-1 text-danger">🏢 Companies Only</strong>
+                                        <p class="small text-muted mb-2">This login portal is exclusively for companies and employers. Job seeker accounts are restricted from accessing this area.</p>
+                                        <p class="small text-muted mb-0">
+                                            <strong>Looking for a job?</strong> 
+                                            <a href="{{ route('login.applicant') }}" class="text-success text-decoration-none fw-semibold">Use Job Seeker Login Portal →</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                
                                 <!-- Enterprise Security Notice dengan Bootstrap alerts -->
                                 <div class="d-flex align-items-start gap-3 bg-primary bg-opacity-10 p-3 rounded-3 border border-primary border-opacity-25 mb-4">
                                     <div class="text-primary">
@@ -205,6 +288,29 @@
                                     <div>
                                         <strong class="d-block mb-1">Enterprise Security Enabled</strong>
                                         <p class="small text-muted mb-0">Your account is protected with bank-level encryption and monitoring</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Social Login dengan Bootstrap grid -->
+                                <div class="text-center mb-4">
+                                    <div class="position-relative">
+                                        <hr>
+                                        <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small">Or continue with</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-2 mb-4">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+                                            <i class="fab fa-google"></i>
+                                            <span class="small">Google</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-info w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+                                            <i class="fab fa-linkedin"></i>
+                                            <span class="small">LinkedIn</span>
+                                        </button>
                                     </div>
                                 </div>
                                 
@@ -223,10 +329,10 @@
                                     <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small">Other options</span>
                                 </div>
                                 
-                                <div class="row g-1">
+                                <div class="row g-2">
                                     <div class="col-md-6">
                                         <a href="{{ route('login.applicant') }}" class="btn btn-outline-secondary text-start d-flex align-items-center gap-3 p-3 w-100">
-                                            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-light rounded-2" style="width: 20px; height: 40px;">
+                                            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-light rounded-2" style="width: 40px; height: 40px;">
                                                 <i class="fas fa-user"></i>
                                             </div>
                                             <div>
@@ -235,9 +341,9 @@
                                             </div>
                                         </a>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-5">
                                         <button type="button" class="btn btn-outline-secondary text-start d-flex align-items-center gap-3 p-3 w-100" onclick="showSupportModal()">
-                                            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-light rounded-2" style="width: 30px; height: 40px;">
+                                            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-light rounded-2" style="width: 40px; height: 40px;">
                                                 <i class="fas fa-headset"></i>
                                             </div>
                                             <div>
@@ -261,30 +367,37 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold" id="supportModalLabel">Get Support</h5>
+                <h5 class="modal-title fw-bold" id="supportModalLabel">Get Enterprise Support</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="list-group list-group-flush">
-                    <a href="mailto:support@jobmatch.com" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                    <a href="mailto:enterprise@jobmatch.com" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
                         <i class="fas fa-envelope text-primary fs-4"></i>
                         <div>
-                            <strong class="d-block">Email Support</strong>
-                            <p class="mb-0 text-muted">support@jobmatch.com</p>
+                            <strong class="d-block">Enterprise Support</strong>
+                            <p class="mb-0 text-muted">enterprise@jobmatch.com</p>
                         </div>
                     </a>
-                    <a href="tel:+6221-1234-5678" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                    <a href="tel:+6221-1234-9999" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
                         <i class="fas fa-phone text-success fs-4"></i>
                         <div>
-                            <strong class="d-block">Phone Support</strong>
-                            <p class="mb-0 text-muted">+62-21-1234-5678</p>
+                            <strong class="d-block">Priority Hotline</strong>
+                            <p class="mb-0 text-muted">+62-21-1234-9999</p>
                         </div>
                     </a>
                     <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
                         <i class="fas fa-comments text-warning fs-4"></i>
                         <div>
-                            <strong class="d-block">Live Chat</strong>
-                            <p class="mb-0 text-muted">Available 9 AM - 6 PM WIB</p>
+                            <strong class="d-block">Dedicated Chat</strong>
+                            <p class="mb-0 text-muted">24/7 Enterprise Support</p>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                        <i class="fas fa-calendar text-info fs-4"></i>
+                        <div>
+                            <strong class="d-block">Schedule Demo</strong>
+                            <p class="mb-0 text-muted">Book a consultation</p>
                         </div>
                     </a>
                 </div>
@@ -305,7 +418,6 @@
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    /* Minimal custom CSS - hanya untuk animasi yang tidak ada di Bootstrap */
     @keyframes float {
         0%, 100% { transform: translate(0, 0) rotate(0deg); }
         25% { transform: translate(50px, -50px) rotate(90deg); }
@@ -313,23 +425,34 @@
         75% { transform: translate(40px, 30px) rotate(270deg); }
     }
 
-    /* Feature card hover effects */
     .feature-card:hover {
         background: rgba(255, 255, 255, 0.15) !important;
         border-color: rgba(255, 255, 255, 0.3) !important;
         transform: translateX(10px);
     }
 
-    /* Button hover effects */
     .btn:hover {
         transform: translateY(-2px);
     }
 
-    /* Submit button loading state */
     .submit-btn.loading span { opacity: 0; }
     .submit-btn.loading .opacity-0 { opacity: 1 !important; }
 
-    /* Mobile responsive */
+    .alert {
+        animation: slideInDown 0.3s ease-out;
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
     @media (max-width: 991.98px) {
         .card {
             background: rgba(255, 255, 255, 0.95) !important;
@@ -347,6 +470,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.querySelector('#password');
     const submitBtn = document.querySelector('.submit-btn');
     const passwordReveal = document.querySelector('.password-reveal');
+    const applicantLoginUrl = '{{ route("login.applicant") }}';
+    
+    // Enhanced security check for personal/job seeker domains
+    const jobSeekerDomains = [
+        'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 
+        'icloud.com', 'protonmail.com', 'aol.com', 'live.com'
+    ];
     
     // Validation functions
     function validateEmail(email) {
@@ -357,10 +487,18 @@ document.addEventListener('DOMContentLoaded', function() {
         return password.length >= 6;
     }
     
+    function isJobSeekerEmail(email) {
+        const domain = email.split('@')[1];
+        return jobSeekerDomains.some(jobSeekerDomain => domain && domain.toLowerCase() === jobSeekerDomain.toLowerCase());
+    }
+    
     function showError(input, message) {
         input.classList.add('is-invalid');
         input.classList.remove('is-valid');
-        input.parentElement.nextElementSibling.textContent = message;
+        const feedback = input.parentElement.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = message;
+        }
     }
     
     function showSuccess(input) {
@@ -368,72 +506,174 @@ document.addEventListener('DOMContentLoaded', function() {
         input.classList.add('is-valid');
     }
     
-    // Email validation
-    emailInput.addEventListener('blur', function() {
-        if (this.value && !validateEmail(this.value)) {
-            showError(this, 'Please enter a valid email address');
-        } else if (this.value) {
-            showSuccess(this);
+    function clearError(input) {
+        input.classList.remove('is-invalid', 'is-valid');
+        const feedback = input.parentElement.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = '';
         }
-    });
+    }
     
-    // Password validation
-    passwordInput.addEventListener('blur', function() {
-        if (this.value && !validatePassword(this.value)) {
-            showError(this, 'Password must be at least 6 characters long');
-        } else if (this.value) {
-            showSuccess(this);
+    function showJobSeekerWarning() {
+        // Remove existing alerts first
+        const existingAlerts = document.querySelectorAll('.alert-warning');
+        existingAlerts.forEach(alert => alert.remove());
+        
+        // Create new alert
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-warning alert-dismissible fade show mb-4';
+        alertDiv.setAttribute('role', 'alert');
+        alertDiv.innerHTML = 
+            '<div class="d-flex align-items-center">' +
+                '<i class="fas fa-user me-2"></i>' +
+                '<div>' +
+                    '<strong>Personal Email Detected!</strong><br>' +
+                    'This appears to be a personal email. Job seekers should use the <a href="' + applicantLoginUrl + '" class="alert-link">Job Seeker Login Portal</a> instead.' +
+                '</div>' +
+            '</div>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+        
+        const cardBody = document.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.insertBefore(alertDiv, cardBody.firstChild);
         }
-    });
+    }
+    
+    // Real-time validation
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            clearError(this);
+        });
+        
+        emailInput.addEventListener('blur', function() {
+            if (this.value && !validateEmail(this.value)) {
+                showError(this, 'Please enter a valid email address');
+            } else if (this.value && isJobSeekerEmail(this.value)) {
+                showError(this, 'Personal emails should use the Job Seeker Login Portal');
+                showJobSeekerWarning();
+            } else if (this.value) {
+                showSuccess(this);
+            }
+        });
+    }
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            clearError(this);
+        });
+        
+        passwordInput.addEventListener('blur', function() {
+            if (this.value && !validatePassword(this.value)) {
+                showError(this, 'Password must be at least 6 characters long');
+            } else if (this.value) {
+                showSuccess(this);
+            }
+        });
+    }
     
     // Password reveal
-    passwordReveal.addEventListener('click', function() {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('fa-eye');
-        this.querySelector('i').classList.toggle('fa-eye-slash');
-    });
+    if (passwordReveal) {
+        passwordReveal.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    }
     
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        let isValid = true;
-        
-        if (!emailInput.value) {
-            showError(emailInput, 'Email is required');
-            isValid = false;
-        } else if (!validateEmail(emailInput.value)) {
-            showError(emailInput, 'Please enter a valid email address');
-            isValid = false;
-        }
-        
-        if (!passwordInput.value) {
-            showError(passwordInput, 'Password is required');
-            isValid = false;
-        } else if (!validatePassword(passwordInput.value)) {
-            showError(passwordInput, 'Password must be at least 6 characters long');
-            isValid = false;
-        }
-        
-        if (isValid) {
-            submitBtn.classList.add('loading');
-            submitBtn.disabled = true;
-            setTimeout(() => form.submit(), 1000);
-        }
-    });
+    // Enhanced form submission with job seeker blocking
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            // Reset previous states
+            if (emailInput) emailInput.classList.remove('is-invalid', 'is-valid');
+            if (passwordInput) passwordInput.classList.remove('is-invalid', 'is-valid');
+            
+            // Email validation
+            if (!emailInput || !emailInput.value) {
+                if (emailInput) showError(emailInput, 'Email is required');
+                isValid = false;
+            } else if (!validateEmail(emailInput.value)) {
+                showError(emailInput, 'Please enter a valid email address');
+                isValid = false;
+            } else if (isJobSeekerEmail(emailInput.value)) {
+                showError(emailInput, 'Personal emails must use the Job Seeker Login Portal');
+                showJobSeekerWarning();
+                isValid = false;
+                
+                // Redirect to job seeker login after 2 seconds
+                setTimeout(function() {
+                    window.location.href = applicantLoginUrl;
+                }, 2000);
+                
+            } else {
+                showSuccess(emailInput);
+            }
+            
+            // Password validation
+            if (!passwordInput || !passwordInput.value) {
+                if (passwordInput) showError(passwordInput, 'Password is required');
+                isValid = false;
+            } else if (!validatePassword(passwordInput.value)) {
+                showError(passwordInput, 'Password must be at least 6 characters long');
+                isValid = false;
+            } else {
+                showSuccess(passwordInput);
+            }
+            
+            if (isValid) {
+                if (submitBtn) {
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                }
+                setTimeout(function() {
+                    form.submit();
+                }, 1000);
+            } else {
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
+            }
+        });
+    }
     
     // Feature cards interaction
-    document.querySelectorAll('.feature-card').forEach(card => {
+    document.querySelectorAll('.feature-card').forEach(function(card) {
         card.addEventListener('click', function() {
-            document.querySelectorAll('.feature-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.feature-card').forEach(function(c) {
+                c.classList.remove('active');
+            });
             this.classList.add('active');
         });
+    });
+    
+    // Auto-dismiss alerts after 5 seconds
+    document.querySelectorAll('.alert').forEach(function(alert) {
+        setTimeout(function() {
+            if (alert && alert.parentNode && typeof bootstrap !== 'undefined') {
+                try {
+                    const bootstrapAlert = new bootstrap.Alert(alert);
+                    bootstrapAlert.close();
+                } catch (e) {
+                    console.log('Bootstrap alert error:', e);
+                }
+            }
+        }, 5000);
     });
 });
 
 function showSupportModal() {
-    new bootstrap.Modal(document.getElementById('supportModal')).show();
+    if (typeof bootstrap !== 'undefined') {
+        try {
+            new bootstrap.Modal(document.getElementById('supportModal')).show();
+        } catch (e) {
+            console.log('Bootstrap modal error:', e);
+        }
+    }
 }
 </script>
 @endsection

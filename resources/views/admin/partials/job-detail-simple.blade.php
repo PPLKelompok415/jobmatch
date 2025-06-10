@@ -223,27 +223,19 @@
             <div class="card-body">
                 <h6 class="card-title d-flex align-items-center">
                     <i class="fas fa-cogs me-2"></i>
-                    Quick Actions
+                    Admin Actions
                 </h6>
                 <div class="d-grid gap-2">
-                    @php
-                        $isExpired = $job->company->deadline && $job->company->deadline < now();
-                    @endphp
-                    
-                    @if($isExpired)
-                        <button type="button" class="btn btn-primary btn-sm reactivate-job" data-job-id="{{ $job->id }}">
-                            <i class="fas fa-redo me-2"></i>Reaktivasi Lowongan
-                        </button>
-                    @endif
-                    
-                    <button type="button" class="btn btn-warning btn-sm edit-job" data-job-id="{{ $job->id }}">
-                        <i class="fas fa-edit me-2"></i>Edit Lowongan
-                    </button>
-                    
                     <button type="button" class="btn btn-outline-danger btn-sm delete-job" 
                             data-job-id="{{ $job->id }}" data-job-title="{{ $job->company->position ?? 'Lowongan' }}">
                         <i class="fas fa-trash me-2"></i>Hapus Lowongan
                     </button>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Admin hanya dapat melihat detail dan menghapus lowongan.
+                    </small>
                 </div>
             </div>
         </div>

@@ -471,11 +471,18 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="dashboard-nav-link ">
-                    <i class="fas fa-search"></i>
-                    <span>Browse Jobs</span>
+                <a href="{{ route('community.index') }}" class="dashboard-nav-link {{ request()->routeIs('community.index') ? 'active' : '' }}">
+                    <i class="fas fa-users"></i>
+                    <span>Community</span>
                 </a>
-                <a href="#" class="dashboard-nav-link ">
+
+
+                <a href="{{ route('applicant.findjobs') }}" class="dashboard-nav-link {{ request()->routeIs('applicant.findjobs') ? 'active' : '' }}">
+                    <i class="fas fa-search"></i>
+                    <span>Find Jobs</span>
+                </a>
+                
+                <a href="#" class="dashboard-nav-link">
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
                 </a>
