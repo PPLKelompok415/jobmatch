@@ -61,12 +61,12 @@ class DashboardApplicantController extends Controller
     {
         /** @var Applicant $applicant **/
         $applicant = auth()->user()->applicantProfile;
+        $userId = auth()->id();
 
         $matchedJobs = JobMatchingService::makeMatches($applicant)
                 ->sortByDesc('match_score')
                 ->take(4)
-                ->values()
-                ->toArray();
+                ->values();
 
         $matchedJobs = $matchedJobs->map(function ($job) use ($userId) {
             $companyUserId = $job->company->user_id ?? null;

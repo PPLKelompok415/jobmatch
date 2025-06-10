@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/community', [CommunityController::class, 'store'])->name('community.store');
     Route::post('/bookmark/{bookmark}/comment', [CommentController::class, 'store'])->name('bookmark.comment.store');
     Route::middleware('auth')->post('/community/{community}/comment', [CommunityCommentController::class, 'store'])->name('community.comment.store');
-    Route::post('/community/{id}/like', [App\Http\Controllers\CommunityController::class, 'like'])->name('community.like');
-    Route::get('/community/liked-comments', [\App\Http\Controllers\CommunityController::class, 'likedComments'])->name('community.liked.comments');
-    Route::delete('/community/{id}', [\App\Http\Controllers\CommunityController::class, 'destroy'])->name('community.destroy');
+    Route::post('/community/{id}/like', [CommunityController::class, 'like'])->name('community.like');
+    Route::get('/community/liked-comments', [CommunityController::class, 'likedComments'])->name('community.liked.comments');
+    Route::delete('/community/{id}', [CommunityController::class, 'destroy'])->name('community.destroy');
 });

@@ -75,7 +75,7 @@
                     <i class="bi bi-building me-1"></i>Company Details
                   </button>
                   <button class="btn btn-primary btn-sm">
-                    <i class="bi bi-eye me-1"></i><a :href="`jobs/${job.id}/applicants`" class="btn btn-sm btn-primary">
+                    <i class="bi bi-eye me-1"></i><a :href="{{route('company.job.applicants')}}" class="btn btn-sm btn-primary">
   <i class="bi bi-eye me-1"></i>View Applicants
 </a>
 
