@@ -11,7 +11,8 @@ class LoginApplicantController extends Controller
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('Auth.loginApplicant');
+        // Menggunakan 'auth.loginApplicant' sesuai konvensi Laravel (folder lowercase)
+        return view('auth.loginApplicant');
     }
 
     // Menangani proses login
@@ -20,7 +21,7 @@ class LoginApplicantController extends Controller
         // Validasi form login
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:6',
+            'password' => 'required|min:6', // Panjang password minimal 6 karakter
         ]);
 
         // Cek kredensial login
@@ -31,7 +32,7 @@ class LoginApplicantController extends Controller
             
             $user = Auth::user();
             
-            // Validasi role - hanya applicant yang boleh login
+            // Validasi role: hanya applicant yang boleh login melalui portal ini (dari cabang main)
             if ($user->role !== 'applicant') {
                 Auth::logout(); // Logout user yang bukan applicant
                 
@@ -48,25 +49,25 @@ class LoginApplicantController extends Controller
                 }
             }
             
-            // Jika role adalah applicant, regenerate session dan redirect ke dashboard
-            $request->session()->regenerate();
+            // Jika role adalah applicant dan login berhasil, regenerate session dan redirect ke dashboard
+            $request->session()->regenerate(); // Untuk keamanan session
             return redirect()->intended(route('applicant.dashboard'));
         }
 
-        // Jika kredensial salah
+        // Jika kredensial salah, kembali ke halaman login dengan pesan error
         return redirect()->back()
             ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.'])
-            ->withInput($request->except('password'));
+            ->withInput($request->except('password')); // Agar email tetap terisi
     }
 
-    // Logout function
+    // Fungsi logout
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Auth::logout(); // Logout user
+        $request->session()->invalidate(); // Hapus session yang ada
+        $request->session()->regenerateToken(); // Buat ulang token CSRF
         
-        return redirect()->route('home')
-            ->with('success', 'Anda telah berhasil logout.');
+        return redirect()->route('home') // Redirect ke halaman home
+            ->with('success', 'Anda telah berhasil logout.'); // Tampilkan pesan sukses
     }
 }

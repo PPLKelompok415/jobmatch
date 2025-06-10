@@ -2,23 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-
-class DatabaseSeeder extends Seeder
-{
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-{
-    $this->call([
-        // DummyDataSeeder::class,
-        RolePermissionSeeder::class
-    ]);
-}
+use Illuminate\Support\Carbon;
 
 class JobSeeder extends Seeder
 {
@@ -31,9 +17,9 @@ class JobSeeder extends Seeder
                 'location' => 'Jakarta',
                 'type' => 'Full-time',
                 'category' => 'Engineering',
-                'published_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'published_at' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'title' => 'UI/UX Designer',
@@ -41,13 +27,10 @@ class JobSeeder extends Seeder
                 'location' => 'Bandung',
                 'type' => 'Freelance',
                 'category' => 'Design',
-                'published_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'published_at' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
-            // Tambah data lain di sini
         ]);
     }
-}
-
 }
