@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Services\JobMatchingService;
 use App\Models\Applicant;
-use App\Models\Job; // Ditambahkan: Model Job diperlukan untuk fungsi findJobs dan viewJobDetails dari cabang main
+use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Message;
+use App\Models\Bookmark;
+use App\Models\User;
 
 class DashboardApplicantController extends Controller
 {
@@ -16,21 +19,38 @@ class DashboardApplicantController extends Controller
     public function index()
     {
         /** @var \App\Models\Applicant $applicant */
-        // Menggunakan relasi 'applicant' yang konsisten seperti di User.php yang sudah digabungkan
-        $applicant = auth()->user()->applicant; 
+        $applicant = auth()->user()->applicant;
+        $userId = auth()->id();
 
         if (!$applicant) {
-            // Memberikan respons error yang lebih spesifik jika profil pelamar tidak ditemukan
-            abort(403, 'Applicant profile not found. Please ensure your applicant profile is complete.');
+            abort(403, 'Applicant profile not found.');
         }
 
         $matchedJobs = JobMatchingService::makeMatches($applicant)
-            ->sortByDesc('match_score')
-            ->take(4)
-            ->values();
+                ->sortByDesc('match_score')
+                ->take(4)
+                ->values();
+
+        $matchedJobs = $matchedJobs->map(function ($job) use ($userId) {
+            $companyUserId = $job->company->user_id ?? null;
+            $jobId = $job->id;
+            $hasChat = false;
+            if ($companyUserId && $jobId) {
+                $hasChat = Message::where(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $companyUserId)->where('job_id', $jobId);
+                })->orWhere(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $companyUserId)->where('receiver_id', $userId)->where('job_id', $jobId);
+                })->exists();
+            }
+            $job->has_chat = $hasChat;
+            $job->is_bookmarked = Bookmark::where('user_id', $userId)->where('job_id', $job->id)->exists();
+
+            return $job;
+        });
 
         return view('applicant.daApplicant', [
-            'matchingJobs' => $matchedJobs
+            'matchingJobs' => $matchedJobs,
+            'userId' => $userId,
         ]);
     }
 
@@ -40,19 +60,28 @@ class DashboardApplicantController extends Controller
     public function data()
     {
         /** @var Applicant $applicant **/
-        // Menggunakan relasi 'applicant' yang konsisten
-        $applicant = auth()->user()->applicant; 
-
-        if (!$applicant) {
-            // Memberikan respons JSON error jika profil pelamar tidak ditemukan
-            return response()->json(['error' => 'Applicant profile not found. Please complete your profile.'], 403);
-        }
+        $applicant = auth()->user()->applicantProfile;
+        $userId = auth()->id();
 
         $matchedJobs = JobMatchingService::makeMatches($applicant)
-            ->sortByDesc('match_score')
-            ->take(4)
-            ->values()
-            ->toArray();
+                ->sortByDesc('match_score')
+                ->take(4)
+                ->values();
+
+        $matchedJobs = $matchedJobs->map(function ($job) use ($userId) {
+            $companyUserId = $job->company->user_id ?? null;
+            $jobId = $job->id;
+            $hasChat = false;
+            if ($companyUserId && $jobId) {
+                $hasChat = Message::where(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $companyUserId)->where('job_id', $jobId);
+                })->orWhere(function($q) use ($userId, $companyUserId, $jobId) {
+                    $q->where('sender_id', $companyUserId)->where('receiver_id', $userId)->where('job_id', $jobId);
+                })->exists();
+            }
+            $job->has_chat = $hasChat;
+            return $job;
+        });
 
         return response()->json($matchedJobs);
     }
@@ -66,47 +95,32 @@ class DashboardApplicantController extends Controller
             'job_id' => 'required|exists:jobs,id',
         ]);
 
-        // Menggunakan relasi 'applicant' yang konsisten
-        $applicant = auth()->user()->applicant; 
-
-        if (!$applicant) {
-            // Jika profil pelamar tidak ditemukan, redirect kembali dengan error
-            return redirect()->back()->with('error', 'Applicant profile not found. Please complete your profile before applying.');
-        }
-
-        // Cek apakah pelamar sudah pernah melamar pekerjaan ini (logika dari cabang main)
         $alreadyApplied = DB::table('job_applications')
             ->where('job_id', $request->job_id)
-            ->where('applicant_id', $applicant->id) // Menggunakan ID pelamar yang sudah didapatkan
+            ->where('applicant_id', auth()->user()->id)
             ->exists();
 
         if ($alreadyApplied) {
             return redirect()->back()->with('error', 'You have already applied for this job.');
         }
 
-        // Masukkan lamaran pekerjaan baru ke database (logika insert dari cabang main)
         DB::table('job_applications')->insert([
             'job_id' => $request->job_id,
-            'applicant_id' => $applicant->id, // Menggunakan ID pelamar
-            'status' => 'pending', // Status awal lamaran
+            'applicant_id' => auth()->user()->id,
+            'status' => 'pending',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        // Redirect ke halaman detail pekerjaan dengan pesan sukses (dari cabang main)
         return redirect()->route('applicant.jobs.details', $request->job_id)
             ->with('success', 'You have successfully applied for this job.');
     }
 
-    /**
-     * Fungsi untuk mencari dan memfilter pekerjaan (dari cabang main).
-     */
     public function findJobs(Request $request)
     {
         $category = $request->query('category', 'all'); // Ambil kategori dari query string, default 'all'
         $search = $request->query('search', ''); // Ambil kata kunci pencarian dari query string
 
-        // Query untuk mendapatkan pekerjaan dengan eager loading relasi
         $jobsQuery = Job::with(['company', 'skills', 'requiredHardSkills', 'requiredSoftSkills']);
 
         if ($category !== 'all') {
@@ -115,36 +129,29 @@ class DashboardApplicantController extends Controller
 
         if (!empty($search)) {
             $jobsQuery->where(function ($query) use ($search) {
-                $query->where('title', 'like', "%{$search}%") // Cari di judul pekerjaan
+                $query->where('title', 'like', "%{$search}%")
                       ->orWhereHas('company', function ($q) use ($search) {
-                          $q->where('company_name', 'like', "%{$search}%"); // Cari di nama perusahaan
+                          $q->where('company_name', 'like', "%{$search}%");
                       });
             });
         }
 
         $jobs = $jobsQuery->paginate(10); // Pagination untuk daftar pekerjaan
 
-        // Daftar kategori yang tersedia
         $categories = [
             'Technology' => 'Technology',
             'Finance' => 'Finance',
             'IT' => 'IT',
             'Other' => 'Other',
-            // Tambahkan kategori lain sesuai kebutuhan
         ];
 
         return view('applicant.findjobs', compact('jobs', 'categories', 'category', 'search'));
     }
 
-    /**
-     * Fungsi untuk menampilkan detail pekerjaan (dari cabang main).
-     */
     public function viewJobDetails($jobId)
     {
-        // Temukan pekerjaan berdasarkan ID, dengan eager loading relasi company
         $job = Job::with('company')->findOrFail($jobId);
 
-        // Cek apakah pelamar sudah melamar pekerjaan ini
         $alreadyApplied = DB::table('job_applications')
             ->where('job_id', $jobId)
             ->where('applicant_id', auth()->user()->id)

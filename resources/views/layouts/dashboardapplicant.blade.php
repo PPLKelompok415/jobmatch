@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Dashboard') - JobMatch</title>
     <meta name="description" content="@yield('description', 'Your personal job matching dashboard')">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -22,8 +24,8 @@
     <!-- Custom Dashboard Styles -->
     <style>
         :root {
-            --primary-color: #3b82f6;
-            --primary-dark: #1e40af;
+            --primary-color: #5B7D87; 
+            --primary-dark: #2B4251;
             --primary-light: #dbeafe;
             --success-color: #10b981;
             --warning-color: #f59e0b;
@@ -85,7 +87,7 @@
         .dashboard-brand-icon {
             width: 35px;
             height: 35px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--light-color) 100%);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -241,6 +243,10 @@
             color: #6b7280;
         }
 
+        .text-primary-custom {
+            color: var(--primary-color) !important;
+        }
+
         /* Dropdown Menu */
         .dropdown-menu {
             border: none;
@@ -281,6 +287,19 @@
         .dropdown-item.text-danger:hover {
             background: rgba(239, 68, 68, 0.1);
             color: var(--danger-color);
+        }
+
+        .btn-navbar-solid {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-navbar-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            color: white;
         }
 
         /* Mobile Menu Toggle */
@@ -409,7 +428,7 @@
 
         /* Quick Stats Cards */
         .stats-card {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--light-color) 100%);
             color: white;
             border-radius: 15px;
             padding: 1.5rem;
@@ -452,24 +471,26 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-<a href="{{ route('community.index') }}" class="dashboard-nav-link {{ request()->routeIs('community.index') ? 'active' : '' }}">
+                <a href="{{ route('community.index') }}" class="dashboard-nav-link {{ request()->routeIs('community.index') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span>Community</span>
                 </a>
+
 
                 <a href="{{ route('applicant.findjobs') }}" class="dashboard-nav-link {{ request()->routeIs('applicant.findjobs') ? 'active' : '' }}">
                     <i class="fas fa-search"></i>
                     <span>Find Jobs</span>
                 </a>
+                
                 <a href="#" class="dashboard-nav-link">
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
                 </a>
-                <a href="{{ route('chat') }}" class="dashboard-nav-link">
+                <a href="{{ route('chat.index') }}" class="dashboard-nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}">
                     <i class="fas fa-comments"></i>
                     <span>Messages</span>
                 </a>
-                <a href="{{ route('bookmark') }}" class="dashboard-nav-link">
+                <a href="{{ route('bookmark.index') }}" class="dashboard-nav-link {{ request()->routeIs('bookmark.index') ? 'active' : '' }}">
                     <i class="fas fa-bookmark"></i>
                     <span>Saved Jobs</span>
                 </a>
@@ -545,20 +566,11 @@
     <!-- Main Content -->
     <main class="dashboard-content">
         <div class="container-fluid px-4">
-@if(!request()->routeIs('applicant.dashboard'))
-            <nav class="dashboard-breadcrumb" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('applicant.dashboard') }}">Dashboard</a></li>
-                    @yield('breadcrumb')
-                </ol>
-            </nav>
-            @endif
-
             <!-- Page Content -->
             @yield('content')
         </div>
     </main>
-
+        
     <!-- Alpine.js -->
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <!-- Bootstrap JS -->

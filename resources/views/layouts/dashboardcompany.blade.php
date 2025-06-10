@@ -533,7 +533,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('chat_company') }}" class="nav-link">
+                        <a href="{{ route('chat.index') }}" class="nav-link">
                             <i class="fas fa-comments"></i>
                             <span>Messages</span>
                         </a>
