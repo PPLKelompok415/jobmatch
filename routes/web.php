@@ -6,8 +6,11 @@ use App\Http\Controllers\Auth\LoginCompanyController;
 use App\Http\Controllers\Auth\LoginApplicantController;
 use App\Http\Controllers\Auth\LoginSuperAdminController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\CompanyHomeController;
+use App\livewire\Chat;
+use App\livewire\ChatList;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\DashboardCompanyController;
 use App\Http\Controllers\JobMatchingController;
 use App\Http\Controllers\Applicant\JobApplyController;
@@ -53,7 +56,15 @@ Route::middleware('auth')->group(function () {
 Route::get('register/applicant', [RegisterController::class, 'showRegistrationForm'])->name('register.applicant');
 Route::post('register/applicant', [RegisterController::class, 'register'])->name('register.applicant.post');
 
-// Login Routes for Applicant
+// ==============================
+// Login Routes
+// ==============================
+
+// Company
+Route::get('login/company', [LoginCompanyController::class, 'showLoginForm'])->name('login.company');
+Route::post('login/company', [LoginCompanyController::class, 'login'])->name('company.login.post');
+
+// Applicant
 Route::get('login/applicant', [LoginApplicantController::class, 'showLoginForm'])->name('login.applicant');
 Route::post('login/applicant', [LoginApplicantController::class, 'login'])->name('applicant.login.post');
 
@@ -67,6 +78,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/applicant/jobs/apply', [DashboardApplicantController::class, 'applyJob'])->name('applicant.jobs.apply');
     Route::get('/applicant/findjobs', [DashboardApplicantController::class, 'findJobs'])->name('applicant.findjobs');
     Route::get('/applicant/jobs/{job}', [DashboardApplicantController::class, 'viewJobDetails'])->name('applicant.jobs.details');
+
+    // Chat
+    Route::get('/chat/{user}/{job}', Chat::class)->name('chat.show');
+    Route::get('/chat', ChatList::class)->name('chat.index');
+    
+    // Bookmark
+    Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
+    Route::post('/bookmark/store', [BookmarkController::class, 'store'])->name('bookmark.store');
+    Route::delete('/bookmark/{id}', [BookmarkController::class, 'destroy'])->name('bookmark.destroy');
+
 });
 
 // Rute untuk logout
@@ -109,27 +130,16 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
 });
 
-// Logout Route
+// ==============================
+// Logout
+// ==============================
+
 Route::post('logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     return redirect('/');
 })->name('logout');
-
-// Chat 
-Route::get('/chat', function () {
-    return view('job-matching.chat');
-})->name('chat');
-
-Route::get('/chat/company', function () {
-    return view('job-matching.companychat');
-})->name('chat_company');
-
-//Bookmark
-Route::get('/bookmark', function () {
-    return view('job-matching.bookmark');
-})->name('bookmark');
 
 //jobmatching
 // Route::get('/match-jobs/{id}', [JobMatchingController::class, 'match'])->name('job.match');
@@ -145,7 +155,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/community', [CommunityController::class, 'store'])->name('community.store');
     Route::post('/bookmark/{bookmark}/comment', [CommentController::class, 'store'])->name('bookmark.comment.store');
     Route::middleware('auth')->post('/community/{community}/comment', [CommunityCommentController::class, 'store'])->name('community.comment.store');
-    Route::post('/community/{id}/like', [App\Http\Controllers\CommunityController::class, 'like'])->name('community.like');
-    Route::get('/community/liked-comments', [\App\Http\Controllers\CommunityController::class, 'likedComments'])->name('community.liked.comments');
-    Route::delete('/community/{id}', [\App\Http\Controllers\CommunityController::class, 'destroy'])->name('community.destroy');
+    Route::post('/community/{id}/like', [CommunityController::class, 'like'])->name('community.like');
+    Route::get('/community/liked-comments', [CommunityController::class, 'likedComments'])->name('community.liked.comments');
+    Route::delete('/community/{id}', [CommunityController::class, 'destroy'])->name('community.destroy');
 });
