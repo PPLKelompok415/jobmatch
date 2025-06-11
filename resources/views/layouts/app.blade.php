@@ -24,12 +24,6 @@
         :root {
             --navbar-height: 70px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -281,15 +275,6 @@
     
     @yield('styles')
     @stack('styles')
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JobMatch</title>
-
-  <!-- Bootstrap & Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  @stack('styles')
 </head>
 <body class="{{ request()->is('login/*') || request()->is('register/*') ? 'no-navbar' : '' }}">
     <!-- Loading Spinner -->
@@ -334,11 +319,21 @@
                             if (Auth::check()) {
                                 // Jika sudah login, arahkan ke community berdasarkan role
                                 if (Auth::user()->role === 'applicant') {
-                                    $communityLink = route('community.index');
+                                    // Periksa apakah route exists
+                                    if (Route::has('community.index')) {
+                                        $communityLink = route('community.index');
+                                    } else {
+                                        $communityLink = url('/community');
+                                    }
                                 } elseif (Auth::user()->role === 'company') {
-                                    $communityLink = route('community.index');
+                                    if (Route::has('community.index')) {
+                                        $communityLink = route('community.index');
+                                    } else {
+                                        $communityLink = url('/community');
+                                    }
                                 } else {
-                                    $communityLink = route('community'); // untuk admin atau role lain
+                                    // untuk admin atau role lain
+                                    $communityLink = url('/community');
                                 }
                             } else {
                                 // Jika belum login, arahkan ke login sesuai context
@@ -437,7 +432,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark.index') }}">
+                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark') }}">
                                             <i class="fas fa-bookmark me-3 text-warning"></i>Bookmarks
                                         </a>
                                     </li>
