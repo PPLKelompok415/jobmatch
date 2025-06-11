@@ -323,7 +323,7 @@
                                 } elseif (Auth::user()->role === 'company') {
                                     $communityLink = route('community.index');
                                 } else {
-                                    $communityLink = route('community'); // untuk admin atau role lain
+                                    $communityLink = route('community.index'); // untuk admin atau role lain
                                 }
                             } else {
                                 // Jika belum login, arahkan ke login sesuai context
