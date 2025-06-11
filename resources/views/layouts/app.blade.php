@@ -313,28 +313,11 @@
                      <li class="nav-item">
                         @php
                             $communityLink = '#Community';
-                            $communityTarget = '';
                             $communityOnClick = '';
                             
                             if (Auth::check()) {
-                                // Jika sudah login, arahkan ke community berdasarkan role
-                                if (Auth::user()->role === 'applicant') {
-                                    // Periksa apakah route exists
-                                    if (Route::has('community.index')) {
-                                        $communityLink = route('community.index');
-                                    } else {
-                                        $communityLink = url('/community');
-                                    }
-                                } elseif (Auth::user()->role === 'company') {
-                                    if (Route::has('community.index')) {
-                                        $communityLink = route('community.index');
-                                    } else {
-                                        $communityLink = url('/community');
-                                    }
-                                } else {
-                                    // untuk admin atau role lain
-                                    $communityLink = url('/community');
-                                }
+                                // Jika sudah login, gunakan URL langsung
+                                $communityLink = url('/community');
                             } else {
                                 // Jika belum login, arahkan ke login sesuai context
                                 if (request()->is('Company*')) {
