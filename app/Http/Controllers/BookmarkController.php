@@ -53,7 +53,7 @@ class BookmarkController extends Controller
             $bookmark->job_id = $job?->id ?? null;
         }
 
-        return view('job-matching.bookmark', compact('bookmarks', var_names: 'userId'));
+        return view('job-matching.bookmark', compact('bookmarks', 'userId'));
     }
     
     public function destroy($id)

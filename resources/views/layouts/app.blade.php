@@ -437,7 +437,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark') }}">
+                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('bookmark.index') }}">
                                             <i class="fas fa-bookmark me-3 text-warning"></i>Bookmarks
                                         </a>
                                     </li>
