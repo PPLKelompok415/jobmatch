@@ -2,37 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory; 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes; // Pastikan ini di-import jika Anda menggunakan soft deletes
-use Illuminate\Database\Eloquent\Relations\BelongsTo; // Import untuk relasi BelongsTo
 
 class Applicant extends Model
 {
-    use HasFactory, SoftDeletes; // Tambahkan SoftDeletes jika Anda menggunakannya
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
         'name',
+        'password',
+        'role',
         'full_name',
-        'email',
-        'address',
-        'phone_number',
+        'photo',
         'date_of_birth',
         'gender',
+        'email',
+        'phone_number',
+        'address',
+        'cv_file',
+        'portfolio_file',
         'institution',
         'major',
         'graduation_year',
-        'soft_skills',
-        'hard_skills',
-        'cv_file',
-        'portfolio_file',
-        'photo',
-        'desired_position', // <-- Ditambahkan Kembali
         'work_company',
         'work_position',
         'work_description',
+        'soft_skills',
+        'hard_skills',
         'certification',
+        'desired_position',
         'type_of_work',
         'location',
         'salary_min',
@@ -40,17 +40,37 @@ class Applicant extends Model
         'availability_date',
     ];
 
-    protected $casts = [
-        'soft_skills' => 'string',    // Menggunakan 'string' karena JSON di contoh Anda terlihat seperti string yang perlu di-parse manual
-        'hard_skills' => 'string',    // Menggunakan 'string' karena JSON di contoh Anda terlihat seperti string yang perlu di-parse manual
-        'date_of_birth' => 'date',   // Cast ke Carbon instance
-        'availability_date' => 'date', // Cast ke Carbon instance
-        'salary_min' => 'integer',   // Cast ke integer
-        'salary_max' => 'integer',   // Cast ke integer
-    ];
-
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    public function educations() {
+        return $this->hasMany(Education::class);
+    }
+
+    public function experiences() {
+        return $this->hasMany(Experience::class);
+    }
+
+    public function certifications() {
+        return $this->hasMany(Certification::class);
+    }
+
+    public function hardSkills()
+    {
+        return $this->belongsToMany(Skill::class, 'applicant_hard_skill');
+    }
+    
+    public function softSkills()
+    {
+        return $this->belongsToMany(Skill::class, 'applicant_soft_skill');
+    }
+
+    public function jobApplications()
+    {
+        return $this->hasMany(\App\Models\JobApplication::class);
+    }
+
+
 }

@@ -3,42 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job;
-use App\Models\Company; // Pastikan ini di-import
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage; // Perbaikan: Mengubah '->' menjadi '\'
-use Illuminate\Support\Facades\Auth; // Perbaikan: Mengubah '->' menjadi '\'
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class JobController extends Controller
 {
     /**
      * Metode index() ini menampilkan daftar lowongan pekerjaan.
-     * Dapat memfilter berdasarkan ID perusahaan yang diberikan melalui query string 'id'.
+     * Dapat memfilter berdasarkan perusahaan jika instance Company diberikan melalui URL path
+     * atau company_id diberikan melalui query string.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
+     * @param  \App\Models\Company|null  $companyFromPath  Opsional: Company from URL path (e.g., /jobs/company/12)
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function index(Request $request)
+    public function index(Request $request, Company $companyFromPath = null)
     {
-        $query = Job::with('company'); // Selalu muat relasi 'company'
+        $currentCompany = $companyFromPath;
 
-        $companyId = null; 
-        
-        // Cek parameter 'id' terlebih dahulu (seperti yang dikirim dari link navbar)
-        if ($request->has('id') && is_numeric($request->id)) {
-            $companyId = (int) $request->id;
-        } 
-        // Jika 'id' tidak ada, cek parameter 'company_id' (untuk konsistensi jika ada sumber lain)
-        elseif ($request->has('company_id') && is_numeric($request->company_id)) {
-            $companyId = (int) $request->company_id;
+        if (!$currentCompany && $request->has('id')) {
+            $companyIdFromQuery = $request->id;
+            if (is_numeric($companyIdFromQuery)) {
+                $currentCompany = Company::find($companyIdFromQuery);
+                if (!$currentCompany) {
+                    return redirect()->route('jobs.index')->with('error', 'Perusahaan dengan ID tersebut tidak ditemukan.');
+                }
+            } else if (!empty($companyIdFromQuery)) {
+                return redirect()->route('jobs.index')->with('error', 'ID perusahaan tidak valid.');
+            }
         }
 
-        // Terapkan filter perusahaan jika companyId ditemukan
-        if ($companyId) {
-            $query->where('company_id', $companyId);
+        $query = Job::with('company');
+
+        if ($currentCompany) {
+            $query->where('company_id', $currentCompany->id);
         }
 
-        // Filter lain yang Anda miliki
         if ($request->has('location') && !empty($request->location)) {
             $query->where('location', 'like', '%' . $request->location . '%');
         }
@@ -46,79 +51,112 @@ class JobController extends Controller
             $query->where('gaji_max', '>=', (int) $request->min_gaji);
         }
         if ($request->has('type') && !empty($request->type)) {
-            $query->where('type_of_work', 'like', '%' . $request->type . '%'); // Mengubah ke like untuk fleksibilitas
+            $query->where('type_of_work', $request->type);
         }
         if ($request->has('bidang') && !empty($request->bidang)) {
-            $query->where('bidang', 'like', '%' . $request->bidang . '%'); // Mengubah ke like untuk fleksibilitas
+            $query->where('bidang', 'like', '%' . $request->bidang . '%');
         }
 
-        $jobs = $query->latest()->get(); 
-        
-        return view('jobs.index', compact('jobs')); // Menggunakan 'jobs.index'
+        $jobs = $query->latest()->get();
+
+        return view('jobs.index', compact('jobs', 'currentCompany'));
     }
 
     /**
-     * Display the community page with all job listings.
-     * This method is specifically for the 'Community' link in the navbar.
+     * Tampilkan halaman komunitas dengan semua daftar lowongan pekerjaan.
+     * Metode ini khusus untuk tautan 'Komunitas' di navbar.
      *
      * @return \Illuminate\View\View
      */
     public function showCommunityJobs()
     {
-        // Fetch all jobs, as the community page should show all public listings
         $jobs = Job::with('company')->latest()->get();
         return view('community', compact('jobs'));
     }
 
     /**
-     * Display the form for creating a new job.
+     * Tampilkan formulir untuk membuat lowongan pekerjaan baru.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create()
     {
-        $companies = Company::all(); // Get all companies for the dropdown
-        return view('jobs.create', compact('companies')); // Menggunakan view 'jobs.create'
+        if (!Auth::check() || !Auth::user()->company) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda harus melengkapi profil perusahaan untuk memposting lowongan.');
+        }
+
+        return view('jobs.create');
     }
 
     /**
-     * Store a newly created job in storage.
+     * Simpan lowongan pekerjaan yang baru dibuat di penyimpanan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
+        if (!Auth::check() || !Auth::user()->company) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki izin untuk memposting lowongan.');
+        }
+
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
+            'company_id' => ['required', 'exists:companies,id', Rule::in([Auth::user()->company->id])],
             'location' => 'required|string|max:255',
             'bidang' => 'required|string|max:255',
             'type_of_work' => 'required|string|max:255',
             'gaji_min' => 'nullable|numeric|min:0',
             'gaji_max' => 'nullable|numeric|min:0|gte:gaji_min',
+            'job_description' => 'required|string',
         ]);
 
         Job::create($validatedData);
 
-        return redirect()->route('jobs.index')->with('success', 'Lowongan pekerjaan berhasil ditambahkan!');
+        return redirect()->route('Company.dashboard')->with('success', 'Lowongan pekerjaan berhasil ditambahkan!');
     }
 
     /**
-     * Display the specified job for editing.
-     * Uses Route Model Binding to find the Job by ID.
+     * Menampilkan detail lowongan pekerjaan tertentu.
+     * Menggunakan Route Model Binding untuk menemukan Pekerjaan berdasarkan ID.
      *
      * @param  \App\Models\Job  $job
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function edit(Job $job) 
+    public function show(Job $job)
     {
-        $companies = Company::all(); // Get all companies for the dropdown
-        return view('jobs.edit', compact('job', 'companies')); // Menggunakan view 'jobs.edit'
+        // Otorisasi: hanya perusahaan pemilik yang bisa melihat detail lowongan dari dashboard mereka
+        // atau jika rute ini memang untuk publik
+        if (Auth::check() && Auth::user()->company && Auth::user()->company->id !== $job->company_id) {
+             return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki akses ke lowongan ini.');
+        }
+        
+        return view('jobs.show', compact('job'));
     }
 
     /**
-     * Update the specified job in storage.
+     * Tampilkan lowongan pekerjaan yang ditentukan untuk diedit.
+     * Menggunakan Route Model Binding untuk menemukan Pekerjaan berdasarkan ID.
+     *
+     * @param  \App\Models\Job  $job
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function edit(Job $job)
+    {
+        // Debugging: uncomment baris ini jika Anda masih mendapatkan error `$job` undefined
+        // dd($job); 
+
+        // Periksa apakah user yang login adalah pemilik lowongan ini
+        if (!Auth::check() || !Auth::user()->company || Auth::user()->company->id !== $job->company_id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki akses untuk mengedit lowongan ini.');
+        }
+        // Mengembalikan view jobs.edit dan mengirimkan variabel $job
+        return view('jobs.edit', compact('job'));
+    }
+
+    /**
+     * Perbarui lowongan pekerjaan yang ditentukan di penyimpanan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Job  $job
@@ -126,51 +164,63 @@ class JobController extends Controller
      */
     public function update(Request $request, Job $job)
     {
+        if (!Auth::check() || !Auth::user()->company || Auth::user()->company->id !== $job->company_id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki akses untuk memperbarui lowongan ini.');
+        }
+
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id', 
+            'company_id' => ['required', 'exists:companies,id', Rule::in([Auth::user()->company->id])],
             'location' => 'required|string|max:255',
-            'bidang' => 'required|string|max:255', 
+            'bidang' => 'required|string|max:255',
             'type_of_work' => 'required|string|max:255',
             'gaji_min' => 'nullable|numeric|min:0',
             'gaji_max' => 'nullable|numeric|min:0|gte:gaji_min',
+            'job_description' => 'required|string',
         ]);
 
-        $job->update($validatedData); 
+        $job->update($validatedData);
 
-        return redirect()->route('jobs.index')->with('success', 'Lowongan pekerjaan berhasil diperbarui!');
+        return redirect()->route('Company.dashboard')->with('success', 'Lowongan pekerjaan berhasil diperbarui!');
     }
 
     /**
-     * Remove the specified job from storage.
+     * Hapus lowongan pekerjaan yang ditentukan dari penyimpanan.
      *
      * @param  \App\Models\Job  $job
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Job $job) 
+    public function destroy(Job $job)
     {
-        $job->delete(); 
+        if (!Auth::check() || !Auth::user()->company || Auth::user()->company->id !== $job->company_id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki akses untuk menghapus lowongan ini.');
+        }
 
-        return redirect()->route('jobs.index')->with('success', 'Lowongan pekerjaan berhasil dihapus!');
+        $job->delete();
+
+        return redirect()->route('Company.dashboard')->with('success', 'Lowongan pekerjaan berhasil dihapus!');
     }
 
-
-
-    ### **Metode untuk Mengelola Data Perusahaan**
-
-  
-
+    // =====================================================================
+    // METHODS FOR MANAGING COMPANY DATA
+    // =====================================================================
 
     /**
      * Display the specified company's details.
      * Uses Route Model Binding to find the Company by ID.
      *
      * @param  \App\Models\Company  $company
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function showCompany(Company $company)
     {
-        return view('jobs.show_company', compact('company')); 
+        // Otorisasi: Hanya perusahaan yang login atau admin yang bisa melihat profilnya sendiri
+        if (Auth::check() && Auth::user()->company && Auth::user()->company->id !== $company->id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki akses ke profil perusahaan ini.');
+        }
+        
+        // MENGUBAH show_company menjadi Company.show_company
+        return view('Company.show_company', compact('company'));
     }
 
     /**
@@ -178,11 +228,19 @@ class JobController extends Controller
      * Uses Route Model Binding to find the Company by ID.
      *
      * @param  \App\Models\Company  $company
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function editCompany(Company $company)
     {
-        return view('jobs.edit', compact('company')); 
+        // Debugging: uncomment baris ini jika Anda masih mendapatkan error `$company` undefined
+        // dd($company); 
+
+        // Otorisasi: Hanya perusahaan yang login yang bisa mengedit profilnya sendiri
+        if (!Auth::check() || !Auth::user()->company || Auth::user()->company->id !== $company->id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki akses untuk mengedit profil perusahaan ini.');
+        }
+        // MENGUBAH companies.edit menjadi Company.edit
+        return view('Company.edit', compact('company'));
     }
 
     /**
@@ -194,38 +252,38 @@ class JobController extends Controller
      */
     public function updateCompany(Request $request, Company $company)
     {
-        $userId = Auth::id(); 
+        // Otorisasi: Hanya perusahaan yang login yang bisa memperbarui profilnya sendiri
+        if (!Auth::check() || !Auth::user()->company || Auth::user()->company->id !== $company->id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki izin untuk memperbarui profil perusahaan ini.');
+        }
 
+        // Validasi data untuk profil perusahaan.
         $validatedData = $request->validate([
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'company_name' => 'required|string|max:255',
-            'company_address' => 'required|string|max:255',
-            'website_address' => 'required|string|max:255',
             'company_email' => 'required|email|max:255|unique:companies,company_email,' . $company->id,
             'company_phone_number' => 'required|string|max:255',
-            'position' => 'required|string|max:255', 
-            'type_of_work' => 'required|string|max:255', 
-            'location' => 'required|string|max:255', 
-            'salary_min' => 'required|integer|min:0', 
-            'salary_max' => 'required|integer|min:0|gte:salary_min', 
-            'deadline' => 'required|date', 
-            'job_description' => 'required|string', 
+            'company_address' => 'required|string|max:500',
+            'website_address' => 'nullable|url|max:255',
+            'description' => 'nullable|string', // Kolom deskripsi umum perusahaan
         ]);
 
-        $validatedData['user_id'] = $userId; 
+        $validatedData['user_id'] = Auth::id();
 
+        // Handle upload logo
         if ($request->hasFile('logo')) {
             if ($company->logo && Storage::disk('public')->exists($company->logo)) {
                 Storage::disk('public')->delete($company->logo);
             }
-            $validatedData['logo'] = $request->file('logo')->store('companies/logos', 'public');
+            $logoPath = $request->file('logo')->store('company_logos', 'public');
+            $validatedData['logo'] = $logoPath;
         } else {
-            $validatedData['logo'] = $company->logo;
+            unset($validatedData['logo']);
         }
-
+        
         $company->update($validatedData);
 
-        return redirect()->route('companies.show', $company->id)->with('success', 'Data perusahaan berhasil diperbarui!');
+        return redirect()->route('Company.dashboard')->with('success', 'Profil perusahaan berhasil diperbarui!');
     }
 
     /**
@@ -236,12 +294,17 @@ class JobController extends Controller
      */
     public function destroyCompany(Company $company)
     {
+        // Otorisasi: Hanya perusahaan yang login yang bisa menghapus profilnya sendiri
+        if (!Auth::check() || !Auth::user()->company || Auth::user()->company->id !== $company->id) {
+            return redirect()->route('Company.dashboard')->with('error', 'Anda tidak memiliki izin untuk menghapus profil perusahaan ini.');
+        }
+
         if ($company->logo && Storage::disk('public')->exists($company->logo)) {
             Storage::disk('public')->delete($company->logo);
         }
 
         $company->delete();
 
-        return redirect()->route('home')->with('success', 'Perusahaan berhasil dihapus!');
+        return redirect()->route('Company.dashboard')->with('success', 'Perusahaan berhasil dihapus!');
     }
 }

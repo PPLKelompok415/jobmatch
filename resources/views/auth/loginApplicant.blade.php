@@ -1,121 +1,391 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="login-container min-vh-100 d-flex align-items-center">
-    <div class="login-bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
+<div class="login-wrapper position-relative min-vh-100">
+    <!-- Animated Background dengan Bootstrap utilities -->
+    <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: -1; background: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #059669 100%);">
+        <div class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
+            <!-- Floating orbs dengan Bootstrap positioning -->
+            <div class="position-absolute rounded-circle" style="width: 400px; height: 400px; top: -200px; left: -200px; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(2px); animation: float 20s infinite ease-in-out;"></div>
+            <div class="position-absolute rounded-circle" style="width: 300px; height: 300px; top: 50%; right: -150px; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(2px); animation: float 20s infinite ease-in-out -7s;"></div>
+            <div class="position-absolute rounded-circle" style="width: 200px; height: 200px; bottom: -100px; left: 20%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(2px); animation: float 20s infinite ease-in-out -14s;"></div>
+            <div class="position-absolute rounded-circle" style="width: 150px; height: 150px; top: 20%; left: 60%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(2px); animation: float 20s infinite ease-in-out -10s;"></div>
+        </div>
     </div>
     
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-7">
-                <div class="login-card shadow-lg">
-                    <a href="{{ route('home') }}" class="back-to-site">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Site
-                        </a>
-                    <div class="login-header text-center mb-4">
-                        <div class="login-icon mb-3">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <h2 class="fw-bold text-dark mb-2">Welcome Back!</h2>
-                        <p class="text-muted">Sign in to continue your job search journey</p>
-                    </div>
-
-                    <form action="{{ route('applicant.login.post') }}" method="POST" class="login-form">
-                        @csrf
-                        
-                        {{-- Tampilkan error non-field-specific (misalnya, jika ada error umum) --}}
-                        {{-- Ini akan menangani pesan 'email' dari withErrors(['email' => '...']) --}}
-                        @if ($errors->has('email'))
-                            <div class="alert alert-danger mb-3">
-                                {{ $errors->first('email') }}
+    <div class="container-fluid">
+        <div class="row min-vh-100 g-0">
+            <!-- Left Panel - Brand Showcase dengan Bootstrap utilities -->
+            <div class="col-lg-7 d-none d-lg-flex">
+                <div class="d-flex flex-column h-100 p-4 text-white position-relative" style="z-index: 2;">
+                    <!-- Navigation dengan Bootstrap spacing -->
+                    <nav class="d-flex justify-content-start align-items-center mb-5">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 border border-white border-opacity-25" style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);">
+                                <i class="fas fa-users"></i>
                             </div>
-                        @endif
-
-                        <div class="form-group mb-4">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-envelope text-primary"></i>
-                                </span>
-                                <input type="email" class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror" id="email" name="email" 
-                                        placeholder="Enter your email address" required value="{{ old('email') }}">
-                            </div>
-                            {{-- @error('email') --}}
-                                {{-- <div class="text-danger mt-1">{{ $message }}</div> --}}
-                            {{-- @enderror --}}
-                            {{-- Catatan: Error 'email' sudah ditangani di bagian alert di atas. --}}
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label for="password" class="form-label fw-semibold">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-lock text-primary"></i>
-                                </span>
-                                <input type="password" class="form-control border-start-0 ps-0 @error('password') is-invalid @enderror" id="password" name="password" 
-                                        placeholder="Enter your password" required>
-                                <button class="btn btn-outline-secondary border-start-0 password-toggle" type="button">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                            @error('password') {{-- Ini akan menampilkan error untuk 'password' (jika ada validasi lain) --}}
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                                <label class="form-check-label text-sm" for="remember">
-                                    Remember me
-                                </label>
-                            </div>
-                            <a href="#" class="text-primary text-decoration-none small fw-semibold">Forgot Password?</a>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-4 login-btn">
-                            <i class="fas fa-sign-in-alt me-2"></i>
-                            Sign In
-                        </button>
-
-                        <div class="login-divider mb-4">
-                            <span class="divider-text">Or continue with</span>
-                        </div>
-
-                        <div class="row g-2 mb-4">
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-danger w-100 social-btn">
-                                    <i class="fab fa-google me-2"></i>Google
-                                </button>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-primary w-100 social-btn">
-                                    <i class="fab fa-linkedin me-2"></i>LinkedIn
-                                </button>
+                            <div>
+                                <h3 class="mb-0">JobMatch</h3>
+                                <span class="opacity-75">for Job Seekers</span>
                             </div>
                         </div>
-
-                        <div class="text-center">
-                            <p class="text-muted mb-0">
-                                Don't have an account? 
-                                <a href="{{ route('register.applicant') }}" class="text-primary fw-semibold text-decoration-none">
-                                    Create Account
-                                </a>
+                    </nav>
+                    
+                    <!-- Main Content dengan Bootstrap flex utilities -->
+                    <div class="flex-grow-1 d-flex flex-column">
+                        <div class="mb-5">
+                            <!-- Hero badge dengan Bootstrap badge utilities -->
+                            <div class="d-inline-flex align-items-center mb-4 px-3 py-2 rounded-pill border border-white border-opacity-25" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);">
+                                <i class="fas fa-star me-2"></i>
+                                <span class="fw-semibold small">Smart Career Platform</span>
+                            </div>
+                            
+                            <!-- Hero title dengan Bootstrap typography -->
+                            <h1 class="display-2 fw-bold lh-1 mb-4" style="letter-spacing: -0.02em;">
+                                Find Your Dream<br>
+                                <span class="text-warning">Career Today</span>
+                            </h1>
+                            
+                            <p class="fs-5 opacity-75">
+                                Join 50,000+ professionals who found their perfect job through our AI-powered matching system.
                             </p>
                         </div>
-                    </form>
+                        
+                        <!-- Interactive Features dengan Bootstrap cards -->
+                        <div class="mb-5">
+                            <!-- Feature Card 1 -->
+                            <div class="d-flex align-items-center gap-4 p-4 mb-3 rounded-3 border border-white border-opacity-25 feature-card active" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-3" style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.15);">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-2">Smart Job Matching</h4>
+                                    <p class="mb-2 opacity-75">AI algorithms match you with jobs based on skills, experience, and preferences</p>
+                                    <div class="d-flex align-items-baseline">
+                                        <span class="fs-3 fw-bold text-warning">98%</span>
+                                        <span class="ms-2 small opacity-75">Match Success Rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Feature Card 2 -->
+                            <div class="d-flex align-items-center gap-4 p-4 mb-3 rounded-3 border border-white border-opacity-25 feature-card" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-3" style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.15);">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-2">Fast Application Process</h4>
+                                    <p class="mb-2 opacity-75">Apply to multiple jobs with one click using our smart application system</p>
+                                    <div class="d-flex align-items-baseline">
+                                        <span class="fs-3 fw-bold text-warning">5x</span>
+                                        <span class="ms-2 small opacity-75">Faster Applications</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Feature Card 3 -->
+                            <div class="d-flex align-items-center gap-4 p-4 mb-3 rounded-3 border border-white border-opacity-25 feature-card" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-3" style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.15);">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-2">Career Growth Insights</h4>
+                                    <p class="mb-2 opacity-75">Track your career progress and get personalized recommendations</p>
+                                    <div class="d-flex align-items-baseline">
+                                        <span class="fs-3 fw-bold text-warning">24/7</span>
+                                        <span class="ms-2 small opacity-75">Career Support</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="text-center mt-4">
-                    <p class="text-muted">
-                        Are you a company? 
-                        <a href="{{ route('login.company') }}" class="text-primary fw-semibold text-decoration-none">
-                            <i class="fas fa-building me-1"></i>Company Login
+            </div>
+            
+            <!-- Right Panel - Login Form dengan Bootstrap components -->
+            <div class="col-lg-5 d-flex align-items-center justify-content-center">
+                <div class="w-100 px-4" style="max-width: 500px;">
+                    <!-- Back to Site Button dengan Bootstrap button -->
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="{{ route('home') }}" class="btn btn-light btn-sm d-flex align-items-center gap-2 text-decoration-none border border-success text-success" 
+                           style="transition: all 0.3s ease;"
+                           onmouseenter="this.classList.add('shadow-lg', 'btn-success', 'text-white'); this.classList.remove('btn-light', 'text-success'); this.style.transform='translateX(-5px)'"
+                           onmouseleave="this.classList.remove('shadow-lg', 'btn-success', 'text-white'); this.classList.add('btn-light', 'text-success'); this.style.transform='translateX(0)'">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Site</span>
                         </a>
-                    </p>
+                    </div>
+                    
+                    <!-- Mobile Header dengan Bootstrap display utilities -->
+                    <div class="d-lg-none text-center mb-4 py-4">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-3 bg-success text-white" style="width: 60px; height: 60px;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h2 class="mb-2">Job Seeker Login</h2>
+                        <p class="text-muted">Access your career dashboard</p>
+                    </div>
+                    
+                    <!-- Error/Success Notifications -->
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <div>
+                                    <strong>Login Failed!</strong><br>
+                                    {{ session('error') }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>
+                                    <strong>Success!</strong><br>
+                                    {{ session('success') }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                                <div>
+                                    <strong>Please check the following errors:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
+                    <!-- Login Card dengan Bootstrap card -->
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-relative">
+                        <!-- Top gradient bar dengan Bootstrap utilities -->
+                        <div class="position-absolute top-0 start-0 end-0 bg-gradient" style="height: 4px; background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);"></div>
+                        
+                        <!-- Card Header dengan Bootstrap spacing -->
+                        <div class="card-header bg-transparent border-0 pt-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="d-none d-lg-flex align-items-center justify-content-center rounded-3 text-white" style="width: 50px; height: 50px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div>
+                                    <h2 class="mb-1">Welcome Back</h2>
+                                    <p class="text-muted mb-0">Continue your job search journey</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Login Form dengan Bootstrap form components -->
+                        <div class="card-body">
+                            <form action="{{ route('applicant.login.post') }}" method="POST" class="needs-validation" novalidate>
+                                @csrf
+                                
+                                <!-- Email Field dengan Bootstrap input group -->
+                                <div class="mb-4">
+                                    <label for="email" class="form-label fw-semibold">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-envelope text-muted"></i>
+                                        </span>
+                                        <input type="email" 
+                                               id="email" 
+                                               name="email" 
+                                               class="form-control border-start-0 @error('email') is-invalid @enderror" 
+                                               placeholder="Enter your email address" 
+                                               value="{{ old('email') }}"
+                                               required 
+                                               autocomplete="email">
+                                    </div>
+                                    @error('email')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @else
+                                        <div class="invalid-feedback"></div>
+                                    @enderror
+                                </div>
+                                
+                                <!-- Password Field dengan Bootstrap input group -->
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-semibold">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-lock text-muted"></i>
+                                        </span>
+                                        <input type="password" 
+                                               id="password" 
+                                               name="password" 
+                                               class="form-control border-start-0 @error('password') is-invalid @enderror" 
+                                               placeholder="Enter your password" 
+                                               required 
+                                               autocomplete="current-password">
+                                        <button type="button" class="btn btn-light border border-start-0 password-reveal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    @error('password')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @else
+                                        <div class="invalid-feedback"></div>
+                                    @enderror
+                                </div>
+                                
+                                <!-- Form Options dengan Bootstrap flex utilities -->
+                                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="remember">Keep me signed in</label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none fw-semibold text-success">Forgot password?</a>
+                                </div>
+                                
+                                <!-- Submit Button dengan Bootstrap button -->
+                                <button type="submit" class="btn btn-success w-100 py-3 position-relative overflow-hidden mb-4 fw-semibold fs-6 submit-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none;">
+                                    <span class="d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-sign-in-alt me-2"></i>
+                                        Sign In to Dashboard
+                                    </span>
+                                    <div class="position-absolute top-50 start-50 translate-middle opacity-0">
+                                        <div class="spinner-border spinner-border-sm text-light" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </button>
+                                
+                                <!-- Role Restriction Notice -->
+                                <div class="d-flex align-items-start gap-3 bg-warning bg-opacity-10 p-3 rounded-3 border border-warning border-opacity-25 mb-4">
+                                    <div class="text-warning">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block mb-1">Job Seeker Access Only</strong>
+                                        <p class="small text-muted mb-0">This login is specifically for job seekers. Company accounts should use the company login portal.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Social Login dengan Bootstrap grid -->
+                                <div class="text-center mb-4">
+                                    <div class="position-relative">
+                                        <hr>
+                                        <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small">Or continue with</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-2 mb-4">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+                                            <i class="fab fa-google"></i>
+                                            <span class="small">Google</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+                                            <i class="fab fa-linkedin"></i>
+                                            <span class="small">LinkedIn</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Notices dengan Bootstrap alerts -->
+                                <div class="d-flex align-items-start gap-3 bg-info bg-opacity-10 p-3 rounded-3 border border-info border-opacity-25 mb-4">
+                                    <div class="text-info">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block mb-1">Career Tips Available</strong>
+                                        <p class="small text-muted mb-0">Get personalized career advice and job recommendations</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Register Section dengan Bootstrap utilities -->
+                                <div class="text-center p-3 bg-light rounded-3 mb-4 border">
+                                    <p class="text-muted mb-2">Don't have an account?</p>
+                                    <a href="{{ route('register.applicant') }}" class="text-decoration-none fw-semibold text-success">
+                                        Create Job Seeker Account
+                                        <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                                
+                                <!-- Alternative Actions dengan Bootstrap grid -->
+                                <div class="position-relative text-center my-4">
+                                    <hr>
+                                    <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small">Other options</span>
+                                </div>
+                                
+                                <div class="row g-1">
+                                    <div class="col-md-6">
+                                        <a href="{{ route('login.company') }}" class="btn btn-outline-secondary text-start d-flex align-items-center gap-3 p-3 w-100">
+                                            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-light rounded-2" style="width: 30px; height: 40px;">
+                                                <i class="fas fa-building"></i>
+                                            </div>
+                                            <div>
+                                                <span class="d-block fw-semibold">Company Login</span>
+                                                <span class="small text-muted">Are you an employer?</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button type="button" class="btn btn-outline-secondary text-start d-flex align-items-center gap-3 p-3 w-100" onclick="showSupportModal()">
+                                            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-light rounded-2" style="width: 40px; height: 40px;">
+                                                <i class="fas fa-headset"></i>
+                                            </div>
+                                            <div>
+                                                <span class="d-block fw-semibold">Get Support</span>
+                                                <span class="small text-muted">Need help signing in?</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Support Modal dengan Bootstrap modal -->
+<div class="modal fade" id="supportModal" tabindex="-1" aria-labelledby="supportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="supportModalLabel">Get Support</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group list-group-flush">
+                    <a href="mailto:support@jobmatch.com" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                        <i class="fas fa-envelope text-primary fs-4"></i>
+                        <div>
+                            <strong class="d-block">Email Support</strong>
+                            <p class="mb-0 text-muted">support@jobmatch.com</p>
+                        </div>
+                    </a>
+                    <a href="tel:+6221-1234-5678" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                        <i class="fas fa-phone text-success fs-4"></i>
+                        <div>
+                            <strong class="d-block">Phone Support</strong>
+                            <p class="mb-0 text-muted">+62-21-1234-5678</p>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                        <i class="fas fa-comments text-warning fs-4"></i>
+                        <div>
+                            <strong class="d-block">Live Chat</strong>
+                            <p class="mb-0 text-muted">Available 9 AM - 6 PM WIB</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -125,238 +395,60 @@
 
 @section('styles')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
-    :root {
-        --primary-color: #4f46e5;
-        --primary-light: #818cf8;
-        --success-color: #10b981;
-        --danger-color: #ef4444;
-        --warning-color: #f59e0b;
-    }
-
     body {
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    .login-container {
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* Background Shapes */
-    .login-bg-shapes {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-    }
-
-    .shape {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        animation: float 6s ease-in-out infinite;
-    }
-
-    .shape-1 {
-        width: 80px;
-        height: 80px;
-        top: 10%;
-        left: 10%;
-        animation-delay: 0s;
-    }
-
-    .shape-2 {
-        width: 120px;
-        height: 120px;
-        top: 70%;
-        right: 10%;
-        animation-delay: 2s;
-    }
-
-    .shape-3 {
-        width: 60px;
-        height: 60px;
-        top: 50%;
-        left: 80%;
-        animation-delay: 4s;
-    }
-
+    /* Minimal custom CSS - hanya untuk animasi yang tidak ada di Bootstrap */
     @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(50px, -50px) rotate(90deg); }
+        50% { transform: translate(-30px, 40px) rotate(180deg); }
+        75% { transform: translate(40px, 30px) rotate(270deg); }
     }
 
-    /* Login Card */
-    .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 24px;
-        padding: 2.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        position: relative;
-        z-index: 10;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    /* Feature card hover effects */
+    .feature-card:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        transform: translateX(10px);
     }
 
-    .login-icon {
-        font-size: 4rem;
-        color: var(--primary-color);
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    /* Form Styles */
-    .form-label {
-        color: #374151;
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control {
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 0.875rem 1rem;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.8);
-    }
-
-    .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        background: white;
-    }
-
-    .input-group-text {
-        border: 2px solid #e5e7eb;
-        border-radius: 12px 0 0 12px;
-        background: #f9fafb;
-        color: #6b7280;
-    }
-
-    .input-group .form-control {
-        border-radius: 0 12px 12px 0;
-    }
-
-    .password-toggle {
-        border: 2px solid #e5e7eb;
-        border-left: none;
-        border-radius: 0 12px 12px 0;
-        background: #f9fafb;
-        color: #6b7280;
-        transition: all 0.3s ease;
-    }
-
-    .password-toggle:hover {
-        background: #e5e7eb;
-        color: var(--primary-color);
-    }
-
-    /* Login Button */
-    .login-btn {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-        border: none;
-        border-radius: 12px;
-        padding: 0.875rem 1rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-    }
-
-    .login-btn:hover {
+    /* Button hover effects */
+    .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
-        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
     }
 
-    /* Divider */
-    .login-divider {
-        position: relative;
-        text-align: center;
+    /* Submit button loading state */
+    .submit-btn.loading span { opacity: 0; }
+    .submit-btn.loading .opacity-0 { opacity: 1 !important; }
+
+    /* Alert animations */
+    .alert {
+        animation: slideInDown 0.3s ease-out;
     }
 
-    .login-divider::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: #e5e7eb;
-    }
-
-    .divider-text {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 0 1rem;
-        color: #6b7280;
-        font-size: 0.875rem;
-    }
-
-    /* Social Buttons */
-    .social-btn {
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 0.75rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.8);
-    }
-
-    .social-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        background: white;
-    }
-
-    /* Form Check */
-    .form-check-input:checked {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-
-    .form-check-input:focus {
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .login-card {
-            padding: 2rem 1.5rem;
-            margin: 1rem;
-        }
-        
-        .login-icon {
-            font-size: 3rem;
-        }
-        
-        .shape {
-            display: none;
-        }
-    }
-
-    /* Animation */
-    .login-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-
-    @keyframes slideInUp {
+    @keyframes slideInDown {
         from {
+            transform: translateY(-100%);
             opacity: 0;
-            transform: translateY(30px);
         }
         to {
-            opacity: 1;
             transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 991.98px) {
+        .card {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
         }
     }
 </style>
@@ -365,90 +457,147 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Password toggle functionality
-    const passwordToggle = document.querySelector('.password-toggle');
+    const form = document.querySelector('form');
+    const emailInput = document.querySelector('#email');
     const passwordInput = document.querySelector('#password');
+    const submitBtn = document.querySelector('.submit-btn');
+    const passwordReveal = document.querySelector('.password-reveal');
     
-    if (passwordToggle && passwordInput) {
-        passwordToggle.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            const icon = this.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
+    // Validation functions
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
-
-    // Social login buttons
-    document.querySelectorAll('.social-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const platform = this.textContent.trim();
-            alert(`${platform} login will be implemented soon!`);
-        });
-    });
-
-    // Form validation and enhancement
-    const form = document.querySelector('.login-form');
-    const inputs = form.querySelectorAll('.form-control');
     
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.classList.add('focused');
-        });
-        
-        input.addEventListener('blur', function() {
-            this.parentElement.classList.remove('focused');
-            if (this.value.trim() !== '') {
-                this.classList.add('has-value');
-            } else {
-                this.classList.remove('has-value');
-            }
-        });
+    function validatePassword(password) {
+        return password.length >= 6;
+    }
+    
+    function showError(input, message) {
+        input.classList.add('is-invalid');
+        input.classList.remove('is-valid');
+        const feedback = input.parentElement.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = message;
+        }
+    }
+    
+    function showSuccess(input) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+    }
+    
+    function clearError(input) {
+        input.classList.remove('is-invalid', 'is-valid');
+        const feedback = input.parentElement.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback') && !feedback.textContent.includes('{{')) {
+            feedback.textContent = '';
+        }
+    }
+    
+    // Real-time validation
+    emailInput.addEventListener('input', function() {
+        clearError(this);
     });
-
-    // Button click animation
-    const loginBtn = document.querySelector('.login-btn');
-    loginBtn.addEventListener('click', function(e) {
-        // Create ripple effect
-        const ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-        
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-        ripple.style.position = 'absolute';
-        ripple.style.borderRadius = '50%';
-        ripple.style.background = 'rgba(255, 255, 255, 0.3)';
-        ripple.style.transform = 'scale(0)';
-        ripple.style.animation = 'ripple 0.6s linear';
-        ripple.style.pointerEvents = 'none';
-        
-        this.style.position = 'relative';
-        this.style.overflow = 'hidden';
-        this.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
+    
+    passwordInput.addEventListener('input', function() {
+        clearError(this);
     });
-
-    // Add ripple animation CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
+    
+    // Email validation
+    emailInput.addEventListener('blur', function() {
+        if (this.value && !validateEmail(this.value)) {
+            showError(this, 'Please enter a valid email address');
+        } else if (this.value) {
+            showSuccess(this);
+        }
+    });
+    
+    // Password validation
+    passwordInput.addEventListener('blur', function() {
+        if (this.value && !validatePassword(this.value)) {
+            showError(this, 'Password must be at least 6 characters long');
+        } else if (this.value) {
+            showSuccess(this);
+        }
+    });
+    
+    // Password reveal
+    passwordReveal.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let isValid = true;
+        
+        // Reset previous states
+        emailInput.classList.remove('is-invalid', 'is-valid');
+        passwordInput.classList.remove('is-invalid', 'is-valid');
+        
+        // Email validation
+        if (!emailInput.value) {
+            showError(emailInput, 'Email is required');
+            isValid = false;
+        } else if (!validateEmail(emailInput.value)) {
+            showError(emailInput, 'Please enter a valid email address');
+            isValid = false;
+        } else {
+            showSuccess(emailInput);
+        }
+        
+        // Password validation
+        if (!passwordInput.value) {
+            showError(passwordInput, 'Password is required');
+            isValid = false;
+        } else if (!validatePassword(passwordInput.value)) {
+            showError(passwordInput, 'Password must be at least 6 characters long');
+            isValid = false;
+        } else {
+            showSuccess(passwordInput);
+        }
+        
+        if (isValid) {
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            setTimeout(() => {
+                this.submit();
+            }, 1000);
+        } else {
+            const firstInvalid = form.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.focus();
             }
         }
-    `;
-    document.head.appendChild(style);
-
-    console.log('Applicant login page initialized successfully!');
+    });
+    
+    // Feature cards interaction
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.feature-card').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // Auto-dismiss alerts after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            if (alert && alert.parentNode && typeof bootstrap !== 'undefined') {
+                const bootstrapAlert = new bootstrap.Alert(alert);
+                bootstrapAlert.close();
+            }
+        }, 5000);
+    });
 });
+
+function showSupportModal() {
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Modal(document.getElementById('supportModal')).show();
+    }
+}
 </script>
 @endsection

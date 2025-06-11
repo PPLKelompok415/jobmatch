@@ -398,18 +398,22 @@
                                     {{-- Use user's profile photo from applicant model, or default --}}
                                     @php
                                         $user = Auth::user();
-                                        $applicant = $user->applicant ?? null;
-                                        $profilePhoto = $applicant && $applicant->photo ? asset('storage/' . $applicant->photo) : asset('images/default_profile.png');
+                                        $profilePhoto = asset('images/default_profile.png'); // Default fallback
+                                        if ($user->applicant && $user->applicant->photo) {
+                                            $profilePhoto = asset('storage/' . $user->applicant->photo);
+                                        } elseif ($user->company && $user->company->logo) { // Use company logo if user is a company
+                                            $profilePhoto = asset('storage/' . $user->company->logo);
+                                        }
                                     @endphp
-                                    <img src="{{ $profilePhoto }}?v={{ $applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp }}" alt="Profile" class="navbar-profile-pic me-2">
+                                    <img src="{{ $profilePhoto }}?v={{ ($user->applicant && $user->applicant->updated_at) ? $user->applicant->updated_at->timestamp : (($user->company && $user->company->updated_at) ? $user->company->updated_at->timestamp : now()->timestamp) }}" alt="Profile" class="navbar-profile-pic me-2">
                                     <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
                                     <!-- User Info Header -->
                                     <li class="dropdown-header-custom">
                                         <div class="d-flex align-items-center">
-                                            {{-- Use user's profile photo from applicant model, or default --}}
-                                            <img src="{{ $profilePhoto }}?v={{ $applicant->updated_at ? $applicant->updated_at->timestamp : now()->timestamp }}" alt="Profile" class="navbar-profile-pic me-3" style="width: 50px; height: 50px;">
+                                            {{-- Use user's profile photo/company logo for header --}}
+                                            <img src="{{ $profilePhoto }}?v={{ ($user->applicant && $user->applicant->updated_at) ? $user->applicant->updated_at->timestamp : (($user->company && $user->company->updated_at) ? $user->company->updated_at->timestamp : now()->timestamp) }}" alt="Profile" class="navbar-profile-pic me-3" style="width: 50px; height: 50px;">
                                             <div>
                                                 <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
                                                 <small class="text-muted">{{ Auth::user()->email }}</small>
@@ -422,14 +426,30 @@
                                     
                                     <!-- Menu Items -->
                                     <li>
-                                        <a class="dropdown-item dropdown-item-custom" href="{{ route('profile.show') }}">
-                                            <i class="fas fa-user me-3 text-primary"></i>My Profile
-                                        </a>
+                                        {{-- Conditional link for "My Profile" based on user role --}}
+                                        @if (Auth::user()->role === 'company')
+                                            {{-- If user is a company, "My Job Postings" leads to their job listings --}}
+                                            @php
+                                                $companyJobsLink = '#';
+                                                if (Auth::user()->company) {
+                                                    // Perubahan di sini: Mengarahkan "My Job Postings" ke daftar lowongan perusahaan
+                                                    $companyJobsLink = route('jobs.index', ['id' => Auth::user()->company->id]);
+                                                }
+                                            @endphp
+                                            <a class="dropdown-item dropdown-item-custom" href="{{ $companyJobsLink }}">
+                                                <i class="fas fa-briefcase me-3 text-primary"></i>My Job Postings
+                                            </a>
+                                        @else
+                                            {{-- For applicant or admin, "My Profile" leads to their personal profile --}}
+                                            <a class="dropdown-item dropdown-item-custom" href="{{ route('profile.show') }}" id="myProfileLink">
+                                                <i class="fas fa-user me-3 text-primary"></i>My Profile
+                                            </a>
+                                        @endif
                                     </li>
                                     
                                     @if (Auth::user()->role === 'applicant')
                                         <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="#">
+                                            <a class="dropdown-item dropdown-item-custom" href="{{ route('applicant.dashboard') }}">
                                                 <i class="fas fa-briefcase me-3 text-success"></i>My Applications
                                             </a>
                                         </li>
@@ -439,13 +459,22 @@
                                             </a>
                                         </li>
                                     @elseif (Auth::user()->role === 'company')
+                                        @php
+                                            $companyProfileLink = '#';
+                                            $companyJobApplicationsLink = '#'; // Default placeholder
+                                            if (Auth::user()->company) { 
+                                                // Perubahan di sini: "Company Profile" juga mengarah ke daftar lowongan perusahaan
+                                                $companyProfileLink = route('jobs.index', Auth::user()->company->id); // Mengarahkan ke daftar lowongan perusahaan Anda
+                                                $companyJobApplicationsLink = route('company.dashboard'); 
+                                            }
+                                        @endphp
                                         <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="#">
+                                            <a class="dropdown-item dropdown-item-custom" href="{{ $companyProfileLink }}">
                                                 <i class="fas fa-building me-3 text-success"></i>Company Profile
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item dropdown-item-custom" href="#">
+                                            <a class="dropdown-item dropdown-item-custom" href="{{ $companyJobApplicationsLink }}">
                                                 <i class="fas fa-users me-3 text-info"></i>Job Applications
                                             </a>
                                         </li>
@@ -462,7 +491,7 @@
                                     <li>
                                         <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
                                             @csrf
-                                            <button type="submit" class="dropdown-item dropdown-item-custom text-danger w-100 text-start border-0 bg-transparent" onclick="return confirm('Are you sure you want to logout?')">
+                                            <button type="submit" class="dropdown-item dropdown-item-custom text-danger w-100 text-start border-0 bg-transparent" onclick="return confirm('Apakah Anda yakin ingin logout?')">
                                                 <i class="fas fa-sign-out-alt me-3"></i>Logout
                                             </button>
                                         </form>
@@ -653,31 +682,59 @@
                 
                 if (userRole === 'applicant' && currentPath.includes('/company/dashboard')) {
                     showAccessDenied(
-                        'Access Denied',
-                        'You are not authorized to access company dashboard. Please login with a company account.',
-                        'Redirecting to Applicant Dashboard...',
+                        'Akses Ditolak',
+                        'Anda tidak diizinkan mengakses dashboard perusahaan. Mohon login dengan akun perusahaan.',
+                        'Mengarahkan ke Dashboard Pelamar...',
                         '{{ route('applicant.dashboard') }}'
                     );
                 }
                 
                 if (userRole === 'company' && currentPath.includes('/applicant/dashboard')) {
                     showAccessDenied(
-                        'Access Denied',
-                        'You are not authorized to access applicant dashboard. Please login with an applicant account.',
-                        'Redirecting to Company Dashboard...',
+                        'Akses Ditolak',
+                        'Anda tidak diizinkan mengakses dashboard pelamar. Mohon login dengan akun pelamar.',
+                        'Mengarahkan ke Dashboard Perusahaan...',
                         '{{ route('company.dashboard') }}'
                     );
                 }
                 
                 if (userRole !== 'admin' && currentPath.includes('/admin/dashboard')) {
                     showAccessDenied(
-                        'Admin Access Required',
-                        'You need administrator privileges to access this area.',
-                        'Redirecting to your Dashboard...',
+                        'Akses Admin Diperlukan',
+                        'Anda memerlukan hak akses administrator untuk masuk ke area ini.',
+                        'Mengarahkan ke Dashboard Anda...',
                         userRole === 'company' ? '{{ route('company.dashboard') }}' : '{{ route('applicant.dashboard') }}'
                     );
                 }
             @endauth
+
+            // Debugging for 'My Profile' link
+            const myProfileLink = document.getElementById('myProfileLink');
+            console.log('JobMatch: Attempting to find #myProfileLink.');
+
+            if (myProfileLink) {
+                console.log('JobMatch: #myProfileLink element found.');
+                console.log('JobMatch: #myProfileLink href attribute is:', myProfileLink.href);
+
+                // Add event listeners for detailed logging
+                myProfileLink.addEventListener('mousedown', function(event) {
+                    console.log('JobMatch: My Profile link - Mouse Down event detected!');
+                });
+                myProfileLink.addEventListener('mouseup', function(event) {
+                    console.log('JobMatch: My Profile link - Mouse Up event detected!');
+                });
+                myProfileLink.addEventListener('click', function(event) {
+                    console.log('JobMatch: My Profile link - Click event detected!');
+                    console.log('JobMatch: Target URL for click is:', myProfileLink.href);
+                    // Prevent default navigation to explicitly control it for debugging
+                    // event.preventDefault(); // Uncomment this line if you want to stop default navigation for testing
+
+                    // You can add a forced redirect here if the link is not working
+                    // window.location.href = myProfileLink.href; 
+                });
+            } else {
+                console.warn('JobMatch: My Profile link (#myProfileLink) was NOT found in the DOM. This might be due to user role (company users won\'t have this link) or other rendering issues.');
+            }
 
             console.log('JobMatch layout initialized successfully!');
         });
@@ -690,9 +747,9 @@
             loadingSpinner.style.display = 'flex';
             
             showInfoModal(
-                'Login Required',
-                'Please login to access the Community features. You will be redirected to the login page.',
-                'Redirecting to Login...'
+                'Login Diperlukan',
+                'Mohon login untuk mengakses fitur Komunitas. Anda akan diarahkan ke halaman login.',
+                'Mengarahkan ke Halaman Login...'
             );
             
             setTimeout(() => window.location.href = loginUrl, 2000);
