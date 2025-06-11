@@ -336,7 +336,7 @@
                                 if (Auth::user()->role === 'applicant') {
                                     $communityLink = route('community.index');
                                 } elseif (Auth::user()->role === 'company') {
-                                    $communityLink = route('community.index');
+                                    $communityLink = route('community');
                                 } else {
                                     $communityLink = route('community.index'); // untuk admin atau role lain
                                 }
