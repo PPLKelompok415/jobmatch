@@ -93,9 +93,13 @@
                                         @endif
                                     </div>
                                 </div>
-                                <button class="btn btn-link text-danger p-2" onclick="removeBookmark({{ $bookmark->id }})" title="Remove bookmark">
-                                    <i class="bi bi-bookmark-x fs-5"></i>
-                                </button>
+                                <form action="{{ route('bookmark.destroy', $bookmark->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link text-danger p-2" title="Remove bookmark" onclick="return confirm('Are you sure you want to remove this bookmark?')">
+                                        <i class="bi bi-bookmark-x fs-5"></i>
+                                    </button>
+                                </form>
                             </div>
 
                             <!-- Job Details -->
@@ -157,12 +161,12 @@
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2 align-items-center">
                                 @if($bookmark->has_chat)
-                                    <a href="{{ url('/chat/' . $bookmark->company_user_id) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
+                                    <a href="{{ route('chat.show', [$bookmark->company_user_id, $bookmark->job_id] ) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
                                         <i class="bi bi-chat-dots me-2"></i>
                                         Go to Chat
                                     </a>
                                 @else
-                                    <a href="{{ url('/chat/' . $bookmark->company_user_id) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
+                                    <a href="{{ route('chat.show', [$bookmark->company_user_id, $bookmark->job_id] ) }}" class="btn btn-navbar-solid flex-grow-1 text-white">
                                         <i class="bi bi-send me-2"></i>
                                         Apply Now
                                     </a>

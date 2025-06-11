@@ -50,9 +50,10 @@ class BookmarkController extends Controller
             }
             $bookmark->has_chat = $hasChat;
             $bookmark->company_user_id = $companyUserId;
+            $bookmark->job_id = $job?->id ?? null;
         }
 
-        return view('job-matching.bookmark', compact('bookmarks', 'userId'));
+        return view('job-matching.bookmark', compact('bookmarks', var_names: 'userId'));
     }
     
     public function destroy($id)
@@ -64,8 +65,9 @@ class BookmarkController extends Controller
 
         if ($bookmark) {
             $bookmark->delete();
-            return response()->json(['message' => 'Bookmark deleted successfully.']);
-        }
+            
+            return redirect()->route('bookmark.index')->with('success', 'Bookmark deleted successfully.');
+            }
 
         return response()->json(['message' => 'Bookmark not found.'], 404);
     }
