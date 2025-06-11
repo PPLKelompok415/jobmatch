@@ -163,14 +163,10 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($company->created_at)
-                                            <small class="text-muted">
-                                                {{ $company->created_at->format('d/m/Y') }}<br>
-                                                {{ $company->created_at->format('H:i') }}
-                                            </small>
-                                        @else
-                                            <small class="text-muted">-</small>
-                                        @endif
+                                        <small class="text-muted">
+                                            {{ $company->created_at->format('d/m/Y') }}<br>
+                                            {{ $company->created_at->format('H:i') }}
+                                        </small>
                                     </td>
                                     <td class="text-center">
                                         <span class="badge bg-success">Aktif</span>
